@@ -12,6 +12,8 @@ authors = [
 dependencies = [
     "biopython>=1.80",
     "matplotlib>=3.5",
+    "numpy>=1.23",
+    "opencv-python>=4.7",
 ]
 
 [project.optional-dependencies]

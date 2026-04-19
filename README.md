@@ -42,6 +42,7 @@ src/jsrc/
   plot/    # plotting module (core.py + command modules)
   analyze/ # analysis module (core.py + command modules)
   grn/     # GRN module (core.py + command modules)
+  vision/  # image recognition module (extract + descriptors)
 ```
 
 Each module is independently loadable by CLI, with optional hot-plug controls:
@@ -126,4 +127,18 @@ jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
 
 # Serve local GRN viewer through HTTP
 jsrc grn serve -d viewer -p 8000
+```
+
+### vision
+
+```bash
+# Step 1: extract object contours from a single image
+jsrc vision extract -i sample.png -o extracted/
+
+# Optional: tune threshold channel and inversion for different object/background styles
+jsrc vision extract -i sample.png -o extracted/ --channel a --invert
+
+# Step 2: after reviewing extraction quality, convert .npy contours to EFD descriptors
+# (output must be a directory because multiple CSV/plot files may be generated)
+jsrc vision efd -i extracted/ -o descriptors/ --harmonics 20
 ```

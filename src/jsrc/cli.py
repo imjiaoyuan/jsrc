@@ -10,6 +10,7 @@ MODULES = {
     "plot": "jsrc.plot",
     "analyze": "jsrc.analyze",
     "grn": "jsrc.grn",
+    "vision": "jsrc.vision",
 }
 
 
