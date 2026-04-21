@@ -120,6 +120,22 @@ jsrc analyze phylo -fa sequences.fa -o tree.nwk -a upgma
 
 # Motif analysis with built-in pure-python k-mer method
 jsrc analyze motif -fa promoters.fa -o motif_output -nmotifs 5
+
+# Quick QC stats to terminal (no -o required)
+# Assembly: contig count / N50 / GC / N%
+jsrc analyze qc -fa assembly.fa
+
+# Mapping: alignment count / mapping rate / mean depth (from SAM CIGAR + @SQ LN)
+jsrc analyze qc -sam aln.sam
+
+# FASTQ sequencing depth estimate (needs genome size)
+jsrc analyze qc -fq r1.fq.gz r2.fq.gz -gs 520000000
+
+# Variant counts: SNP / INDEL / other
+jsrc analyze qc -vcf variants.vcf.gz
+
+# Combine multiple inputs in one run, optionally JSON
+jsrc analyze qc -fa assembly.fa -sam aln.sam -vcf variants.vcf.gz --json
 ```
 
 ### grn
