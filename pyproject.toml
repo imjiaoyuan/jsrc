@@ -14,6 +14,7 @@ dependencies = [
     "matplotlib>=3.5",
     "numpy>=1.23",
     "opencv-python>=4.7",
+    "plotly>=5.0",
 ]
 
 [project.optional-dependencies]

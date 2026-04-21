@@ -101,6 +101,12 @@ jsrc plot domain -tsv domains.tsv -o protein_domains.png
 
 # Plot cis-regulatory elements from BED
 jsrc plot cis -bed elements.bed -o cis_elements.png
+
+# Plot heart curve
+jsrc plot heart
+
+# Plot 3D rose (interactive window)
+jsrc plot rose
 ```
 
 ### analyze

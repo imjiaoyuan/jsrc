@@ -46,3 +46,9 @@ def register_subparser(subparsers):
     p.add_argument("-o", required=True, help="Output PNG file")
     p.add_argument("-dpi", type=int, default=300, help="DPI")
     p.set_defaults(func=_dispatch("jsrc.plot.cis"))
+
+    p = plot_sub.add_parser("heart", help="Plot heart curve")
+    p.set_defaults(func=_dispatch("jsrc.plot.heart"))
+
+    p = plot_sub.add_parser("rose", help="Plot 3D rose model")
+    p.set_defaults(func=_dispatch("jsrc.plot.rose"))
