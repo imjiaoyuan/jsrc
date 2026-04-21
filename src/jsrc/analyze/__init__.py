@@ -36,3 +36,22 @@ def register_subparser(subparsers):
     p.add_argument("-gs", type=int, help="Genome size (bp), used with -fq for depth estimate")
     p.add_argument("--json", action="store_true", help="Print JSON instead of text table")
     p.set_defaults(func=_dispatch("jsrc.analyze.qc"))
+
+    p = analyze_sub.add_parser("msa_consensus", help="Consensus and conservation from FASTA")
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=_dispatch("jsrc.analyze.msa_consensus"))
+
+    p = analyze_sub.add_parser("snpindel", help="Pairwise SNP/INDEL summary")
+    p.add_argument("-fa", required=True, help="FASTA containing at least two sequences")
+    p.add_argument("-id1", help="Sequence 1 ID (default: first record)")
+    p.add_argument("-id2", help="Sequence 2 ID (default: second record)")
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=_dispatch("jsrc.analyze.snpindel"))
+
+    p = analyze_sub.add_parser("bootstrap_phylo", help="Bootstrap support for NJ phylogeny")
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("-n", type=int, default=100, help="Bootstrap replicates")
+    p.add_argument("-seed", type=int, default=42, help="Random seed")
+    p.add_argument("-o", help="Optional output Newick file")
+    p.set_defaults(func=_dispatch("jsrc.analyze.bootstrap_phylo"))

@@ -52,3 +52,18 @@ def register_subparser(subparsers):
 
     p = plot_sub.add_parser("rose", help="Plot 3D rose model")
     p.set_defaults(func=_dispatch("jsrc.plot.rose"))
+
+    p = plot_sub.add_parser("dotplot", help="Sequence dotplot by exact k-mer matches")
+    p.add_argument("-fa1", required=True, help="FASTA file 1")
+    p.add_argument("-fa2", required=True, help="FASTA file 2")
+    p.add_argument("-k", type=int, default=10, help="k-mer size")
+    p.add_argument("-o", help="Optional output PNG")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=_dispatch("jsrc.plot.dotplot"))
+
+    p = plot_sub.add_parser("circoslite", help="Simple circular tracks for genome stats")
+    p.add_argument("-fa", required=True, help="Genome FASTA")
+    p.add_argument("-w", type=int, default=100000, help="Window size")
+    p.add_argument("-o", help="Optional output PNG")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=_dispatch("jsrc.plot.circoslite"))

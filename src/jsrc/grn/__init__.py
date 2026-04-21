@@ -28,3 +28,9 @@ def register_subparser(subparsers):
     p.add_argument("-d", "--dir", default=".", help="Viewer directory (default: current directory)")
     p.add_argument("-p", "--port", type=int, default=8000, help="Port")
     p.set_defaults(func=_dispatch("jsrc.grn.serve"))
+
+    p = grn_sub.add_parser("centrality", help="Compute GRN node centrality summary")
+    p.add_argument("-i", "--input", required=True, help="Edge table (source target [weight])")
+    p.add_argument("--sep", default=None, help="Column separator (default: auto whitespace/tab)")
+    p.add_argument("--top", type=int, default=20, help="Top N nodes to print")
+    p.set_defaults(func=_dispatch("jsrc.grn.centrality"))

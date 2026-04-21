@@ -79,6 +79,20 @@ jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
 
 # Extract promoter sequences with configurable upstream/downstream bp
 jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -id ID -feature gene -up 2000 -down 200 -o promoters.fa
+
+# FASTA/FASTQ QC to terminal (contig N50, depth estimate)
+jsrc seq qc -fa assembly.fa
+jsrc seq qc -fq r1.fq.gz r2.fq.gz -gs 520000000
+
+# Codon usage + RSCU
+jsrc seq codon -fa cds.fa --top 30
+
+# k-mer profile (single sample) or distance matrix (multi-sample)
+jsrc seq kmer -fa sample.fa -k 5
+jsrc seq kmer -fa s1.fa s2.fa s3.fa -k 7
+
+# Sliding-window GC/AT-skew
+jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200
 ```
 
 ### plot
@@ -107,6 +121,12 @@ jsrc plot heart
 
 # Plot 3D rose (interactive window)
 jsrc plot rose
+
+# Dotplot (show directly; add -o to save)
+jsrc plot dotplot -fa1 a.fa -fa2 b.fa -k 10
+
+# Light-weight circos style plot (show directly; add -o to save)
+jsrc plot circoslite -fa genome.fa -w 100000
 ```
 
 ### analyze
@@ -136,6 +156,15 @@ jsrc analyze qc -vcf variants.vcf.gz
 
 # Combine multiple inputs in one run, optionally JSON
 jsrc analyze qc -fa assembly.fa -sam aln.sam -vcf variants.vcf.gz --json
+
+# MSA consensus and average conservation
+jsrc analyze msa_consensus -fa aligned.fa
+
+# Pairwise SNP/INDEL summary
+jsrc analyze snpindel -fa pair.fa -id1 sample1 -id2 sample2
+
+# NJ bootstrap support
+jsrc analyze bootstrap_phylo -fa sequences.fa -n 200 -o boot.nwk
 ```
 
 ### grn
@@ -149,6 +178,9 @@ jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
 
 # Serve local GRN viewer through HTTP
 jsrc grn serve -d viewer -p 8000
+
+# GRN centrality summary
+jsrc grn centrality -i grn.tsv --top 30
 ```
 
 ### vision
@@ -163,4 +195,7 @@ jsrc vision extract -i sample.png -o extracted/ --channel a --invert
 # Step 2: after reviewing extraction quality, convert .npy contours to EFD descriptors
 # (output must be a directory because multiple CSV/plot files may be generated)
 jsrc vision efd -i extracted/ -o descriptors/ --harmonics 20
+
+# Morphology traits from image
+jsrc vision traits -i sample.png --channel a
 ```
