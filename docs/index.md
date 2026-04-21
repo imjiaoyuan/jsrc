@@ -62,6 +62,7 @@ Project layout:
 - `src/jsrc/grn` GRN conversion/service utilities
 - `src/jsrc/vision` image and shape analysis
 - `src/jsrc/text` general text processing
+- `src/jsrc/job` background job tracking and management
 
 ## Module Docs
 
@@ -72,6 +73,7 @@ Project layout:
 - [GRN Module](./module-grn.md)
 - [Vision Module](./module-vision.md)
 - [Text Module](./module-text.md)
+- [Job Module](./module-job.md)
 
 ## Global CLI Behavior
 
