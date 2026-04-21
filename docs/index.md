@@ -1,8 +1,8 @@
 # jsrc Documentation
 
-## 1. Quick Start
+## Quick Start
 
-### 1.1 Installation
+### Installation
 
 Use `uv` (recommended):
 
@@ -21,7 +21,7 @@ pip install -e .
 jsrc --help
 ```
 
-### 1.2 Deployment / Runtime Usage
+### Deployment / Runtime Usage
 
 Run commands directly:
 
@@ -42,7 +42,7 @@ JSRC_MODULES=seq,plot jsrc --help
 JSRC_DISABLE_MODULES=grn jsrc --help
 ```
 
-### 1.3 Development Workflow
+### Development Workflow
 
 ```bash
 git clone https://github.com/imjiaoyuan/jsrc.git
@@ -63,7 +63,7 @@ Project layout:
 - `src/jsrc/vision` image and shape analysis
 - `src/jsrc/text` general text processing
 
-## 2. Module Docs
+## Module Docs
 
 - [Sequence Module](./module-seq.md)
 - [Analyze Module](./module-analyze.md)
@@ -73,7 +73,7 @@ Project layout:
 - [Vision Module](./module-vision.md)
 - [Text Module](./module-text.md)
 
-## 3. Global CLI Behavior
+## Global CLI Behavior
 
 - Main form: `jsrc <module> <command> ...`
 - Some commands print to terminal by default; some require `-o` outputs.
