@@ -7,6 +7,8 @@ jsrc job submit "python train.py --epochs 100"
 
 Use this to submit and track long-running background jobs via `nohup`. Every submitted job is recorded in a plain-text history file at `~/.local/share/jsrc/jobs`, and default logs are written to `~/.local/share/jsrc/job-logs/`.
 
+> **Compatibility note:** This module is currently tested only on **Arch Linux**.
+
 ---
 
 ```bash
