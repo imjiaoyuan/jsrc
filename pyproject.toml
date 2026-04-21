@@ -1,7 +1,7 @@
 [project]
 name = "jsrc"
 version = "0.1.1"
-description = "Bioinformatics analysis toolkit"
+description = "General-purpose toolkit for bioinformatics, data analysis, plotting, and text processing"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
@@ -14,7 +14,10 @@ dependencies = [
     "matplotlib>=3.5",
     "numpy>=1.23",
     "opencv-python>=4.7",
+    "pandas>=2.0",
+    "pandas-plink>=2.2",
     "plotly>=5.0",
+    "scikit-learn>=1.2",
 ]
 
 [project.optional-dependencies]

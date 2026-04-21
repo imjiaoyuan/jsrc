@@ -9,8 +9,10 @@ MODULES = {
     "seq": "jsrc.seq",
     "plot": "jsrc.plot",
     "analyze": "jsrc.analyze",
+    "gs": "jsrc.gs",
     "grn": "jsrc.grn",
     "vision": "jsrc.vision",
+    "text": "jsrc.text",
 }
 
 
@@ -39,7 +41,7 @@ def _register_modules(subparsers):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="jsrc", description="Bioinformatics analysis toolkit")
+    parser = argparse.ArgumentParser(prog="jsrc", description="General-purpose bioinformatics and data toolkit")
     parser.add_argument("--version", action="version", version=__version__)
     subparsers = parser.add_subparsers(dest="command", help="Available modules")
 
