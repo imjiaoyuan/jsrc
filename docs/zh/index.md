@@ -1,28 +1,5 @@
 # jsrc 中文文档
 
-## 快速开始
-
-```bash
-git clone https://github.com/imjiaoyuan/jsrc.git
-cd jsrc
-uv venv
-uv sync --extra dev
-uv run jsrc --help
-```
-
-或：
-
-```bash
-pip install -e .
-jsrc --help
-```
-
-运行格式：
-
-```bash
-jsrc <模块> <子命令> [参数]
-```
-
 ## 模块文档
 
 - [序列模块](./module-seq.md)

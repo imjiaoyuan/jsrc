@@ -2,15 +2,37 @@
 
 A CLI toolkit for data processing, analysis, and visualization.
 
-For usage instructions, please refer to the [Documentation](docs/en/index.md).中文文档请参阅 [文档](docs/zh/index.md)。
+## Installation
+
+PyPI (recommended):
+```bash
+pip install jsrc
+```
+
+uv:
+```bash
+uv pip install jsrc
+```
+
+From source:
+```bash
+git clone https://github.com/imjiaoyuan/jsrc.git
+cd jsrc
+uv venv
+uv sync --extra dev
+```
+
+Run `jsrc --help` to get started.
+
+For detailed usage, see the [Documentation](docs/en/index.md).中文文档请参阅 [文档](docs/zh/index.md)。
 
 ## A Glance of jsrc's Functions
 
 **vision module**
 
 ```bash
-uv run jsrc vision extract -i test/leaf1.jpg -o test/efd --channel a --invert --save-mask
-uv run jsrc vision efd -i test/efd -o test/efd --harmonics 20
+jsrc vision extract -i test/leaf1.jpg -o test/efd --channel a --invert --save-mask
+jsrc vision efd -i test/efd -o test/efd --harmonics 20
 ```
 
 Contour extraction & EFD reconstruction (20 harmonics):
@@ -30,7 +52,7 @@ an,bn,cn,dn
 Morphological traits:
 
 ```bash
-uv run jsrc vision traits -i test/leaf1.jpg --channel a --invert
+jsrc vision traits -i test/leaf1.jpg --channel a --invert
 ```
 
 | trait | value |
@@ -49,7 +71,7 @@ uv run jsrc vision traits -i test/leaf1.jpg --channel a --invert
 Generate 1000-gene random network viewer with full-view mode (top 200 nodes):
 
 ```bash
-uv run jsrc grn net2json -i test/grn/network.tsv -o test/grn/json/grn.json -n test/grn/annotation.tsv -z test/grn/grn-viewer.zip -s
+jsrc grn net2json -i test/grn/network.tsv -o test/grn/json/grn.json -n test/grn/annotation.tsv -z test/grn/grn-viewer.zip -s
 ```
 
 ![](assets/grn.jpg)
@@ -57,7 +79,7 @@ uv run jsrc grn net2json -i test/grn/network.tsv -o test/grn/json/grn.json -n te
 Centrality ranking (top 5):
 
 ```bash
-uv run jsrc grn centrality -i test/grn/network.tsv --top 5
+jsrc grn centrality -i test/grn/network.tsv --top 5
 ```
 
 | rank | node | in_degree | out_degree | total_degree |
@@ -73,7 +95,7 @@ uv run jsrc grn centrality -i test/grn/network.tsv --top 5
 **seq module**
 
 ```bash
-uv run jsrc seq extract -fa test/seq/test.fa -gff test/seq/test.gff -ids test/seq/ids.txt -o test/seq/extracted.fa -feature gene -match ID
+jsrc seq extract -fa test/seq/test.fa -gff test/seq/test.gff -ids test/seq/ids.txt -o test/seq/extracted.fa -feature gene -match ID
 ```
 
 Extract sequences by gene ID from FASTA+GFF, rename via CSV map, run QC stats, k-mer counting, and sliding-window analysis.
@@ -87,10 +109,10 @@ k-mer (k=3): top `ATC` (40), `TCG` (40), `CGA` (39).
 **analyze module**
 
 ```bash
-uv run jsrc analyze msa_consensus -fa test/analyze/aln.fa --json
-uv run jsrc analyze snpindel -fa test/analyze/aln.fa
-uv run jsrc analyze motif -fa test/analyze/aln.fa -o test/analyze/motif_out -minw 3 -maxw 5 -nmotifs 3
-uv run jsrc analyze phylo -fa test/analyze/aln.fa -o test/analyze/tree.nwk
+jsrc analyze msa_consensus -fa test/analyze/aln.fa --json
+jsrc analyze snpindel -fa test/analyze/aln.fa
+jsrc analyze motif -fa test/analyze/aln.fa -o test/analyze/motif_out -minw 3 -maxw 5 -nmotifs 3
+jsrc analyze phylo -fa test/analyze/aln.fa -o test/analyze/tree.nwk
 ```
 
 - Consensus: `ATGCTAGCTAGCTAGCTAGC`, mean conservation 0.983
@@ -105,7 +127,7 @@ uv run jsrc analyze phylo -fa test/analyze/aln.fa -o test/analyze/tree.nwk
 Submit, monitor, and inspect background jobs:
 
 ```bash
-uv run jsrc job submit "echo 'job module test' && sleep 1 && echo done" -N test-job
+jsrc job submit "echo 'job module test' && sleep 1 && echo done" -N test-job
 ```
 
 ```
@@ -116,7 +138,7 @@ status	running
 ```
 
 ```bash
-uv run jsrc job ls --limit 5
+jsrc job ls --limit 5
 ```
 
 ```
@@ -126,7 +148,7 @@ job_id  status  pid    runtime  rss_mb  ...  command
 ```
 
 ```bash
-uv run jsrc job logs 1
+jsrc job logs 1
 ```
 
 ```
