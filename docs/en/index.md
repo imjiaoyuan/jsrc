@@ -8,5 +8,4 @@
 - [GS Module](./module-gs.md)
 - [GRN Module](./module-grn.md)
 - [Vision Module](./module-vision.md)
-- [Text Module](./module-text.md)
 - [Job Module](./module-job.md)
