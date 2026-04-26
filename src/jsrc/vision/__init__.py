@@ -16,7 +16,7 @@ def register_subparser(subparsers):
 
     p = vision_sub.add_parser("extract", help="Extract object contours from a single image")
     p.add_argument("-i", "--input", required=True, help="Input image file")
-    p.add_argument("-o", "--output", required=True, help="Output directory")
+    p.add_argument("-o", dest="output", required=True, help="Output directory")
     p.add_argument(
         "--channel",
         choices=["gray", "a", "b", "s", "v"],
@@ -38,7 +38,7 @@ def register_subparser(subparsers):
 
     p = vision_sub.add_parser("efd", help="Convert extracted contours (.npy) to EFD descriptors")
     p.add_argument("-i", "--input", required=True, help="Input .npy file or directory")
-    p.add_argument("-o", "--output", required=True, help="Output directory for CSV/plot files")
+    p.add_argument("-o", dest="output", required=True, help="Output directory for CSV/plot files")
     p.add_argument("--harmonics", type=int, default=20, help="Number of EFD harmonics")
     p.add_argument("--points", type=int, default=300, help="Reconstruction points for preview plot")
     p.add_argument("--no-plot", action="store_true", help="Skip reconstruction plot output")
