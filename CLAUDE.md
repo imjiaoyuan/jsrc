@@ -65,6 +65,7 @@ src/jsrc/<module>/
 | `plot`    | Visualization (gene, exon, chromosome, domain, cis, heart, rose, dotplot, circoslite) | matplotlib, numpy |
 | `analyze` | Analysis (phylo, motif, qc, msa_consensus, snpindel, bootstrap_phylo) | numpy, scikit-learn |
 | `gs`      | Genomic selection dataset/model workflows (build, split, train) | pandas, pandas-plink, scikit-learn |
+| `math`    | Statistical & ML models (20+ subcommands, zero external deps) | — |
 | `grn`     | Gene regulatory network conversion, viewer, centrality | — |
 | `vision`  | Image processing (extract, efd, traits) | opencv-python, numpy |
 | `job`     | Background job submission, monitoring, logs | — |

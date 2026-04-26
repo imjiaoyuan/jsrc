@@ -13,6 +13,7 @@ MODULES = {
     "grn": "jsrc.grn",
     "vision": "jsrc.vision",
     "job": "jsrc.job",
+    "math": "jsrc.math",
 }
 
 
@@ -42,7 +43,7 @@ def _register_modules(subparsers):
 
 def main():
     parser = argparse.ArgumentParser(prog="jsrc", description="General-purpose bioinformatics and data toolkit")
-    parser.add_argument("--version", action="version", version=__version__)
+    parser.add_argument("-v", "--version", action="version", version=__version__)
     subparsers = parser.add_subparsers(dest="command", help="Available modules")
 
     loaded, errors = _register_modules(subparsers)

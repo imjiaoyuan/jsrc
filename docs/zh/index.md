@@ -2,6 +2,7 @@
 
 ## 模块文档
 
+- [数学模块](./module-math.md)
 - [序列模块](./module-seq.md)
 - [分析模块](./module-analyze.md)
 - [绘图模块](./module-plot.md)

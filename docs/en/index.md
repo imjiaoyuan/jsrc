@@ -2,6 +2,7 @@
 
 ## Modules
 
+- [Math Module](./module-math.md)
 - [Sequence Module](./module-seq.md)
 - [Analyze Module](./module-analyze.md)
 - [Plot Module](./module-plot.md)
