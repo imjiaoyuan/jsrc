@@ -1,6 +1,6 @@
 [project]
 name = "jsrc"
-version = "0.1.3"
+version = "0.1.4"
 description = "General-purpose toolkit for bioinformatics, data analysis, plotting, and text processing"
 readme = "README.md"
 requires-python = ">=3.10"
