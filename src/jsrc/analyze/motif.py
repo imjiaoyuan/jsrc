@@ -16,7 +16,7 @@ def _kmer_counts(seqs: list[str], k: int) -> collections.Counter:
     return c
 
 
-def _run_python(args):
+def cmd(args):
     os.makedirs(args.o, exist_ok=True)
     seqs = [str(rec.seq) for rec in SeqIO.parse(args.fa, "fasta")]
     combined = collections.Counter()
@@ -31,5 +31,3 @@ def _run_python(args):
     print(f"Motif analysis complete (python). Results in {out_tsv}")
 
 
-def cmd(args):
-    _run_python(args)
