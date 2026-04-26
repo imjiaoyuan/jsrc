@@ -6,18 +6,7 @@ from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstruct
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.analyze.core import normalize_sequence
-
-
-def _pad_alignment(records: list[SeqRecord]) -> MultipleSeqAlignment:
-    max_len = max(len(r.seq) for r in records)
-    aligned = []
-    for r in records:
-        seq = normalize_sequence(str(r.seq))
-        if len(seq) < max_len:
-            seq += "-" * (max_len - len(seq))
-        aligned.append(SeqRecord(Seq(seq), id=r.id, description=""))
-    return MultipleSeqAlignment(aligned)
+from jsrc.analyze.core import pad_alignment
 
 
 def _tree_from_alignment(aln: MultipleSeqAlignment):
@@ -47,7 +36,7 @@ def cmd(args):
         raise SystemExit("Need at least three sequences for bootstrap phylogeny")
     if args.n < 1:
         raise SystemExit("-n must be >= 1")
-    aln = _pad_alignment(records)
+    aln = pad_alignment(records)
     base_tree = _tree_from_alignment(aln)
     rng = random.Random(args.seed)
 

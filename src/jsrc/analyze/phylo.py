@@ -1,25 +1,11 @@
 from Bio import Phylo, SeqIO
-from Bio.Align import MultipleSeqAlignment
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 
-from jsrc.analyze.core import normalize_sequence
+from jsrc.analyze.core import pad_alignment
 
 
-def _pad_alignment(records: list[SeqRecord]) -> MultipleSeqAlignment:
-    max_len = max(len(r.seq) for r in records)
-    aligned = []
-    for r in records:
-        seq = normalize_sequence(str(r.seq))
-        if len(seq) < max_len:
-            seq += "-" * (max_len - len(seq))
-        aligned.append(SeqRecord(Seq(seq), id=r.id, description=""))
-    return MultipleSeqAlignment(aligned)
-
-
-def _build_tree(records: list[SeqRecord], algo: str):
-    alignment = _pad_alignment(records)
+def _build_tree(records, algo: str):
+    alignment = pad_alignment(records)
     calculator = DistanceCalculator("identity")
     dm = calculator.get_distance(alignment)
     constructor = DistanceTreeConstructor(calculator)

@@ -1,8 +1,5 @@
-from typing import Dict
-
-
-def parse_gff_attributes(attr_string: str) -> Dict[str, str]:
-    attrs: Dict[str, str] = {}
+def parse_gff_attributes(attr_string: str) -> dict[str, str]:
+    attrs: dict[str, str] = {}
     for item in attr_string.strip().strip(";").split(";"):
         if "=" in item:
             key, value = item.strip().split("=", 1)

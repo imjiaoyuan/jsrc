@@ -1,5 +1,5 @@
 import collections
-import os
+from pathlib import Path
 
 from Bio import SeqIO
 from jsrc.analyze.core import normalize_sequence
@@ -17,17 +17,16 @@ def _kmer_counts(seqs: list[str], k: int) -> collections.Counter:
 
 
 def cmd(args):
-    os.makedirs(args.o, exist_ok=True)
+    output_dir = Path(args.o)
+    output_dir.mkdir(parents=True, exist_ok=True)
     seqs = [str(rec.seq) for rec in SeqIO.parse(args.fa, "fasta")]
     combined = collections.Counter()
     for k in range(args.minw, args.maxw + 1):
         combined.update(_kmer_counts(seqs, k))
     top = combined.most_common(args.nmotifs)
-    out_tsv = os.path.join(args.o, "motifs.tsv")
+    out_tsv = output_dir / "motifs.tsv"
     with open(out_tsv, "w", encoding="utf-8") as f:
         f.write("motif\tcount\tlength\n")
         for motif, count in top:
             f.write(f"{motif}\t{count}\t{len(motif)}\n")
-    print(f"Motif analysis complete (python). Results in {out_tsv}")
-
-
+    print(f"Motif analysis complete. Results in {out_tsv}")

@@ -10,7 +10,6 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 FIELDS = [
     "job_id",
@@ -79,7 +78,7 @@ def _ensure_dirs() -> None:
     _state_dir().mkdir(parents=True, exist_ok=True)
 
 
-def _load_jobs() -> List[Dict[str, str]]:
+def _load_jobs() -> list[dict[str, str]]:
     path = _history_path()
     if not path.exists():
         return []
@@ -91,7 +90,7 @@ def _load_jobs() -> List[Dict[str, str]]:
         return rows
 
 
-def _write_jobs(rows: List[Dict[str, str]], keep: int | None = None) -> None:
+def _write_jobs(rows: list[dict[str, str]], keep: int | None = None) -> None:
     if keep is not None and keep > 0 and len(rows) > keep:
         rows = rows[-keep:]
     path = _history_path()
@@ -102,7 +101,7 @@ def _write_jobs(rows: List[Dict[str, str]], keep: int | None = None) -> None:
             writer.writerow({k: row.get(k, "") for k in FIELDS})
 
 
-def _next_job_id(rows: List[Dict[str, str]]) -> int:
+def _next_job_id(rows: list[dict[str, str]]) -> int:
     if not rows:
         return 1
     return max(_to_int(r.get("job_id", "0")) for r in rows) + 1
@@ -136,7 +135,7 @@ def _process_alive(pid: int) -> bool:
     return Path(f"/proc/{pid}").exists()
 
 
-def _ps_row(pid: int) -> Tuple[bool, str, float, str]:
+def _ps_row(pid: int) -> tuple[bool, str, float, str]:
     proc = subprocess.run(
         ["ps", "-o", "etime=,pcpu=,stat=", "-p", str(pid)],
         capture_output=True,
@@ -185,7 +184,7 @@ def _parse_iso(ts: str) -> datetime | None:
         return None
 
 
-def _runtime_seconds(row: Dict[str, str], live: Dict[str, str]) -> int:
+def _runtime_seconds(row: dict[str, str], live: dict[str, str]) -> int:
     if row.get("status", "") == "running":
         return _etime_to_seconds(live.get("etime", ""))
     stored = _to_int(row.get("runtime_sec", "0"), 0)
@@ -213,7 +212,7 @@ def _format_duration(seconds: int) -> str:
     return f"{secs}s"
 
 
-def _to_row_view(row: Dict[str, str], live: Dict[str, str]) -> Dict[str, str]:
+def _to_row_view(row: dict[str, str], live: dict[str, str]) -> dict[str, str]:
     rss_kb = _to_int(row.get("rss_kb_last", "0"), 0)
     min_kb = _to_int(row.get("rss_kb_min", "0"), 0)
     if min_kb <= 0 and rss_kb > 0:
@@ -237,7 +236,7 @@ def _to_row_view(row: Dict[str, str], live: Dict[str, str]) -> Dict[str, str]:
     return out
 
 
-def _refresh_jobs(rows: List[Dict[str, str]]) -> Tuple[List[Dict[str, str]], bool]:
+def _refresh_jobs(rows: list[dict[str, str]]) -> tuple[list[dict[str, str]], bool]:
     changed = False
     now = _now_iso()
     for row in rows:
@@ -292,7 +291,7 @@ def _refresh_jobs(rows: List[Dict[str, str]]) -> Tuple[List[Dict[str, str]], boo
     return rows, changed
 
 
-def _filter_rows(rows: List[Dict[str, str]], query: str) -> List[Dict[str, str]]:
+def _filter_rows(rows: list[dict[str, str]], query: str) -> list[dict[str, str]]:
     if not query:
         return rows
     q = query.lower()
@@ -304,7 +303,7 @@ def _filter_rows(rows: List[Dict[str, str]], query: str) -> List[Dict[str, str]]
     return out
 
 
-def _sort_rows(rows: List[Dict[str, str]], key: str, reverse: bool) -> List[Dict[str, str]]:
+def _sort_rows(rows: list[dict[str, str]], key: str, reverse: bool) -> list[dict[str, str]]:
     if key == "submit_time":
         return sorted(rows, key=lambda r: r.get("submit_time", ""), reverse=reverse)
     if key == "pid":
@@ -326,7 +325,7 @@ def _sort_rows(rows: List[Dict[str, str]], key: str, reverse: bool) -> List[Dict
     return rows
 
 
-def _print_table(rows: List[Dict[str, str]], columns: List[str]) -> None:
+def _print_table(rows: list[dict[str, str]], columns: list[str]) -> None:
     if not rows:
         print("(no records)")
         return
@@ -341,7 +340,7 @@ def _print_table(rows: List[Dict[str, str]], columns: List[str]) -> None:
         print("  ".join(str(row.get(c, "")).ljust(widths[c]) for c in columns))
 
 
-def _print_rows(rows: List[Dict[str, str]], columns: List[str], fmt: str) -> None:
+def _print_rows(rows: list[dict[str, str]], columns: list[str], fmt: str) -> None:
     if fmt == "json":
         print(json.dumps([{c: r.get(c, "") for c in columns} for r in rows], ensure_ascii=False, indent=2))
         return
@@ -353,14 +352,14 @@ def _print_rows(rows: List[Dict[str, str]], columns: List[str], fmt: str) -> Non
     _print_table(rows, columns)
 
 
-def _build_live(pid: int) -> Dict[str, str]:
+def _build_live(pid: int) -> dict[str, str]:
     ok, etime, pcpu, stat = _ps_row(pid)
     if not ok:
         return {"etime": "", "pcpu": "0", "stat": ""}
     return {"etime": etime, "pcpu": str(pcpu), "stat": stat}
 
 
-def _find_row(rows: List[Dict[str, str]], target: str) -> Dict[str, str] | None:
+def _find_row(rows: list[dict[str, str]], target: str) -> dict[str, str] | None:
     if target.isdigit():
         for row in reversed(rows):
             if row.get("job_id", "") == target:
@@ -375,7 +374,7 @@ def _find_row(rows: List[Dict[str, str]], target: str) -> Dict[str, str] | None:
     return None
 
 
-def _parse_env(items: List[str]) -> Dict[str, str]:
+def _parse_env(items: list[str]) -> dict[str, str]:
     extra = {}
     for item in items:
         if "=" not in item:
@@ -451,7 +450,7 @@ def cmd_submit(args) -> None:
     print("status\trunning")
 
 
-def _collect_render_rows(args, refresh: bool) -> List[Dict[str, str]]:
+def _collect_render_rows(args, refresh: bool) -> list[dict[str, str]]:
     rows = _load_jobs()
     changed = False
     if refresh:
@@ -505,7 +504,7 @@ def cmd_show(args) -> None:
     _print_rows([view], columns, args.format)
 
 
-def _tail_lines(path: Path, n: int) -> List[str]:
+def _tail_lines(path: Path, n: int) -> list[str]:
     if n <= 0:
         return path.read_text(encoding="utf-8", errors="replace").splitlines()
     with path.open("r", encoding="utf-8", errors="replace") as fh:

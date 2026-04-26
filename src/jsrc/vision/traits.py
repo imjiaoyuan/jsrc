@@ -1,8 +1,7 @@
 from pathlib import Path
 
 import cv2
-
-from jsrc.vision.extract import _ensure_odd, _get_channel_image
+from jsrc.vision.core import ensure_odd, get_channel_image
 
 
 def cmd(args):
@@ -11,9 +10,9 @@ def cmd(args):
     if img is None:
         raise SystemExit(f"Cannot read image: {args.input}")
 
-    blur_ksize = _ensure_odd(args.blur)
+    blur_ksize = ensure_odd(args.blur)
     blurred = cv2.GaussianBlur(img, (blur_ksize, blur_ksize), 0)
-    channel_img = _get_channel_image(blurred, args.channel)
+    channel_img = get_channel_image(blurred, args.channel)
     threshold_mode = cv2.THRESH_BINARY_INV if args.invert else cv2.THRESH_BINARY
     _, binary = cv2.threshold(channel_img, 0, 255, threshold_mode + cv2.THRESH_OTSU)
 
