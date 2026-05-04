@@ -877,5 +877,11 @@ def sync_viewer_assets(
 
 
 def cmd_init(args):
-    sync_viewer_assets(args.outdir, init_empty_json=True, view_mode="auto", full_view_threshold=300, max_display_nodes=0)
+    sync_viewer_assets(
+        args.outdir,
+        init_empty_json=True,
+        view_mode="auto",
+        full_view_threshold=300,
+        max_display_nodes=0,
+    )
     print(f"Viewer scaffold created in {args.outdir}")

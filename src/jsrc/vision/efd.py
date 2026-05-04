@@ -11,7 +11,9 @@ import numpy as np
 
 class EllipticFourier:
     @staticmethod
-    def calculate(contour: np.ndarray, order: int = 20, normalize: bool = True) -> np.ndarray:
+    def calculate(
+        contour: np.ndarray, order: int = 20, normalize: bool = True
+    ) -> np.ndarray:
         contour = contour.squeeze()
         if contour.ndim != 2 or contour.shape[0] < 3:
             return np.zeros((order, 4), dtype=float)
@@ -88,7 +90,14 @@ class EllipticFourier:
             vec_cd = mat_phi @ np.array([cn, dn])
             vec_ac = rot_matrix @ np.array([vec_ab[0], vec_cd[0]])
             vec_bd = rot_matrix @ np.array([vec_ab[1], vec_cd[1]])
-            out.append([vec_ac[0] / scale, vec_bd[0] / scale, vec_ac[1] / scale, vec_bd[1] / scale])
+            out.append(
+                [
+                    vec_ac[0] / scale,
+                    vec_bd[0] / scale,
+                    vec_ac[1] / scale,
+                    vec_bd[1] / scale,
+                ]
+            )
         return np.array(out)
 
     @staticmethod
@@ -125,10 +134,20 @@ def _center_contour(contour: np.ndarray) -> np.ndarray:
     return np.stack([centered_x, centered_y], axis=1)
 
 
-def _plot_comparison(contour: np.ndarray, reconstruction: np.ndarray, output_png: Path, harmonics: int):
+def _plot_comparison(
+    contour: np.ndarray, reconstruction: np.ndarray, output_png: Path, harmonics: int
+):
     plt.figure(figsize=(6, 6))
-    plt.plot(contour[:, 0], contour[:, 1], "k-", alpha=0.35, linewidth=2.5, label="Original")
-    plt.plot(reconstruction[:, 0], reconstruction[:, 1], "r--", linewidth=1.5, label=f"EFD (Order {harmonics})")
+    plt.plot(
+        contour[:, 0], contour[:, 1], "k-", alpha=0.35, linewidth=2.5, label="Original"
+    )
+    plt.plot(
+        reconstruction[:, 0],
+        reconstruction[:, 1],
+        "r--",
+        linewidth=1.5,
+        label=f"EFD (Order {harmonics})",
+    )
     plt.axhline(0, color="gray", alpha=0.3)
     plt.axvline(0, color="gray", alpha=0.3)
     plt.legend()
@@ -150,7 +169,9 @@ def cmd(args):
         contour = np.load(npy_file)
         centered = _center_contour(contour)
 
-        coeffs_norm = EllipticFourier.calculate(centered, order=args.harmonics, normalize=True)
+        coeffs_norm = EllipticFourier.calculate(
+            centered, order=args.harmonics, normalize=True
+        )
         np.savetxt(
             output_dir / f"{file_name}_efd.csv",
             coeffs_norm,
@@ -160,8 +181,17 @@ def cmd(args):
         )
 
         if not args.no_plot:
-            coeffs_raw = EllipticFourier.calculate(centered, order=args.harmonics, normalize=False)
-            reconstruction = EllipticFourier.reconstruct(coeffs_raw, num_points=args.points)
-            _plot_comparison(centered, reconstruction, output_dir / f"{file_name}_analysis.png", args.harmonics)
+            coeffs_raw = EllipticFourier.calculate(
+                centered, order=args.harmonics, normalize=False
+            )
+            reconstruction = EllipticFourier.reconstruct(
+                coeffs_raw, num_points=args.points
+            )
+            _plot_comparison(
+                centered,
+                reconstruction,
+                output_dir / f"{file_name}_analysis.png",
+                args.harmonics,
+            )
 
         print(f"Processed: {file_name}")

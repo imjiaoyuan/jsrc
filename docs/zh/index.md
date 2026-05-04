@@ -36,3 +36,8 @@ jsrc <module> <subcommand> --help
 - [GRN 模块](./module-grn.md)
 - [视觉模块](./module-vision.md)
 - [任务模块](./module-job.md)
+
+## 参考
+
+- [兼容性策略](./stability.md)
+- [发布清单](../../RELEASE.md)

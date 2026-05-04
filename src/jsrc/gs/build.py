@@ -1,4 +1,3 @@
-import os
 import subprocess
 from pathlib import Path
 
@@ -22,7 +21,9 @@ def _run_ld_pruning(plink_bin: str, input_prefix: str, out_dir: Path) -> str:
         "--out",
         str(prune_out),
     ]
-    subprocess.run(cmd_prune, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(
+        cmd_prune, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
 
     pruned_prefix = out_dir / "pruned_data"
     cmd_extract = [
@@ -36,7 +37,9 @@ def _run_ld_pruning(plink_bin: str, input_prefix: str, out_dir: Path) -> str:
         "--out",
         str(pruned_prefix),
     ]
-    subprocess.run(cmd_extract, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(
+        cmd_extract, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
     return str(pruned_prefix)
 
 
@@ -139,7 +142,9 @@ def cmd(args):
 
     np.save(out_dir / "X.npy", x_final)
     np.save(out_dir / "y.npy", y_final)
-    (out_dir / "sample_ids.txt").write_text("\n".join(sample_ids) + "\n", encoding="utf-8")
+    (out_dir / "sample_ids.txt").write_text(
+        "\n".join(sample_ids) + "\n", encoding="utf-8"
+    )
     (out_dir / "snp_ids.txt").write_text("\n".join(snp_ids) + "\n", encoding="utf-8")
 
     print(f"Dataset built in {out_dir}")

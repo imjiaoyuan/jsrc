@@ -21,9 +21,23 @@ def cmd(args):
         for row in prot_rows:
             start, end = float(row["start"]), float(row["end"])
             ax.add_patch(
-                plt.Rectangle((start, y - 0.2), end - start, 0.4, facecolor="orange", edgecolor="black", alpha=0.7)
+                plt.Rectangle(
+                    (start, y - 0.2),
+                    end - start,
+                    0.4,
+                    facecolor="orange",
+                    edgecolor="black",
+                    alpha=0.7,
+                )
             )
-            ax.text((start + end) / 2, y, row["domain"], ha="center", va="center", fontsize=8)
+            ax.text(
+                (start + end) / 2,
+                y,
+                row["domain"],
+                ha="center",
+                va="center",
+                fontsize=8,
+            )
     ax.set_yticks(range(len(proteins)))
     ax.set_yticklabels(proteins[::-1])
     ax.set_xlabel("Position (aa)")

@@ -29,7 +29,10 @@ def _load_gff_mapping(gff_path: str, parent_field: str) -> dict[str, str]:
 
 
 def _apply_mapping(fasta_path: str, output_path: str, mapping: dict[str, str]):
-    with open(fasta_path, "r", encoding="utf-8") as fin, open(output_path, "w", encoding="utf-8") as fout:
+    with (
+        open(fasta_path, "r", encoding="utf-8") as fin,
+        open(output_path, "w", encoding="utf-8") as fout,
+    ):
         for line in fin:
             if line.startswith(">"):
                 old_id = line[1:].split()[0]

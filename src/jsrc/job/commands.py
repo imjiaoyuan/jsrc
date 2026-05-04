@@ -297,31 +297,53 @@ def _filter_rows(rows: list[dict[str, str]], query: str) -> list[dict[str, str]]
     q = query.lower()
     out = []
     for r in rows:
-        text = " ".join([r.get("command", ""), r.get("name", ""), r.get("log_path", "")]).lower()
+        text = " ".join(
+            [r.get("command", ""), r.get("name", ""), r.get("log_path", "")]
+        ).lower()
         if q in text:
             out.append(r)
     return out
 
 
-def _sort_rows(rows: list[dict[str, str]], key: str, reverse: bool) -> list[dict[str, str]]:
+def _sort_rows(
+    rows: list[dict[str, str]], key: str, reverse: bool
+) -> list[dict[str, str]]:
     if key == "submit_time":
         return sorted(rows, key=lambda r: r.get("submit_time", ""), reverse=reverse)
     if key == "pid":
         return sorted(rows, key=lambda r: _to_int(r.get("pid", "0")), reverse=reverse)
     if key == "job_id":
-        return sorted(rows, key=lambda r: _to_int(r.get("job_id", "0")), reverse=reverse)
+        return sorted(
+            rows, key=lambda r: _to_int(r.get("job_id", "0")), reverse=reverse
+        )
     if key == "status":
         return sorted(rows, key=lambda r: r.get("status", ""), reverse=reverse)
     if key == "rss_mb":
-        return sorted(rows, key=lambda r: _to_float(r.get("rss_mb", "0"), 0.0), reverse=reverse)
+        return sorted(
+            rows, key=lambda r: _to_float(r.get("rss_mb", "0"), 0.0), reverse=reverse
+        )
     if key == "rss_min_mb":
-        return sorted(rows, key=lambda r: _to_float(r.get("rss_min_mb", "0"), 0.0), reverse=reverse)
+        return sorted(
+            rows,
+            key=lambda r: _to_float(r.get("rss_min_mb", "0"), 0.0),
+            reverse=reverse,
+        )
     if key == "rss_avg_mb":
-        return sorted(rows, key=lambda r: _to_float(r.get("rss_avg_mb", "0"), 0.0), reverse=reverse)
+        return sorted(
+            rows,
+            key=lambda r: _to_float(r.get("rss_avg_mb", "0"), 0.0),
+            reverse=reverse,
+        )
     if key == "rss_peak_mb":
-        return sorted(rows, key=lambda r: _to_float(r.get("rss_peak_mb", "0"), 0.0), reverse=reverse)
+        return sorted(
+            rows,
+            key=lambda r: _to_float(r.get("rss_peak_mb", "0"), 0.0),
+            reverse=reverse,
+        )
     if key in {"elapsed", "runtime", "runtime_sec"}:
-        return sorted(rows, key=lambda r: _to_int(r.get("runtime_sec", "0"), 0), reverse=reverse)
+        return sorted(
+            rows, key=lambda r: _to_int(r.get("runtime_sec", "0"), 0), reverse=reverse
+        )
     return rows
 
 
@@ -342,7 +364,13 @@ def _print_table(rows: list[dict[str, str]], columns: list[str]) -> None:
 
 def _print_rows(rows: list[dict[str, str]], columns: list[str], fmt: str) -> None:
     if fmt == "json":
-        print(json.dumps([{c: r.get(c, "") for c in columns} for r in rows], ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                [{c: r.get(c, "") for c in columns} for r in rows],
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
         return
     if fmt == "tsv":
         print("\t".join(columns))
@@ -460,7 +488,11 @@ def _collect_render_rows(args, refresh: bool) -> list[dict[str, str]]:
     rows = _filter_rows(rows, args.query)
     rendered = []
     for row in rows:
-        live = _build_live(_to_int(row.get("pid", "0"), 0)) if row.get("status", "") == "running" else {}
+        live = (
+            _build_live(_to_int(row.get("pid", "0"), 0))
+            if row.get("status", "") == "running"
+            else {}
+        )
         view = _to_row_view(row, live)
         view["_etime"] = live.get("etime", "")
         rendered.append(view)
@@ -473,14 +505,26 @@ def _collect_render_rows(args, refresh: bool) -> list[dict[str, str]]:
 def cmd_ls(args) -> None:
     columns = [c.strip() for c in args.cols.split(",") if c.strip()]
     if not columns:
-        columns = ["job_id", "status", "pid", "runtime", "rss_mb", "rss_min_mb", "rss_avg_mb", "rss_peak_mb", "command"]
+        columns = [
+            "job_id",
+            "status",
+            "pid",
+            "runtime",
+            "rss_mb",
+            "rss_min_mb",
+            "rss_avg_mb",
+            "rss_peak_mb",
+            "command",
+        ]
 
     if args.watch:
         try:
             while True:
                 rows = _collect_render_rows(args, refresh=True)
                 sys.stdout.write("\033[2J\033[H")
-                print(f"# jsrc job ls --watch  interval={args.interval}s  time={_now_iso()}")
+                print(
+                    f"# jsrc job ls --watch  interval={args.interval}s  time={_now_iso()}"
+                )
                 _print_rows(rows, columns, args.format)
                 sys.stdout.flush()
                 time.sleep(max(args.interval, 0.2))
@@ -498,9 +542,17 @@ def cmd_show(args) -> None:
     row = _find_row(rows, str(args.target))
     if row is None:
         raise SystemExit(f"job not found: {args.target}")
-    live = _build_live(_to_int(row.get("pid", "0"), 0)) if row.get("status", "") == "running" else {}
+    live = (
+        _build_live(_to_int(row.get("pid", "0"), 0))
+        if row.get("status", "") == "running"
+        else {}
+    )
     view = _to_row_view(row, live)
-    columns = [c.strip() for c in args.cols.split(",") if c.strip()] if args.cols else list(view.keys())
+    columns = (
+        [c.strip() for c in args.cols.split(",") if c.strip()]
+        if args.cols
+        else list(view.keys())
+    )
     _print_rows([view], columns, args.format)
 
 
@@ -535,7 +587,9 @@ def cmd_kill(args) -> None:
     pid = _to_int(row.get("pid", "0"), 0)
     if pid <= 0:
         raise SystemExit("invalid pid")
-    sig = {"TERM": signal.SIGTERM, "KILL": signal.SIGKILL, "INT": signal.SIGINT}[args.signal]
+    sig = {"TERM": signal.SIGTERM, "KILL": signal.SIGKILL, "INT": signal.SIGINT}[
+        args.signal
+    ]
     try:
         if args.group:
             pgid = os.getpgid(pid)
@@ -584,7 +638,11 @@ def cmd_gc(args) -> None:
     if args.prune_missing_log:
         for row in rows:
             log_path = row.get("log_path", "")
-            if log_path and not Path(log_path).expanduser().exists() and row.get("status", "") == "running":
+            if (
+                log_path
+                and not Path(log_path).expanduser().exists()
+                and row.get("status", "") == "running"
+            ):
                 row["status"] = "lost"
                 row["end_time"] = _now_iso()
                 row["runtime_sec"] = str(_runtime_seconds(row, {}))

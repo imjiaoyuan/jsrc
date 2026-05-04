@@ -27,7 +27,9 @@ def cmd(args):
             shutil.copy2(src_anno, dst_anno)
     elif not os.path.exists(f"{args.dir}/json/annotation.json"):
         write_json(f"{args.dir}/json/annotation.json", {})
-    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=args.dir)
+    handler = functools.partial(
+        http.server.SimpleHTTPRequestHandler, directory=args.dir
+    )
     with http.server.ThreadingHTTPServer(("0.0.0.0", args.port), handler) as httpd:
         print(f"Serving {args.dir} at http://127.0.0.1:{args.port}")
         httpd.serve_forever()

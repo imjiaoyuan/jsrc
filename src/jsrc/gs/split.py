@@ -12,13 +12,21 @@ def cmd(args):
     if not y_path.exists() or not id_path.exists():
         raise SystemExit("Input directory must contain y.npy and sample_ids.txt")
 
-    sample_ids = [line.strip() for line in id_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    sample_ids = [
+        line.strip()
+        for line in id_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
     if not sample_ids:
         raise SystemExit("sample_ids.txt is empty")
     _ = np.load(y_path)
 
-    real_indices = np.array([i for i, sid in enumerate(sample_ids) if not sid.startswith("sim_")], dtype=int)
-    sim_indices = np.array([i for i, sid in enumerate(sample_ids) if sid.startswith("sim_")], dtype=int)
+    real_indices = np.array(
+        [i for i, sid in enumerate(sample_ids) if not sid.startswith("sim_")], dtype=int
+    )
+    sim_indices = np.array(
+        [i for i, sid in enumerate(sample_ids) if sid.startswith("sim_")], dtype=int
+    )
     if len(real_indices) < args.folds:
         raise SystemExit("Number of real samples must be >= number of folds")
 

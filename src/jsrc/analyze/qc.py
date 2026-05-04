@@ -176,7 +176,9 @@ def _print_human(stats: dict[str, dict[str, float | int]]) -> None:
 
 def cmd(args):
     if not any([args.fa, args.sam, args.vcf, args.fq]):
-        raise SystemExit("At least one input is required: -fa and/or -sam and/or -vcf and/or -fq")
+        raise SystemExit(
+            "At least one input is required: -fa and/or -sam and/or -vcf and/or -fq"
+        )
 
     stats: dict[str, dict[str, float | int]] = {}
     if args.fa:

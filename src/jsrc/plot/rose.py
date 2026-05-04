@@ -5,7 +5,9 @@ def cmd(args):
     try:
         import plotly.graph_objects as go
     except ImportError as exc:
-        raise SystemExit("plotly is required for this command. Install it with: pip install plotly") from exc
+        raise SystemExit(
+            "plotly is required for this command. Install it with: pip install plotly"
+        ) from exc
 
     x_vec = np.linspace(0, 1, 25)
     t_vec = np.linspace(0, 575, 1151) / 575 * 20 * np.pi + 4 * np.pi

@@ -11,4 +11,3 @@ def test_phylo_requires_two_sequences(tmp_path):
     args = Namespace(fa=str(fasta), o=str(tmp_path / "x.nwk"), a="nj")
     with pytest.raises(SystemExit):
         cmd(args)
-

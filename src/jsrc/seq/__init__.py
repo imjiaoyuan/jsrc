@@ -14,13 +14,21 @@ def register_subparser(subparsers):
     seq_sub = seq_parser.add_subparsers(dest="seq_cmd")
     seq_parser.set_defaults(_group_parser=seq_parser)
 
-    p = seq_sub.add_parser("extract", help="Extract feature sequences by IDs from genome+GFF")
+    p = seq_sub.add_parser(
+        "extract", help="Extract feature sequences by IDs from genome+GFF"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA file")
     p.add_argument("-gff", required=True, help="GFF annotation file")
     p.add_argument("-ids", required=True, help="ID list file")
     p.add_argument("-o", required=True, help="Output FASTA file")
-    p.add_argument("-feature", default="CDS", help="Feature type in GFF (e.g. CDS,gene,exon,mRNA)")
-    p.add_argument("-match", default="Parent", help="Attribute key used to match IDs (e.g. Parent,ID,gene_id)")
+    p.add_argument(
+        "-feature", default="CDS", help="Feature type in GFF (e.g. CDS,gene,exon,mRNA)"
+    )
+    p.add_argument(
+        "-match",
+        default="Parent",
+        help="Attribute key used to match IDs (e.g. Parent,ID,gene_id)",
+    )
     p.set_defaults(func=_dispatch("jsrc.seq.extract"))
 
     p = seq_sub.add_parser("rename", help="Rename FASTA IDs (CSV or GFF mapping)")
@@ -39,7 +47,9 @@ def register_subparser(subparsers):
     p.add_argument("-o", required=True, help="Output protein FASTA")
     p.set_defaults(func=_dispatch("jsrc.seq.translate"))
 
-    p = seq_sub.add_parser("promoter", help="Extract promoter sequences from genome and GFF")
+    p = seq_sub.add_parser(
+        "promoter", help="Extract promoter sequences from genome and GFF"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA file")
     p.add_argument("-gff", required=True, help="GFF annotation file")
     p.add_argument("-ids", required=True, help="Target gene ID list file")
@@ -53,7 +63,9 @@ def register_subparser(subparsers):
     p = seq_sub.add_parser("qc", help="Quick FASTA/FASTQ sequence QC stats")
     p.add_argument("-fa", help="Input FASTA file")
     p.add_argument("-fq", nargs="+", help="Input FASTQ/FASTQ.GZ file(s)")
-    p.add_argument("-gs", type=int, help="Genome size (bp), used with -fq for depth estimate")
+    p.add_argument(
+        "-gs", type=int, help="Genome size (bp), used with -fq for depth estimate"
+    )
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=_dispatch("jsrc.seq.qc"))
 
@@ -66,7 +78,9 @@ def register_subparser(subparsers):
     p = seq_sub.add_parser("kmer", help="k-mer profile and optional sample distances")
     p.add_argument("-fa", nargs="+", required=True, help="One or more FASTA files")
     p.add_argument("-k", type=int, default=5, help="k-mer size")
-    p.add_argument("--top", type=int, default=20, help="Show top N k-mers for single FASTA")
+    p.add_argument(
+        "--top", type=int, default=20, help="Show top N k-mers for single FASTA"
+    )
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=_dispatch("jsrc.seq.kmer"))
 

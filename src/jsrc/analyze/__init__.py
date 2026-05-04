@@ -32,12 +32,20 @@ def register_subparser(subparsers):
     p.add_argument("-fa", help="Assembly FASTA for contig/N50/GC stats")
     p.add_argument("-sam", help="SAM/SAM.GZ for mapping rate and depth")
     p.add_argument("-vcf", help="VCF/VCF.GZ for SNP/INDEL counts")
-    p.add_argument("-fq", nargs="+", help="FASTQ/FASTQ.GZ files for read/base/depth stats")
-    p.add_argument("-gs", type=int, help="Genome size (bp), used with -fq for depth estimate")
-    p.add_argument("--json", action="store_true", help="Print JSON instead of text table")
+    p.add_argument(
+        "-fq", nargs="+", help="FASTQ/FASTQ.GZ files for read/base/depth stats"
+    )
+    p.add_argument(
+        "-gs", type=int, help="Genome size (bp), used with -fq for depth estimate"
+    )
+    p.add_argument(
+        "--json", action="store_true", help="Print JSON instead of text table"
+    )
     p.set_defaults(func=_dispatch("jsrc.analyze.qc"))
 
-    p = analyze_sub.add_parser("msa_consensus", help="Consensus and conservation from FASTA")
+    p = analyze_sub.add_parser(
+        "msa_consensus", help="Consensus and conservation from FASTA"
+    )
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=_dispatch("jsrc.analyze.msa_consensus"))
@@ -49,7 +57,9 @@ def register_subparser(subparsers):
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=_dispatch("jsrc.analyze.snpindel"))
 
-    p = analyze_sub.add_parser("bootstrap_phylo", help="Bootstrap support for NJ phylogeny")
+    p = analyze_sub.add_parser(
+        "bootstrap_phylo", help="Bootstrap support for NJ phylogeny"
+    )
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("-n", type=int, default=100, help="Bootstrap replicates")
     p.add_argument("-seed", type=int, default=42, help="Random seed")

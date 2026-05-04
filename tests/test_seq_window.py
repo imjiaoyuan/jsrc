@@ -14,4 +14,3 @@ def test_seq_window_json_output(tmp_path, capsys):
     assert payload["sequence_id"] == "s1"
     assert payload["window_count"] >= 1
     assert "windows_head" in payload
-

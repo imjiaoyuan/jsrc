@@ -31,7 +31,9 @@ def cmd(args):
                     gene_id = attr.get("ID", "")
                     if target_ids is not None and gene_id not in target_ids:
                         continue
-                    gene_positions.append({"chr": chrom, "start": start, "end": end, "id": gene_id})
+                    gene_positions.append(
+                        {"chr": chrom, "start": start, "end": end, "id": gene_id}
+                    )
                     if chrom not in chr_lengths:
                         chr_lengths[chrom] = max(chr_lengths.get(chrom, 0), end)
 
@@ -43,7 +45,11 @@ def cmd(args):
     for i, chrom in enumerate(chr_sorted):
         y = len(chr_sorted) - i - 1
         chr_len = chr_lengths[chrom]
-        ax.add_patch(plt.Rectangle((0, y - 0.2), chr_len, 0.4, facecolor="lightgray", edgecolor="black"))
+        ax.add_patch(
+            plt.Rectangle(
+                (0, y - 0.2), chr_len, 0.4, facecolor="lightgray", edgecolor="black"
+            )
+        )
         for gene in (g for g in gene_positions if g["chr"] == chrom):
             mid = (gene["start"] + gene["end"]) / 2
             ax.plot([mid, mid], [y - 0.15, y + 0.15], "r-", linewidth=0.5, alpha=0.5)

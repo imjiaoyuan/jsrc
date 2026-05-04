@@ -64,7 +64,9 @@ def cmd(args):
         by_locus: dict[tuple[str, str], list[tuple[int, int]]] = {}
         for chrom, start, end, strand in segments:
             by_locus.setdefault((chrom, strand), []).append((start, end))
-        best_locus = max(by_locus.items(), key=lambda item: sum(e - s for s, e in item[1]))
+        best_locus = max(
+            by_locus.items(), key=lambda item: sum(e - s for s, e in item[1])
+        )
         (chrom, strand), regions = best_locus
         regions = _merge_regions(regions)
         chrom_seq = genome.get(chrom)
@@ -75,7 +77,9 @@ def cmd(args):
             seq += chrom_seq.seq[start:end]
         if strand == "-":
             seq = seq.reverse_complement()
-        desc = f"feature={args.feature};match={args.match};locus={chrom};strand={strand}"
+        desc = (
+            f"feature={args.feature};match={args.match};locus={chrom};strand={strand}"
+        )
         records.append(SeqRecord(Seq(str(seq)), id=tid, description=desc))
 
     SeqIO.write(records, args.o, "fasta")

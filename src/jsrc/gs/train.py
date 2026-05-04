@@ -3,7 +3,12 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import AdaBoostClassifier, ExtraTreesClassifier, GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    ExtraTreesClassifier,
+    GradientBoostingClassifier,
+    RandomForestClassifier,
+)
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, mean_squared_error, roc_auc_score
@@ -15,13 +20,25 @@ from sklearn.tree import DecisionTreeClassifier
 
 def _models(seed: int):
     return {
-        "gbdt": lambda: GradientBoostingClassifier(n_estimators=200, learning_rate=0.05, max_depth=4, random_state=seed),
-        "rf": lambda: RandomForestClassifier(n_estimators=300, class_weight="balanced", random_state=seed, n_jobs=-1),
-        "et": lambda: ExtraTreesClassifier(n_estimators=300, class_weight="balanced", random_state=seed, n_jobs=-1),
+        "gbdt": lambda: GradientBoostingClassifier(
+            n_estimators=200, learning_rate=0.05, max_depth=4, random_state=seed
+        ),
+        "rf": lambda: RandomForestClassifier(
+            n_estimators=300, class_weight="balanced", random_state=seed, n_jobs=-1
+        ),
+        "et": lambda: ExtraTreesClassifier(
+            n_estimators=300, class_weight="balanced", random_state=seed, n_jobs=-1
+        ),
         "ada": lambda: AdaBoostClassifier(n_estimators=100, random_state=seed),
-        "dt": lambda: DecisionTreeClassifier(max_depth=5, class_weight="balanced", random_state=seed),
-        "lr": lambda: LogisticRegression(max_iter=2000, class_weight="balanced", solver="lbfgs", n_jobs=-1),
-        "svm": lambda: SVC(probability=True, kernel="rbf", class_weight="balanced", random_state=seed),
+        "dt": lambda: DecisionTreeClassifier(
+            max_depth=5, class_weight="balanced", random_state=seed
+        ),
+        "lr": lambda: LogisticRegression(
+            max_iter=2000, class_weight="balanced", solver="lbfgs", n_jobs=-1
+        ),
+        "svm": lambda: SVC(
+            probability=True, kernel="rbf", class_weight="balanced", random_state=seed
+        ),
         "nb": lambda: GaussianNB(),
     }
 
@@ -35,7 +52,9 @@ def _predict(model, x_test):
     return y_pred, y_score
 
 
-def _metrics(y_true: np.ndarray, y_pred: np.ndarray, y_score: np.ndarray) -> dict[str, float]:
+def _metrics(
+    y_true: np.ndarray, y_pred: np.ndarray, y_score: np.ndarray
+) -> dict[str, float]:
     out = {
         "accuracy": float(accuracy_score(y_true, y_pred)),
         "f1": float(f1_score(y_true, y_pred, zero_division=0)),
@@ -79,7 +98,9 @@ def cmd(args):
         train_idx_path = cv_dir / f"fold_{fold}_train.txt"
         test_idx_path = cv_dir / f"fold_{fold}_test.txt"
         if not train_idx_path.exists() or not test_idx_path.exists():
-            raise SystemExit(f"Missing fold files: fold_{fold}_train.txt / fold_{fold}_test.txt")
+            raise SystemExit(
+                f"Missing fold files: fold_{fold}_train.txt / fold_{fold}_test.txt"
+            )
         train_idx = np.loadtxt(train_idx_path, dtype=int)
         test_idx = np.loadtxt(test_idx_path, dtype=int)
         if train_idx.ndim == 0:

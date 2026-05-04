@@ -1,6 +1,6 @@
 [project]
 name = "jsrc"
-version = "0.1.6"
+version = "0.1.7"
 description = "General-purpose toolkit for bioinformatics, data analysis, plotting, and text processing"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -11,16 +11,21 @@ authors = [
 
 dependencies = [
     "biopython>=1.80",
-    "matplotlib>=3.5",
     "numpy>=1.23",
-    "opencv-python>=4.7",
-    "pandas>=2.0",
-    "pandas-plink>=2.2",
-    "plotly>=5.0",
-    "scikit-learn>=1.2",
 ]
 
 [project.optional-dependencies]
+plot = ["matplotlib>=3.5", "plotly>=5.0"]
+gs = ["pandas>=2.0", "scikit-learn>=1.2", "pandas-plink>=2.2"]
+vision = ["opencv-python>=4.7", "matplotlib>=3.5"]
+all = [
+    "matplotlib>=3.5",
+    "plotly>=5.0",
+    "pandas>=2.0",
+    "scikit-learn>=1.2",
+    "pandas-plink>=2.2",
+    "opencv-python>=4.7",
+]
 dev = ["pytest>=7.0", "black>=22.0", "ruff>=0.1"]
 
 [project.scripts]
@@ -33,3 +38,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["jsrc*"]
+
+[tool.black]
+target-version = ["py312"]

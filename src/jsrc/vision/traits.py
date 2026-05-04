@@ -33,7 +33,11 @@ def cmd(args):
     hull = cv2.convexHull(cnt)
     hull_area = float(cv2.contourArea(hull))
 
-    circularity = (4.0 * 3.141592653589793 * area / (perimeter * perimeter)) if perimeter > 0 else 0.0
+    circularity = (
+        (4.0 * 3.141592653589793 * area / (perimeter * perimeter))
+        if perimeter > 0
+        else 0.0
+    )
     aspect_ratio = (w / h) if h > 0 else 0.0
     extent = (area / bbox_area) if bbox_area > 0 else 0.0
     solidity = (area / hull_area) if hull_area > 0 else 0.0

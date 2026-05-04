@@ -77,7 +77,11 @@ def cmd_network(args):
         return
 
     view_mode = "expand" if args.some else "auto"
-    viewer_dir = Path(args.viewer_dir).expanduser().resolve() if args.viewer_dir else _infer_viewer_dir(args.output)
+    viewer_dir = (
+        Path(args.viewer_dir).expanduser().resolve()
+        if args.viewer_dir
+        else _infer_viewer_dir(args.output)
+    )
     sync_viewer_assets(
         str(viewer_dir),
         init_empty_json=False,
@@ -87,7 +91,9 @@ def cmd_network(args):
     )
     write_json(str(viewer_dir / "json" / "grn.json"), links)
     if args.annotation_input:
-        _annotation_to_json(args.annotation_input, str(viewer_dir / "json" / "annotation.json"))
+        _annotation_to_json(
+            args.annotation_input, str(viewer_dir / "json" / "annotation.json")
+        )
     elif not (viewer_dir / "json" / "annotation.json").exists():
         write_json(str(viewer_dir / "json" / "annotation.json"), {})
     print(f"Viewer assets written: {viewer_dir}")

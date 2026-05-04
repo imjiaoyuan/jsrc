@@ -46,7 +46,9 @@ def cmd(args):
 
             if len(seq) == 0:
                 continue
-            desc = f"{chrom}:{p_start + 1}-{p_end}({strand}) up={args.up} down={args.down}"
+            desc = (
+                f"{chrom}:{p_start + 1}-{p_end}({strand}) up={args.up} down={args.down}"
+            )
             promoters.append(SeqRecord(Seq(str(seq)), id=gene_id, description=desc))
 
     SeqIO.write(promoters, args.o, "fasta")

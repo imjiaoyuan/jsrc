@@ -5,9 +5,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build & Run
 
 ```bash
-# Setup
+# Setup (install all extras for development)
 uv venv
-uv sync --extra dev
+uv sync --extra dev --extra all
+
+# Minimal install (core only: biopython, numpy)
+uv sync
+
+# Install specific extras
+uv sync --extra plot
+uv sync --extra gs
+uv sync --extra vision
 
 # Run CLI
 uv run jsrc --help
@@ -15,19 +23,33 @@ uv run jsrc <module> <subcommand> [options]
 
 # Install from local source
 pip install -e .
+pip install -e ".[plot,gs,vision]"  # with extras
 
 # Format / lint
 uv run ruff check src/
 uv run black src/
 
-# Tests (none yet)
-# No test framework is set up — run individual modules manually with uv run
+# Test
+uv run pytest tests/
 ```
+
+## Dependencies by module
+
+Extras in `pyproject.toml`:
+
+| Extra | Packages | Used by module |
+|-------|----------|----------------|
+| (core) | biopython, numpy | seq, analyze, plot, gs, vision |
+| plot | matplotlib, plotly | plot, vision |
+| gs | pandas, scikit-learn, pandas-plink | gs |
+| vision | opencv-python, matplotlib | vision |
+| all | all of the above | — |
+| dev | pytest, black, ruff | — |
 
 ## CI/CD
 
-- Publishing: GitHub Actions (`.github/workflows/publish.yml`) triggers on `v*` tags
-- Builds via `uv build`, publishes to PyPI with trusted publishing (OIDC)
+- CI (`.github/workflows/ci.yml`): lint + test + build on push/PR to main
+- Publishing (`.github/workflows/publish.yml`): triggers on `v*` tags
 
 ## Architecture
 
@@ -56,19 +78,6 @@ src/jsrc/<module>/
 - Dispatch uses either `_dispatch("jsrc.module.file")` (calls `module.cmd(args)`) or `_dispatch("jsrc.module.file", "func_name")` (calls `module.func_name(args)`)
 - Each subcommand file exposes a `cmd(args)` function (or a named function for modules like `job` which uses `cmd_submit`, `cmd_ls`, etc.)
 - Argparse `set_defaults(_group_parser=...)` is used so that typing a parent command (e.g. `jsrc seq`) prints its subcommand help instead of falling through to the root parser
-
-### Modules
-
-| Module    | Purpose | Key dependencies |
-|-----------|---------|-----------------|
-| `seq`     | Sequence ops (extract, rename, translate, promoter, qc, codon, kmer, window) | Biopython, numpy |
-| `plot`    | Visualization (gene, exon, chromosome, domain, cis, heart, rose, dotplot, circoslite) | matplotlib, numpy |
-| `analyze` | Analysis (phylo, motif, qc, msa_consensus, snpindel, bootstrap_phylo) | numpy, scikit-learn |
-| `gs`      | Genomic selection dataset/model workflows (build, split, train) | pandas, pandas-plink, scikit-learn |
-| `math`    | Statistical & ML models (20+ subcommands, zero external deps) | — |
-| `grn`     | Gene regulatory network conversion, viewer, centrality | — |
-| `vision`  | Image processing (extract, efd, traits) | opencv-python, numpy |
-| `job`     | Background job submission, monitoring, logs | — |
 
 ### Shared utilities
 

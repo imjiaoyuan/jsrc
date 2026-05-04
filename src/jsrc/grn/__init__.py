@@ -18,8 +18,18 @@ def register_subparser(subparsers):
     p.add_argument("-i", "--input", required=True, help="Input file")
     p.add_argument("-o", dest="output", required=True, help="Output JSON")
     mode = p.add_mutually_exclusive_group()
-    mode.add_argument("-a", "--all", action="store_true", help="Mode all: auto full-view when gene count <= threshold")
-    mode.add_argument("-s", "--some", action="store_true", help="Mode some: manual click-to-expand only")
+    mode.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Mode all: auto full-view when gene count <= threshold",
+    )
+    mode.add_argument(
+        "-s",
+        "--some",
+        action="store_true",
+        help="Mode some: manual click-to-expand only",
+    )
     p.set_defaults(all=True, some=False)
     p.add_argument(
         "-t",
@@ -33,24 +43,56 @@ def register_subparser(subparsers):
         "--viewer-dir",
         help="Optional viewer output directory. If omitted, infer from -o (e.g. viewer/json/grn.json -> viewer)",
     )
-    p.add_argument("-n", "--annotation-input", help="Optional annotation TSV to generate json/annotation.json for package")
-    p.add_argument("-z", "--zip-output", help="Optional ZIP output path containing html/css/js/json viewer package")
-    p.add_argument("--max-nodes", type=int, default=0, help="Max nodes to display in full view mode (0 = all)")
+    p.add_argument(
+        "-n",
+        "--annotation-input",
+        help="Optional annotation TSV to generate json/annotation.json for package",
+    )
+    p.add_argument(
+        "-z",
+        "--zip-output",
+        help="Optional ZIP output path containing html/css/js/json viewer package",
+    )
+    p.add_argument(
+        "--max-nodes",
+        type=int,
+        default=0,
+        help="Max nodes to display in full view mode (0 = all)",
+    )
     p.set_defaults(func=_dispatch("jsrc.grn.convert", "cmd_network"))
 
-    p = grn_sub.add_parser("anno2json", help="Convert annotation table to annotation.json")
+    p = grn_sub.add_parser(
+        "anno2json", help="Convert annotation table to annotation.json"
+    )
     p.add_argument("-i", "--input", required=True, help="Input file")
     p.add_argument("-o", dest="output", required=True, help="Output JSON")
     p.set_defaults(func=_dispatch("jsrc.grn.convert", "cmd_annotation"))
 
     p = grn_sub.add_parser("serve", help="Start GRN viewer service")
-    p.add_argument("-d", "--dir", default=".", help="Viewer directory (default: current directory)")
+    p.add_argument(
+        "-d", "--dir", default=".", help="Viewer directory (default: current directory)"
+    )
     p.add_argument("-p", "--port", type=int, default=8000, help="Port")
     p.add_argument("-g", "--grn-json", required=True, help="Path to grn.json")
-    p.add_argument("-n", "--annotation-json", default=None, help="Path to annotation.json (optional)")
+    p.add_argument(
+        "-n",
+        "--annotation-json",
+        default=None,
+        help="Path to annotation.json (optional)",
+    )
     mode = p.add_mutually_exclusive_group()
-    mode.add_argument("-a", "--all", action="store_true", help="Mode all: auto full-view when gene count <= threshold")
-    mode.add_argument("-s", "--some", action="store_true", help="Mode some: manual click-to-expand only")
+    mode.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Mode all: auto full-view when gene count <= threshold",
+    )
+    mode.add_argument(
+        "-s",
+        "--some",
+        action="store_true",
+        help="Mode some: manual click-to-expand only",
+    )
     p.set_defaults(all=True, some=False)
     p.add_argument(
         "-t",
@@ -62,7 +104,11 @@ def register_subparser(subparsers):
     p.set_defaults(func=_dispatch("jsrc.grn.serve"))
 
     p = grn_sub.add_parser("centrality", help="Compute GRN node centrality summary")
-    p.add_argument("-i", "--input", required=True, help="Edge table (source target [weight])")
-    p.add_argument("--sep", default=None, help="Column separator (default: auto whitespace/tab)")
+    p.add_argument(
+        "-i", "--input", required=True, help="Edge table (source target [weight])"
+    )
+    p.add_argument(
+        "--sep", default=None, help="Column separator (default: auto whitespace/tab)"
+    )
     p.add_argument("--top", type=int, default=20, help="Top N nodes to print")
     p.set_defaults(func=_dispatch("jsrc.grn.centrality"))

@@ -26,7 +26,9 @@ def cmd(args):
             gene_id = attr.get(args.id)
             if not gene_id or chrom not in genome:
                 continue
-            cds_dict.setdefault(gene_id, {"chrom": chrom, "strand": strand, "regions": []})
+            cds_dict.setdefault(
+                gene_id, {"chrom": chrom, "strand": strand, "regions": []}
+            )
             cds_dict[gene_id]["regions"].append((start, end))
 
     proteins = []

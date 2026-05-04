@@ -12,7 +12,9 @@ def _validate_image_file(input_path: str) -> Path:
     if not path.exists():
         raise FileNotFoundError(f"Input path not found: {input_path}")
     if not path.is_file():
-        raise SystemExit(f"Input must be a single image file, got directory: {input_path}")
+        raise SystemExit(
+            f"Input must be a single image file, got directory: {input_path}"
+        )
     if path.suffix.lower() not in IMAGE_SUFFIXES:
         raise SystemExit(f"Unsupported image format: {path.suffix}")
     return path
@@ -33,8 +35,12 @@ def _extract_contours(args, image_path: Path, output_dir: Path):
 
     kernel_size = max(1, args.kernel)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
-    binary = cv2.morphologyEx(binary, cv2.MORPH_OPEN, kernel, iterations=max(0, args.open_iters))
-    binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel, iterations=max(0, args.close_iters))
+    binary = cv2.morphologyEx(
+        binary, cv2.MORPH_OPEN, kernel, iterations=max(0, args.open_iters)
+    )
+    binary = cv2.morphologyEx(
+        binary, cv2.MORPH_CLOSE, kernel, iterations=max(0, args.close_iters)
+    )
 
     contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     h_img, w_img = binary.shape
@@ -81,12 +87,24 @@ def _extract_contours(args, image_path: Path, output_dir: Path):
 
 
 def cmd(args):
-    if args.min_area_ratio < 0 or args.max_area_ratio < 0 or args.min_area_ratio > args.max_area_ratio:
-        raise SystemExit("Invalid area ratio range: require 0 <= min_area_ratio <= max_area_ratio")
+    if (
+        args.min_area_ratio < 0
+        or args.max_area_ratio < 0
+        or args.min_area_ratio > args.max_area_ratio
+    ):
+        raise SystemExit(
+            "Invalid area ratio range: require 0 <= min_area_ratio <= max_area_ratio"
+        )
     if args.max_area_ratio > 1:
         raise SystemExit("Invalid max_area_ratio: must be <= 1")
-    if args.min_aspect_ratio <= 0 or args.max_aspect_ratio <= 0 or args.min_aspect_ratio > args.max_aspect_ratio:
-        raise SystemExit("Invalid aspect ratio range: require 0 < min_aspect_ratio <= max_aspect_ratio")
+    if (
+        args.min_aspect_ratio <= 0
+        or args.max_aspect_ratio <= 0
+        or args.min_aspect_ratio > args.max_aspect_ratio
+    ):
+        raise SystemExit(
+            "Invalid aspect ratio range: require 0 < min_aspect_ratio <= max_aspect_ratio"
+        )
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
     image_path = _validate_image_file(args.input)

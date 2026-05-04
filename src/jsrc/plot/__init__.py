@@ -61,7 +61,9 @@ def register_subparser(subparsers):
     p.add_argument("-dpi", type=int, default=300, help="DPI")
     p.set_defaults(func=_dispatch("jsrc.plot.dotplot"))
 
-    p = plot_sub.add_parser("circoslite", help="Simple circular tracks for genome stats")
+    p = plot_sub.add_parser(
+        "circoslite", help="Simple circular tracks for genome stats"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA")
     p.add_argument("-w", type=int, default=100000, help="Window size")
     p.add_argument("-o", help="Optional output PNG")

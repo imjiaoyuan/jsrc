@@ -52,7 +52,9 @@ def plot_gene_track(
     ax.set_title(title)
 
 
-def get_gene_structure(gff_file: str, gene_ids: list[str], feature_types: list[str]) -> dict[str, list[tuple[int, int]]]:
+def get_gene_structure(
+    gff_file: str, gene_ids: list[str], feature_types: list[str]
+) -> dict[str, list[tuple[int, int]]]:
     target_set = set(gene_ids)
     valid_mrna = {}
     coords = {gid: [] for gid in gene_ids}

@@ -22,8 +22,10 @@ def cmd(args):
     lengths = [len(r.seq) for r in records]
     min_len, max_len = min(lengths), max(lengths)
     if max_len > min_len * 1.2:
-        print(f"Warning: Sequence lengths differ significantly (min={min_len}, max_len={max_len}). "
-              f"Input may not be pre-aligned; shorter sequences will be padded with gaps.")
+        print(
+            f"Warning: Sequence lengths differ significantly (min={min_len}, max_len={max_len}). "
+            f"Input may not be pre-aligned; shorter sequences will be padded with gaps."
+        )
     seqs = _pad(records)
     consensus_chars = []
     conservation = []

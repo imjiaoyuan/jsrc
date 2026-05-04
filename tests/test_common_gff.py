@@ -10,4 +10,3 @@ def test_parse_gff_attributes_eq_and_gtf_style():
     attrs2 = parse_gff_attributes('gene_id "g1"; transcript_id "t1";')
     assert attrs2["gene_id"] == "g1"
     assert attrs2["transcript_id"] == "t1"
-

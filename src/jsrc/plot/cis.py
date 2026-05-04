@@ -11,7 +11,14 @@ def cmd(args):
                 continue
             parts = line.strip().split("\t")
             if len(parts) >= 4:
-                elements.append({"chr": parts[0], "start": int(parts[1]), "end": int(parts[2]), "name": parts[3]})
+                elements.append(
+                    {
+                        "chr": parts[0],
+                        "start": int(parts[1]),
+                        "end": int(parts[2]),
+                        "name": parts[3],
+                    }
+                )
 
     chromosomes = sorted(set(e["chr"] for e in elements), key=natural_sort_key)
     fig, ax = plt.subplots(figsize=(12, max(6, len(chromosomes) * 0.5)))
@@ -34,4 +41,3 @@ def cmd(args):
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
     print(f"Cis-element plot saved to {args.o}")
-

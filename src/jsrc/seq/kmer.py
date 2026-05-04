@@ -36,7 +36,13 @@ def cmd(args):
         total = sum(profiles[path].values())
         top = profiles[path].most_common(args.top)
         if args.json:
-            print(json.dumps({"k": args.k, "file": path, "total_kmers": total, "top_kmers": top}, ensure_ascii=False, indent=2))
+            print(
+                json.dumps(
+                    {"k": args.k, "file": path, "total_kmers": total, "top_kmers": top},
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
             return
         print(f"k\t{args.k}")
         print(f"file\t{path}")
@@ -56,7 +62,13 @@ def cmd(args):
         matrix.append(row)
 
     if args.json:
-        print(json.dumps({"k": args.k, "samples": names, "cosine_distance_matrix": matrix}, ensure_ascii=False, indent=2))
+        print(
+            json.dumps(
+                {"k": args.k, "samples": names, "cosine_distance_matrix": matrix},
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
         return
     print(f"k\t{args.k}")
     print("sample\t" + "\t".join(names))
