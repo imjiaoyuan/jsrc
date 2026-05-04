@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Important Rules
 
-- **Never commit code** — AI agents (Claude Code, Copilot, etc.) must never create commits, push, or publish under their own identity. All git operations are handled by the human user.
-- **Only suggest changes** — Present code changes and let the user decide when/how to commit them.
+- **Never commit code** — I must not directly create commits, push, or publish. The user handles all git operations, version bumps, and PyPI releases.
+- **Only suggest changes** — I should present code changes and let the user decide when/how to commit them.
 
 ## Build & Run
 
