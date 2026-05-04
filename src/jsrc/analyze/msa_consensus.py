@@ -3,16 +3,7 @@ from collections import Counter
 
 from Bio import SeqIO
 
-
-def _pad(records):
-    max_len = max(len(r.seq) for r in records)
-    padded = []
-    for r in records:
-        seq = str(r.seq).upper().replace("U", "T")
-        if len(seq) < max_len:
-            seq += "-" * (max_len - len(seq))
-        padded.append(seq)
-    return padded
+from jsrc.analyze.core import pad_alignment
 
 
 def cmd(args):
@@ -26,7 +17,7 @@ def cmd(args):
             f"Warning: Sequence lengths differ significantly (min={min_len}, max_len={max_len}). "
             f"Input may not be pre-aligned; shorter sequences will be padded with gaps."
         )
-    seqs = _pad(records)
+    seqs = [str(r.seq) for r in pad_alignment(records)]
     consensus_chars = []
     conservation = []
     for i in range(len(seqs[0])):

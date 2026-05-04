@@ -1,6 +1,7 @@
 import sys
 
 from Bio import SeqIO
+from Bio.Data.CodonTable import TranslationError
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
@@ -44,7 +45,7 @@ def cmd(args):
             protein_seq = cds_seq.translate(to_stop=True)
             if len(protein_seq) > 0:
                 proteins.append(SeqRecord(protein_seq, id=gene_id, description=""))
-        except Exception as exc:
+        except (TranslationError, ValueError) as exc:
             print(f"Warning: Failed to translate {gene_id}: {exc}", file=sys.stderr)
     SeqIO.write(proteins, args.o, "fasta")
     print(f"Translated {len(proteins)} genes to {args.o}")

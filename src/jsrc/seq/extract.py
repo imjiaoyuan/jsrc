@@ -33,7 +33,6 @@ def cmd(args):
     if not targets:
         raise SystemExit("No target IDs found in -ids file")
     target_set = set(targets)
-    genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     grouped: dict[str, list[tuple[str, int, int, str]]] = {tid: [] for tid in targets}
 
     with open(args.gff, "r", encoding="utf-8") as f:
@@ -56,31 +55,35 @@ def cmd(args):
                 if key in target_set:
                     grouped[key].append((chrom, start, end, strand))
 
-    records: list[SeqRecord] = []
-    for tid in targets:
-        segments = grouped.get(tid, [])
-        if not segments:
-            continue
-        by_locus: dict[tuple[str, str], list[tuple[int, int]]] = {}
-        for chrom, start, end, strand in segments:
-            by_locus.setdefault((chrom, strand), []).append((start, end))
-        best_locus = max(
-            by_locus.items(), key=lambda item: sum(e - s for s, e in item[1])
-        )
-        (chrom, strand), regions = best_locus
-        regions = _merge_regions(regions)
-        chrom_seq = genome.get(chrom)
-        if chrom_seq is None:
-            continue
-        seq = Seq("")
-        for start, end in regions:
-            seq += chrom_seq.seq[start:end]
-        if strand == "-":
-            seq = seq.reverse_complement()
-        desc = (
-            f"feature={args.feature};match={args.match};locus={chrom};strand={strand}"
-        )
-        records.append(SeqRecord(Seq(str(seq)), id=tid, description=desc))
+    genome = SeqIO.index(args.fa, "fasta")
+    try:
+        extracted = 0
+        with open(args.o, "w", encoding="utf-8") as out_fh:
+            for tid in targets:
+                segments = grouped.get(tid, [])
+                if not segments:
+                    continue
+                by_locus: dict[tuple[str, str], list[tuple[int, int]]] = {}
+                for chrom, start, end, strand in segments:
+                    by_locus.setdefault((chrom, strand), []).append((start, end))
+                best_locus = max(
+                    by_locus.items(), key=lambda item: sum(e - s for s, e in item[1])
+                )
+                (chrom, strand), regions = best_locus
+                regions = _merge_regions(regions)
+                if chrom not in genome:
+                    continue
+                chrom_seq = genome[chrom].seq
+                seq = Seq("")
+                for start, end in regions:
+                    seq += chrom_seq[start:end]
+                if strand == "-":
+                    seq = seq.reverse_complement()
+                desc = f"feature={args.feature};match={args.match};locus={chrom};strand={strand}"
+                record = SeqRecord(Seq(str(seq)), id=tid, description=desc)
+                SeqIO.write(record, out_fh, "fasta")
+                extracted += 1
+    finally:
+        genome.close()
 
-    SeqIO.write(records, args.o, "fasta")
-    print(f"Extracted {len(records)}/{len(targets)} sequences to {args.o}")
+    print(f"Extracted {extracted}/{len(targets)} sequences to {args.o}")

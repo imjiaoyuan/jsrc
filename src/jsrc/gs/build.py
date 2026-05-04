@@ -118,6 +118,12 @@ def cmd(args):
     y_real = pheno.loc[valid_iids, "PHENO"].values.astype(np.float32)
     if set(np.unique(y_real)).issubset({1.0, 2.0}):
         y_real = y_real - 1.0
+    if set(np.unique(y_real)) != {0.0, 1.0}:
+        unique_vals = sorted(np.unique(y_real))
+        raise SystemExit(
+            f"Only binary traits (0/1 or 1/2 encoding) are supported, "
+            f"but got values: {unique_vals}"
+        )
     x_real = bed[:, keep_indices].compute().T.astype(np.float32)
 
     col_means = np.nanmean(x_real, axis=0)

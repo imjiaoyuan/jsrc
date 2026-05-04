@@ -28,7 +28,8 @@ def _load_gff_mapping(gff_path: str, parent_field: str) -> dict[str, str]:
     return mapping
 
 
-def _apply_mapping(fasta_path: str, output_path: str, mapping: dict[str, str]):
+def _apply_mapping(fasta_path: str, output_path: str, mapping: dict[str, str]) -> int:
+    renamed = 0
     with (
         open(fasta_path, "r", encoding="utf-8") as fin,
         open(output_path, "w", encoding="utf-8") as fout,
@@ -36,9 +37,14 @@ def _apply_mapping(fasta_path: str, output_path: str, mapping: dict[str, str]):
         for line in fin:
             if line.startswith(">"):
                 old_id = line[1:].split()[0]
-                fout.write(f">{mapping[old_id]}\n" if old_id in mapping else line)
+                if old_id in mapping:
+                    fout.write(f">{mapping[old_id]}\n")
+                    renamed += 1
+                else:
+                    fout.write(line)
             else:
                 fout.write(line)
+    return renamed
 
 
 def cmd(args):
@@ -52,5 +58,5 @@ def cmd(args):
             raise SystemExit("Error: mode=gff requires -gff and -parent")
         mapping = _load_gff_mapping(args.gff, args.parent)
 
-    _apply_mapping(args.fa, args.o, mapping)
-    print(f"Renamed {len(mapping)} IDs to {args.o}")
+    renamed = _apply_mapping(args.fa, args.o, mapping)
+    print(f"Renamed {renamed} IDs to {args.o}")

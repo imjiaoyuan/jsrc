@@ -1,10 +1,10 @@
 # jsrc
 
-A CLI toolkit for data processing, analysis, and visualization.
+Python library for bioinformatics and scientific computing.
 
 ## Installation
 
-PyPI (recommended):
+PyPI:
 ```bash
 pip install jsrc
 ```
@@ -53,7 +53,6 @@ jsrc vision extract --help
 | `grn` | GRN conversion, centrality, local viewer | `jsrc grn net2json ...` |
 | `vision` | Object extraction, morphology traits, EFD | `jsrc vision extract ...` |
 | `job` | Background job submit/list/log/kill/history | `jsrc job submit "cmd"` |
-| `math` | Statistics and ML-style CLI utilities | `jsrc math statistics ...` |
 
 ## Error Output Conventions
 
@@ -160,6 +159,8 @@ jsrc analyze phylo -fa test/analyze/aln.fa -o test/analyze/tree.nwk
 **job module**
 
 Submit, monitor, and inspect background jobs:
+
+> Note: RSS/process-state metrics are most complete on Linux (`/proc`). On macOS/other Unix, `job` still works with `ps` fallback but some metrics may be limited.
 
 ```bash
 jsrc job submit "echo 'job module test' && sleep 1 && echo done" -N test-job

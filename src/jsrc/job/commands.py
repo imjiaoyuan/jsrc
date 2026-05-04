@@ -11,6 +11,9 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+IS_LINUX = sys.platform.startswith("linux")
+_PLATFORM_NOTE_EMITTED = False
+
 FIELDS = [
     "job_id",
     "name",
@@ -39,14 +42,14 @@ def _now_iso() -> str:
 def _to_int(value: str, default: int = 0) -> int:
     try:
         return int(value)
-    except Exception:
+    except (TypeError, ValueError):
         return default
 
 
 def _to_float(value: str, default: float = 0.0) -> float:
     try:
         return float(value)
-    except Exception:
+    except (TypeError, ValueError):
         return default
 
 
@@ -119,29 +122,67 @@ def _read_exit_code(job_id: str) -> str:
     return value
 
 
+def _ps_rss_kb(pid: int) -> int:
+    try:
+        proc = subprocess.run(
+            ["ps", "-o", "rss=", "-p", str(pid)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return 0
+    if proc.returncode != 0:
+        return 0
+    text = proc.stdout.strip()
+    if not text:
+        return 0
+    return _to_int(text.split()[0], 0)
+
+
 def _get_rss_kb_from_status(pid: int) -> int:
+    if not IS_LINUX:
+        return _ps_rss_kb(pid)
     status = Path(f"/proc/{pid}/status")
     if not status.exists():
-        return 0
-    for line in status.read_text(encoding="utf-8", errors="replace").splitlines():
-        if line.startswith("VmRSS:"):
-            parts = line.split()
-            if len(parts) >= 2 and parts[1].isdigit():
-                return int(parts[1])
-    return 0
+        return _ps_rss_kb(pid)
+    try:
+        for line in status.read_text(encoding="utf-8", errors="replace").splitlines():
+            if line.startswith("VmRSS:"):
+                parts = line.split()
+                if len(parts) >= 2 and parts[1].isdigit():
+                    return int(parts[1])
+    except OSError:
+        return _ps_rss_kb(pid)
+    return _ps_rss_kb(pid)
 
 
 def _process_alive(pid: int) -> bool:
-    return Path(f"/proc/{pid}").exists()
+    if pid <= 0:
+        return False
+    if IS_LINUX:
+        return Path(f"/proc/{pid}").exists()
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    except OSError:
+        return False
 
 
 def _ps_row(pid: int) -> tuple[bool, str, float, str]:
-    proc = subprocess.run(
-        ["ps", "-o", "etime=,pcpu=,stat=", "-p", str(pid)],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["ps", "-o", "etime=,pcpu=,stat=", "-p", str(pid)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError:
+        return False, "", 0.0, ""
     if proc.returncode != 0:
         return False, "", 0.0, ""
     line = proc.stdout.strip()
@@ -152,6 +193,17 @@ def _ps_row(pid: int) -> tuple[bool, str, float, str]:
         return False, "", 0.0, ""
     etime, pcpu, stat = parts
     return True, etime, _to_float(pcpu, 0.0), stat
+
+
+def _warn_portability_limits() -> None:
+    global _PLATFORM_NOTE_EMITTED
+    if IS_LINUX or _PLATFORM_NOTE_EMITTED:
+        return
+    print(
+        "Note: non-Linux platform detected; /proc-based metrics may be limited.",
+        file=sys.stderr,
+    )
+    _PLATFORM_NOTE_EMITTED = True
 
 
 def _etime_to_seconds(etime: str) -> int:
@@ -180,7 +232,7 @@ def _parse_iso(ts: str) -> datetime | None:
         return None
     try:
         return datetime.fromisoformat(ts)
-    except Exception:
+    except (TypeError, ValueError):
         return None
 
 
@@ -503,6 +555,7 @@ def _collect_render_rows(args, refresh: bool) -> list[dict[str, str]]:
 
 
 def cmd_ls(args) -> None:
+    _warn_portability_limits()
     columns = [c.strip() for c in args.cols.split(",") if c.strip()]
     if not columns:
         columns = [
@@ -535,6 +588,7 @@ def cmd_ls(args) -> None:
 
 
 def cmd_show(args) -> None:
+    _warn_portability_limits()
     rows = _load_jobs()
     rows, changed = _refresh_jobs(rows)
     if changed:
@@ -607,6 +661,7 @@ def cmd_kill(args) -> None:
 
 
 def cmd_history(args) -> None:
+    _warn_portability_limits()
     rows = _load_jobs()
     rows = _filter_rows(rows, args.query)
     if args.limit > 0:

@@ -13,7 +13,6 @@ MODULES = {
     "grn": "jsrc.grn",
     "vision": "jsrc.vision",
     "job": "jsrc.job",
-    "math": "jsrc.math",
 }
 
 
@@ -26,7 +25,7 @@ def _iter_enabled_modules():
     return [n for n in names if n in MODULES and n not in disabled]
 
 
-def _register_modules(subparsers):
+def _register_modules(subparsers, *, debug: bool = False):
     loaded = []
     errors = []
     for name in _iter_enabled_modules():
@@ -38,19 +37,27 @@ def _register_modules(subparsers):
                 continue
             reg(subparsers)
             loaded.append(name)
-        except Exception as exc:
+        except (ImportError, AttributeError) as exc:
+            if debug:
+                raise
             errors.append(f"{name}: {exc}")
     return loaded, errors
 
 
 def main():
+    debug_mode = "--debug" in sys.argv[1:]
     parser = argparse.ArgumentParser(
         prog="jsrc", description="General-purpose bioinformatics and data toolkit"
     )
     parser.add_argument("-v", "--version", action="version", version=__version__)
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show traceback for module loading and runtime errors",
+    )
     subparsers = parser.add_subparsers(dest="command", help="Available modules")
 
-    loaded, errors = _register_modules(subparsers)
+    loaded, errors = _register_modules(subparsers, debug=debug_mode)
     if errors:
         print("Warning: some modules failed to load:", file=sys.stderr)
         for item in errors:
@@ -67,6 +74,8 @@ def main():
         try:
             args.func(args)
         except SystemExit as exc:
+            if args.debug:
+                raise
             code = exc.code
             if code is None:
                 return
@@ -78,9 +87,13 @@ def main():
             print(msg, file=sys.stderr)
             sys.exit(2)
         except (FileNotFoundError, ValueError) as exc:
+            if args.debug:
+                raise
             print(f"Error: {exc}", file=sys.stderr)
             sys.exit(2)
         except Exception as exc:
+            if args.debug:
+                raise
             print(f"Error: {exc}", file=sys.stderr)
             sys.exit(2)
         return

@@ -11,14 +11,6 @@ def _open_text(path: str):
     return open(path, "r", encoding="utf-8")
 
 
-def _format_int(x: int) -> str:
-    return f"{x:,}"
-
-
-def _format_float(x: float, ndigits: int = 2) -> str:
-    return f"{x:.{ndigits}f}"
-
-
 def _nxx(lengths: list[int], pct: float) -> int:
     if not lengths:
         return 0
@@ -59,7 +51,6 @@ _CIGAR_RE = re.compile(r"(\d+)([MIDNSHP=X])")
 
 
 def _mapped_ref_bases(cigar: str) -> int:
-    # Reference-consuming ops: M, D, N, =, X
     total = 0
     for length, op in _CIGAR_RE.findall(cigar):
         if op in {"M", "D", "N", "=", "X"}:
@@ -157,6 +148,14 @@ def _vcf_stats(vcf_path: str) -> dict[str, int]:
         "indel_count": indel,
         "other_variant_count": other,
     }
+
+
+def _format_int(x: int) -> str:
+    return f"{x:,}"
+
+
+def _format_float(x: float, ndigits: int = 2) -> str:
+    return f"{x:.{ndigits}f}"
 
 
 def _print_human(stats: dict[str, dict[str, float | int]]) -> None:

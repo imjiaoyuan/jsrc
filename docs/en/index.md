@@ -1,4 +1,6 @@
-# jsrc Documentation (EN)
+# jsrc
+
+Python library for bioinformatics and scientific computing.
 
 ## Quick Start
 
@@ -19,7 +21,6 @@ jsrc <module> <subcommand> --help
 | `grn` | GRN conversion, centrality calculation, viewer packaging/service |
 | `vision` | Image contour extraction, EFD descriptors, morphology traits |
 | `job` | Background job management (`submit/ls/show/logs/kill/history/gc`) |
-| `math` | Statistics and machine-learning style command-line utilities |
 
 ## Error Behavior
 
@@ -28,7 +29,6 @@ jsrc <module> <subcommand> --help
 
 ## Modules
 
-- [Math Module](./module-math.md)
 - [Sequence Module](./module-seq.md)
 - [Analyze Module](./module-analyze.md)
 - [Plot Module](./module-plot.md)

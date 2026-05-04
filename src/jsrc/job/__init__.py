@@ -1,12 +1,4 @@
-import importlib
-
-
-def _dispatch(module_name: str, func_name: str):
-    def _runner(args):
-        module = importlib.import_module(module_name)
-        getattr(module, func_name)(args)
-
-    return _runner
+from jsrc.common import _dispatch
 
 
 def register_subparser(subparsers):

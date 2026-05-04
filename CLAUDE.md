@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important Rules
+
+- **Never commit code** — AI agents (Claude Code, Copilot, etc.) must never create commits, push, or publish under their own identity. All git operations are handled by the human user.
+- **Only suggest changes** — Present code changes and let the user decide when/how to commit them.
+
 ## Build & Run
 
 ```bash
@@ -50,6 +55,10 @@ Extras in `pyproject.toml`:
 
 - CI (`.github/workflows/ci.yml`): lint + test + build on push/PR to main
 - Publishing (`.github/workflows/publish.yml`): triggers on `v*` tags
+
+## Release
+
+See [RELEASE.md](RELEASE.md).
 
 ## Architecture
 

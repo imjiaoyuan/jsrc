@@ -1,12 +1,12 @@
 [project]
 name = "jsrc"
-version = "0.1.7"
-description = "General-purpose toolkit for bioinformatics, data analysis, plotting, and text processing"
+version = "0.1.8"
+description = "Python library for bioinformatics and scientific computing"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Jiaoyuan", email = "your.email@example.com"}
+    {name = "Jiaoyuan", email = "imjiaoyuan@gmail.com"}
 ]
 
 dependencies = [
