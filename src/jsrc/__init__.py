@@ -1,1 +1,3 @@
-__version__ = "0.1.8"
+from importlib.metadata import version as _version
+
+__version__ = _version("jsrc")
