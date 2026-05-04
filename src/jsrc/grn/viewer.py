@@ -330,6 +330,8 @@ let currentCenterId = null;
 let highlightedNodeId = null;
 let expandedSet = new Set();
 let currentNeighbors = [];
+const VIEW_MODE = "__JSRC_VIEW_MODE__";
+const FULL_VIEW_THRESHOLD = __JSRC_FULL_THRESHOLD__;
 
 const expandPalette = [
     '0, 123, 255', '255, 71, 87', '46, 213, 115',
@@ -393,6 +395,16 @@ Promise.all([
     annotations = annoData;
     isLoaded = true;
     document.getElementById('nodeCount').innerText = `Data Ready`;
+
+    const uniqueGeneCount = countUniqueGenes();
+    const useFullView = (
+        VIEW_MODE === 'full' ||
+        (VIEW_MODE === 'auto' && FULL_VIEW_THRESHOLD > 0 && uniqueGeneCount <= FULL_VIEW_THRESHOLD)
+    );
+    if (useFullView) {
+        startFullView();
+        return;
+    }
 
     const possibleStartIds = ['Palv2-33948', 'Palv2_33948'];
     let startId = '';
@@ -624,6 +636,59 @@ function updateInfoPanel() {
     });
 }
 
+function countUniqueGenes() {
+    const set = new Set();
+    allLinks.forEach(l => {
+        set.add(l.source);
+        set.add(l.target);
+    });
+    return set.size;
+}
+
+function startFullView() {
+    if (!isLoaded || allLinks.length === 0) {
+        document.getElementById('nodeCount').innerText = "No data";
+        return;
+    }
+
+    const degree = new Map();
+    const nodeSet = new Map();
+    allLinks.forEach(l => {
+        const s = l.source;
+        const t = l.target;
+        nodeSet.set(s, { id: s, color: '#007bff' });
+        nodeSet.set(t, { id: t, color: '#007bff' });
+        degree.set(s, (degree.get(s) || 0) + 1);
+        degree.set(t, (degree.get(t) || 0) + 1);
+    });
+
+    let centerId = '';
+    degree.forEach((d, id) => {
+        if (!centerId || d > (degree.get(centerId) || -1)) centerId = id;
+    });
+    if (!centerId) centerId = Array.from(nodeSet.keys())[0];
+
+    currentCenterId = centerId;
+    highlightedNodeId = null;
+    expandColorIndex = 0;
+    expandedSet = new Set(nodeSet.keys());
+    const baseRgb = expandPalette[0];
+
+    const links = allLinks.map(l => ({
+        source: l.source, target: l.target, val: l.val, baseColor: baseRgb
+    }));
+    if (nodeSet.has(centerId)) {
+        nodeSet.set(centerId, { ...nodeSet.get(centerId), color: '#ff4757' });
+    }
+    const nodes = Array.from(nodeSet.values());
+
+    historyStack = [];
+    historyIndex = -1;
+    updateHistory(nodes, links, centerId);
+    renderState(historyStack[0]);
+    Graph.zoomToFit(800, 80);
+}
+
 function getTopNeighbors(centerId, limit = 100) {
     const related = allLinks.filter(l => l.source === centerId || l.target === centerId);
     related.sort((a, b) => b.val - a.val);
@@ -763,14 +828,22 @@ document.getElementById('geneInput').addEventListener('keypress', (e) => {
 """
 
 
-def sync_viewer_assets(base: str, init_empty_json: bool):
+def sync_viewer_assets(
+    base: str,
+    init_empty_json: bool,
+    view_mode: str = "auto",
+    full_view_threshold: int = 300,
+):
+    mode = view_mode if view_mode in {"expand", "full", "auto"} else "auto"
+    threshold = max(0, int(full_view_threshold))
     ensure_dir(base)
     ensure_dir(os.path.join(base, "css"))
     ensure_dir(os.path.join(base, "js"))
     ensure_dir(os.path.join(base, "json"))
     write_text(os.path.join(base, "index.html"), INDEX_HTML)
     write_text(os.path.join(base, "css/style.css"), STYLE_CSS)
-    write_text(os.path.join(base, "js/script.js"), SCRIPT_JS)
+    script = SCRIPT_JS.replace("__JSRC_VIEW_MODE__", mode).replace("__JSRC_FULL_THRESHOLD__", str(threshold))
+    write_text(os.path.join(base, "js/script.js"), script)
     if init_empty_json:
         write_json(os.path.join(base, "json/grn.json"), [])
         write_json(os.path.join(base, "json/annotation.json"), {})
@@ -781,5 +854,5 @@ def sync_viewer_assets(base: str, init_empty_json: bool):
 
 
 def cmd_init(args):
-    sync_viewer_assets(args.outdir, init_empty_json=True)
+    sync_viewer_assets(args.outdir, init_empty_json=True, view_mode="auto", full_view_threshold=300)
     print(f"Viewer scaffold created in {args.outdir}")
