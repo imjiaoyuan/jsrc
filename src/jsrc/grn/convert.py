@@ -36,9 +36,16 @@ def _annotation_to_json(input_path: str, output_path: str):
     print(f"Annotation JSON written: {output_path}")
 
 
+def cmd_network(args):
+    _network_to_json(args.input, args.output)
+
+
+def cmd_annotation(args):
+    _annotation_to_json(args.input, args.output)
+
+
 def cmd(args):
     if args.type == "network":
-        _network_to_json(args.input, args.output)
+        cmd_network(args)
     else:
-        _annotation_to_json(args.input, args.output)
-
+        cmd_annotation(args)
