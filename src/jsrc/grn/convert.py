@@ -96,10 +96,3 @@ def cmd_network(args):
 
 def cmd_annotation(args):
     _annotation_to_json(args.input, args.output)
-
-
-def cmd(args):
-    if args.type == "network":
-        cmd_network(args)
-    else:
-        cmd_annotation(args)

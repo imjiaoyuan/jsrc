@@ -1,6 +1,7 @@
 import json
 
-from Bio import SeqIO, pairwise2
+from Bio import SeqIO
+from Bio.Align import PairwiseAligner
 
 
 def _pick(records, seq_id, index):
@@ -31,10 +32,15 @@ def cmd(args):
     r2 = _pick(records, args.id2, 1)
     s1 = str(r1.seq).upper().replace("U", "T")
     s2 = str(r2.seq).upper().replace("U", "T")
-    aln = pairwise2.align.globalms(s1, s2, 1, -1, -3, -1, one_alignment_only=True)
-    if not aln:
-        raise SystemExit("Alignment failed")
-    a1, a2, score, _, _ = aln[0]
+    aligner = PairwiseAligner()
+    aligner.mode = "global"
+    aligner.match_score = 1
+    aligner.mismatch_score = -1
+    aligner.open_gap_score = -3
+    aligner.extend_gap_score = -1
+    aln = aligner.align(s1, s2)[0]
+    a1, a2 = str(aln[0]), str(aln[1])
+    score = aln.score
     snp = 0
     indel_bases = 0
     match_bases = 0

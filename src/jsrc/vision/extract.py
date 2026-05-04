@@ -1,9 +1,8 @@
-from __future__ import annotations
-
 from pathlib import Path
 
 import cv2
 import numpy as np
+from jsrc.vision.core import ensure_odd, get_channel_image
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
 
@@ -19,33 +18,15 @@ def _validate_image_file(input_path: str) -> Path:
     return path
 
 
-def _get_channel_image(img: np.ndarray, channel: str) -> np.ndarray:
-    if channel == "gray":
-        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    if channel in {"a", "b"}:
-        lab = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)
-        _, a_channel, b_channel = cv2.split(lab)
-        return a_channel if channel == "a" else b_channel
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    _, s_channel, v_channel = cv2.split(hsv)
-    return s_channel if channel == "s" else v_channel
-
-
-def _ensure_odd(value: int) -> int:
-    if value < 1:
-        return 1
-    return value if value % 2 == 1 else value + 1
-
-
 def _extract_contours(args, image_path: Path, output_dir: Path):
     img = cv2.imread(str(image_path))
     if img is None:
         print(f"Skip unreadable image: {image_path}")
         return
 
-    blur_ksize = _ensure_odd(args.blur)
+    blur_ksize = ensure_odd(args.blur)
     blurred = cv2.GaussianBlur(img, (blur_ksize, blur_ksize), 0)
-    channel_img = _get_channel_image(blurred, args.channel)
+    channel_img = get_channel_image(blurred, args.channel)
 
     threshold_mode = cv2.THRESH_BINARY_INV if args.invert else cv2.THRESH_BINARY
     _, binary = cv2.threshold(channel_img, 0, 255, threshold_mode + cv2.THRESH_OTSU)

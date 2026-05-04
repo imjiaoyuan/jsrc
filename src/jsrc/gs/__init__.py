@@ -33,7 +33,7 @@ def register_subparser(subparsers):
 
     p = gs_sub.add_parser("train", help="Train and evaluate GS models with CV indices")
     p.add_argument("-i", "--input", required=True, help="Dataset directory containing X.npy/y.npy/cv_indices/")
-    p.add_argument("-o", "--output", help="Output directory for result CSV files")
+    p.add_argument("-o", dest="output", help="Output directory for result CSV files")
     p.add_argument("--folds", type=int, default=5, help="Number of folds to run")
     p.add_argument("--select-k", type=int, default=1000, help="Top K features selected by ANOVA")
     p.add_argument(

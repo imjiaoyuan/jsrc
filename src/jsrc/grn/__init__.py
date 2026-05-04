@@ -16,7 +16,7 @@ def register_subparser(subparsers):
 
     p = grn_sub.add_parser("net2json", help="Convert GRN edge table to grn.json")
     p.add_argument("-i", "--input", required=True, help="Input file")
-    p.add_argument("-o", "--output", required=True, help="Output JSON")
+    p.add_argument("-o", dest="output", required=True, help="Output JSON")
     mode = p.add_mutually_exclusive_group()
     mode.add_argument("-a", "--all", action="store_true", help="Mode all: auto full-view when gene count <= threshold")
     mode.add_argument("-s", "--some", action="store_true", help="Mode some: manual click-to-expand only")
@@ -39,7 +39,7 @@ def register_subparser(subparsers):
 
     p = grn_sub.add_parser("anno2json", help="Convert annotation table to annotation.json")
     p.add_argument("-i", "--input", required=True, help="Input file")
-    p.add_argument("-o", "--output", required=True, help="Output JSON")
+    p.add_argument("-o", dest="output", required=True, help="Output JSON")
     p.set_defaults(func=_dispatch("jsrc.grn.convert", "cmd_annotation"))
 
     p = grn_sub.add_parser("serve", help="Start GRN viewer service")
