@@ -1,5 +1,5 @@
 import csv
-from jsrc.common.gff import parse_gff_attributes
+from jsrc.seq.core import parse_gff_attributes
 
 
 def _load_csv_mapping(path: str) -> dict[str, str]:

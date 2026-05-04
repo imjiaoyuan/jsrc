@@ -2,7 +2,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.common.gff import parse_gff_attributes
+from jsrc.seq.core import parse_gff_attributes
 
 
 def _read_target_ids(path: str) -> set[str]:

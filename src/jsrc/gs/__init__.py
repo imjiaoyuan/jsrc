@@ -1,4 +1,4 @@
-from jsrc.common import _dispatch
+from jsrc.cli import _dispatch
 
 
 def register_subparser(subparsers):

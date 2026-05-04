@@ -1,4 +1,4 @@
-from jsrc.common.gff import parse_gff_attributes
+from jsrc.seq.core import parse_gff_attributes
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 plt = setup_matplotlib()
