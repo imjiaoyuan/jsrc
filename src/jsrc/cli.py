@@ -7,7 +7,23 @@ from jsrc import __version__
 
 
 def _dispatch(module_name: str, func_name: str = "cmd"):
-    def _runner(args):
+    """Create a CLI dispatch callable that imports a module and calls a function.
+
+    Parameters
+    ----------
+    module_name : str
+        Fully qualified module name to import (e.g. ``"jsrc.seq.extract"``).
+    func_name : str
+        Name of the function to call on the imported module (default ``"cmd"``).
+
+    Returns
+    -------
+    callable
+        A function ``(args: argparse.Namespace) -> None`` that imports the
+        target module and calls ``module.func_name(args)``.
+    """
+
+    def _runner(args: argparse.Namespace) -> None:
         module = importlib.import_module(module_name)
         getattr(module, func_name)(args)
 
