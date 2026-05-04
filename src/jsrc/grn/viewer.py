@@ -6,7 +6,7 @@ INDEX_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GRN for P. alba</title>
+    <title>GRN</title>
     <link rel="stylesheet" href="css/style.css">
     <script src="//unpkg.com/d3"></script>
     <script src="//unpkg.com/force-graph"></script>
@@ -32,7 +32,7 @@ INDEX_HTML = """<!DOCTYPE html>
         <div id="neighborList"></div>
     </div>
 
-    <div id="watermark">GRN for P. alba</div>
+    <div id="watermark">GRN</div>
     <div id="emptyState">No Nodes</div>
     <div id="graph"></div>
 
@@ -330,8 +330,10 @@ let currentCenterId = null;
 let highlightedNodeId = null;
 let expandedSet = new Set();
 let currentNeighbors = [];
+let _fullViewZoomed = false;
 const VIEW_MODE = "__JSRC_VIEW_MODE__";
 const FULL_VIEW_THRESHOLD = __JSRC_FULL_THRESHOLD__;
+const MAX_DISPLAY_NODES = __JSRC_MAX_DISPLAY_NODES__;
 
 const expandPalette = [
     '0, 123, 255', '255, 71, 87', '46, 213, 115',
@@ -380,6 +382,12 @@ const Graph = ForceGraph()
     })
     .onNodeClick(node => {
         expandNode(node.id);
+    })
+    .onEngineStop(() => {
+        if (!_fullViewZoomed && Graph.graphData().nodes.length > 0) {
+            _fullViewZoomed = true;
+            Graph.zoomToFit(600, 200);
+        }
     });
 
 Promise.all([
@@ -406,16 +414,11 @@ Promise.all([
         return;
     }
 
-    const possibleStartIds = ['Palv2-33948', 'Palv2_33948'];
-    let startId = '';
-    for (let id of possibleStartIds) {
-        if (allLinks.some(l => l.source === id || l.target === id)) {
-            startId = id;
-            break;
-        }
-    }
-
-    if (startId) {
+    const allGeneIds = new Set();
+    allLinks.forEach(l => { allGeneIds.add(l.source); allGeneIds.add(l.target); });
+    const geneArray = Array.from(allGeneIds);
+    if (geneArray.length > 0) {
+        const startId = geneArray[Math.floor(Math.random() * geneArray.length)];
         document.getElementById('geneInput').value = startId;
         startNewSearch();
     } else {
@@ -662,8 +665,18 @@ function startFullView() {
         degree.set(t, (degree.get(t) || 0) + 1);
     });
 
+    let keepIds = null;
+    if (MAX_DISPLAY_NODES > 0 && nodeSet.size > MAX_DISPLAY_NODES) {
+        const ranked = Array.from(degree.entries()).sort((a, b) => b[1] - a[1]);
+        keepIds = new Set(ranked.slice(0, MAX_DISPLAY_NODES).map(e => e[0]));
+        for (const id of nodeSet.keys()) {
+            if (!keepIds.has(id)) nodeSet.delete(id);
+        }
+    }
+
     let centerId = '';
     degree.forEach((d, id) => {
+        if (keepIds && !keepIds.has(id)) return;
         if (!centerId || d > (degree.get(centerId) || -1)) centerId = id;
     });
     if (!centerId) centerId = Array.from(nodeSet.keys())[0];
@@ -674,7 +687,10 @@ function startFullView() {
     expandedSet = new Set(nodeSet.keys());
     const baseRgb = expandPalette[0];
 
-    const links = allLinks.map(l => ({
+    const links = allLinks.filter(l => {
+        if (!keepIds) return true;
+        return keepIds.has(l.source) && keepIds.has(l.target);
+    }).map(l => ({
         source: l.source, target: l.target, val: l.val, baseColor: baseRgb
     }));
     if (nodeSet.has(centerId)) {
@@ -684,9 +700,10 @@ function startFullView() {
 
     historyStack = [];
     historyIndex = -1;
+    _fullViewZoomed = false;
     updateHistory(nodes, links, centerId);
     renderState(historyStack[0]);
-    Graph.zoomToFit(800, 80);
+    Graph.d3ReheatSimulation();
 }
 
 function getTopNeighbors(centerId, limit = 100) {
@@ -833,16 +850,22 @@ def sync_viewer_assets(
     init_empty_json: bool,
     view_mode: str = "auto",
     full_view_threshold: int = 300,
+    max_display_nodes: int = 0,
 ):
     mode = view_mode if view_mode in {"expand", "full", "auto"} else "auto"
     threshold = max(0, int(full_view_threshold))
+    max_nodes = max(0, int(max_display_nodes))
     ensure_dir(base)
     ensure_dir(os.path.join(base, "css"))
     ensure_dir(os.path.join(base, "js"))
     ensure_dir(os.path.join(base, "json"))
     write_text(os.path.join(base, "index.html"), INDEX_HTML)
     write_text(os.path.join(base, "css/style.css"), STYLE_CSS)
-    script = SCRIPT_JS.replace("__JSRC_VIEW_MODE__", mode).replace("__JSRC_FULL_THRESHOLD__", str(threshold))
+    script = (
+        SCRIPT_JS.replace("__JSRC_VIEW_MODE__", mode)
+        .replace("__JSRC_FULL_THRESHOLD__", str(threshold))
+        .replace("__JSRC_MAX_DISPLAY_NODES__", str(max_nodes))
+    )
     write_text(os.path.join(base, "js/script.js"), script)
     if init_empty_json:
         write_json(os.path.join(base, "json/grn.json"), [])
@@ -854,5 +877,5 @@ def sync_viewer_assets(
 
 
 def cmd_init(args):
-    sync_viewer_assets(args.outdir, init_empty_json=True, view_mode="auto", full_view_threshold=300)
+    sync_viewer_assets(args.outdir, init_empty_json=True, view_mode="auto", full_view_threshold=300, max_display_nodes=0)
     print(f"Viewer scaffold created in {args.outdir}")

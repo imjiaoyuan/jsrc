@@ -67,7 +67,6 @@ src/jsrc/<module>/
 | `gs`      | Genomic selection dataset/model workflows (build, split, train) | pandas, pandas-plink, scikit-learn |
 | `grn`     | Gene regulatory network conversion, viewer, centrality | — |
 | `vision`  | Image processing (extract, efd, traits) | opencv-python, numpy |
-| `text`    | Text processing (wc, dedup, grep, cut, replace) | — |
 | `job`     | Background job submission, monitoring, logs | — |
 
 ### Shared utilities

@@ -83,6 +83,7 @@ def cmd_network(args):
         init_empty_json=False,
         view_mode=view_mode,
         full_view_threshold=args.threshold,
+        max_display_nodes=args.max_nodes,
     )
     write_json(str(viewer_dir / "json" / "grn.json"), links)
     if args.annotation_input:
