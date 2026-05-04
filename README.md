@@ -1,6 +1,6 @@
 # jsrc
 
-Bioinformatics and phenotype analysis toolkit
+Bioinformatics analysis toolkit with modular subcommands.
 
 ## Installation
 
@@ -16,40 +16,97 @@ cd jsrc
 pip install -e .
 ```
 
+## Module Layout
+
+```text
+src/jsrc/
+  seq/     # sequence module (core.py + command modules)
+  plot/    # plotting module (core.py + command modules)
+  analyze/ # analysis module (core.py + command modules)
+  grn/     # GRN module (core.py + command modules)
+```
+
+Each module is independently loadable by CLI, with optional hot-plug controls:
+
+```bash
+# Enable only specific modules
+JSRC_MODULES=seq,plot jsrc --help
+
+# Disable selected modules
+JSRC_DISABLE_MODULES=grn jsrc --help
+```
+
 ## Commands
 
-**Sequence Operations**
+### seq
 
 ```bash
-jsrc seq extract -fa genome.fa -ids ids.txt -o output.fa
-jsrc seq rename -fa input.fa -map mapping.csv -o output.fa
-jsrc seq rename-by-gff -fa transcripts.fa -gff genes.gff -parent Parent -o output.fa
+# Extract feature sequences by IDs from genome+GFF (default: feature=CDS, match=Parent)
+jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -feature CDS -match Parent -o cds.fa
+
+# Extract full gene sequences by gene IDs
+jsrc seq extract -fa genome.fa -gff genes.gff -ids genes.txt -feature gene -match ID -o genes.fa
+
+# Rename FASTA IDs using CSV mapping old_id,new_id
+jsrc seq rename -fa input.fa -mode csv -map mapping.csv -o output.fa
+
+# Rename FASTA IDs using GFF mRNA->parent mapping
+jsrc seq rename -fa transcripts.fa -mode gff -gff genes.gff -parent Parent -o output.fa
+
+# Extract CDS from GFF and translate to proteins
 jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
+
+# Extract promoter sequences with configurable upstream/downstream bp
+jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -id ID -feature gene -up 2000 -down 200 -o promoters.fa
 ```
 
-**Visualization**
+### plot
 
 ```bash
-jsrc plot gene-structure -gff genes.gff -ids genes.txt -o gene_structure.png
-jsrc plot exon-structure -gff genes.gff -ids genes.txt -o exon_structure.png
-jsrc plot chromosome-map -gff genes.gff -o chromosome_map.png
-jsrc plot protein-domain -tsv domains.tsv -o protein_domains.png
-jsrc plot cis-element -bed elements.bed -o cis_elements.png
+# Plot CDS-based gene structure
+jsrc plot gene -gff genes.gff -ids genes.txt -o gene_structure.png
+
+# Plot exon-based structure
+jsrc plot exon -gff genes.gff -ids genes.txt -o exon_structure.png
+
+# Plot chromosome map with gene positions
+jsrc plot chromosome -gff genes.gff -o chromosome_map.png
+
+# Plot chromosome map only for genes in ID list
+jsrc plot chromosome -gff genes.gff -ids genes.txt -o chromosome_map_selected.png
+
+# Plot protein domain architecture from TSV
+jsrc plot domain -tsv domains.tsv -o protein_domains.png
+
+# Plot cis-regulatory elements from BED
+jsrc plot cis -bed elements.bed -o cis_elements.png
 ```
 
-**Analysis Tools**
+### analyze
 
 ```bash
-jsrc analyze phylo-tree -fa sequences.fa -o tree.nwk -a nj
-jsrc analyze phylo-tree -fa sequences.fa -o tree.nwk -a ml
+# Build phylogenetic tree (default NJ)
+jsrc analyze phylo -fa sequences.fa -o tree.nwk -a nj
+
+# Build phylogenetic tree with UPGMA
+jsrc analyze phylo -fa sequences.fa -o tree.nwk -a upgma
+
+# Motif analysis with built-in pure-python k-mer method
 jsrc analyze motif -fa promoters.fa -o motif_output -nmotifs 5
 ```
 
-**Phenotype Image Analysis**
+### grn
 
 ```bash
-jsrc pheno split-fruit -i fruit_image.jpg -o output_dir
-jsrc pheno split-fruit-raw -i fruit_image.jpg -o output_dir
-jsrc pheno split-leaf -i leaf_image.jpg -o output_dir
-jsrc pheno split-leaf-edge -i leaf_image.jpg -o output_dir
+# Convert GRN edge table to JSON links
+jsrc grn to_json -i grn.tsv -o viewer/json/grn.json -t network
+
+# Convert annotation table to JSON dictionary
+jsrc grn to_json -i annotation.tsv -o viewer/json/annotation.json -t annotation
+
+# Initialize empty local GRN viewer scaffold
+jsrc grn init -o viewer
+
+# Serve local GRN viewer through HTTP
+jsrc grn serve -d viewer -p 8000
 ```
