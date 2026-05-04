@@ -10,7 +10,9 @@ def test_seq_rename_csv_mode(tmp_path, capsys):
     mapping.write_text("old1,new1\nold2,new2\n", encoding="utf-8")
     out = tmp_path / "out.fa"
 
-    args = Namespace(fa=str(fa), mode="csv", map=str(mapping), gff=None, parent=None, o=str(out))
+    args = Namespace(
+        fa=str(fa), mode="csv", map=str(mapping), gff=None, parent=None, o=str(out)
+    )
     cmd(args)
 
     assert "Renamed 2 IDs" in capsys.readouterr().out
@@ -28,7 +30,9 @@ def test_seq_rename_csv_partial(tmp_path, capsys):
     mapping.write_text("old1,new1\n", encoding="utf-8")
     out = tmp_path / "out.fa"
 
-    args = Namespace(fa=str(fa), mode="csv", map=str(mapping), gff=None, parent=None, o=str(out))
+    args = Namespace(
+        fa=str(fa), mode="csv", map=str(mapping), gff=None, parent=None, o=str(out)
+    )
     cmd(args)
 
     out_text = out.read_text()
@@ -47,7 +51,9 @@ def test_seq_rename_gff_mode(tmp_path, capsys):
     )
     out = tmp_path / "out.fa"
 
-    args = Namespace(fa=str(fa), mode="gff", map=None, gff=str(gff), parent="Parent", o=str(out))
+    args = Namespace(
+        fa=str(fa), mode="gff", map=None, gff=str(gff), parent="Parent", o=str(out)
+    )
     cmd(args)
 
     assert "Renamed 2 IDs" in capsys.readouterr().out

@@ -50,7 +50,9 @@ class TestAnalyzeQC:
             encoding="utf-8",
         )
 
-        args = Namespace(fa=None, sam=None, fq=None, vcf=str(vcf_file), gs=None, json=True)
+        args = Namespace(
+            fa=None, sam=None, fq=None, vcf=str(vcf_file), gs=None, json=True
+        )
         qc_cmd(args)
 
         payload = json.loads(capsys.readouterr().out)
@@ -126,7 +128,9 @@ class TestAnalyzeSnpIndel:
         payload = json.loads(capsys.readouterr().out)
         assert payload["seq1"] == "s1"
         assert payload["seq2"] == "s2"
-        assert payload["snp_count"] == 3  # PairwiseAligner reports 3 mismatches for these 8-mers
+        assert (
+            payload["snp_count"] == 3
+        )  # PairwiseAligner reports 3 mismatches for these 8-mers
 
     def test_snpindel_with_ids(self, tmp_path, capsys):
         fa = tmp_path / "seqs.fa"

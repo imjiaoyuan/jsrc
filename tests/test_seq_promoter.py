@@ -9,16 +9,20 @@ def test_seq_promoter_forward_strand(tmp_path, capsys):
     fa = tmp_path / "genome.fa"
     fa.write_text(">chr1\nNNNNNNNNNNATGGCCTAA\n", encoding="utf-8")
     gff = tmp_path / "anno.gff"
-    gff.write_text(
-        "chr1\tsrc\tgene\t11\t19\t.\t+\t.\tID=gene1;\n", encoding="utf-8"
-    )
+    gff.write_text("chr1\tsrc\tgene\t11\t19\t.\t+\t.\tID=gene1;\n", encoding="utf-8")
     ids = tmp_path / "ids.txt"
     ids.write_text("gene1\n", encoding="utf-8")
     out = tmp_path / "promoters.fa"
 
     args = Namespace(
-        fa=str(fa), gff=str(gff), ids=str(ids), o=str(out),
-        id="ID", feature="gene", up=5, down=0,
+        fa=str(fa),
+        gff=str(gff),
+        ids=str(ids),
+        o=str(out),
+        id="ID",
+        feature="gene",
+        up=5,
+        down=0,
     )
     cmd(args)
 
@@ -27,7 +31,9 @@ def test_seq_promoter_forward_strand(tmp_path, capsys):
     recs = list(SeqIO.parse(str(out), "fasta"))
     assert len(recs) == 1
     assert recs[0].id == "gene1"
-    assert str(recs[0].seq) == "NNNNN"  # 5 bp upstream of start (position 11 -> 10 -> 5 upstream = start-5 to start-1)
+    assert (
+        str(recs[0].seq) == "NNNNN"
+    )  # 5 bp upstream of start (position 11 -> 10 -> 5 upstream = start-5 to start-1)
 
 
 def test_seq_promoter_reverse_strand(tmp_path, capsys):
@@ -38,16 +44,20 @@ def test_seq_promoter_reverse_strand(tmp_path, capsys):
     fa = tmp_path / "genome.fa"
     fa.write_text(">chr1\nAAAACCTTTTGGGGGCCCCC\n", encoding="utf-8")
     gff = tmp_path / "anno.gff"
-    gff.write_text(
-        "chr1\tsrc\tgene\t1\t5\t.\t-\t.\tID=gene1;\n", encoding="utf-8"
-    )
+    gff.write_text("chr1\tsrc\tgene\t1\t5\t.\t-\t.\tID=gene1;\n", encoding="utf-8")
     ids = tmp_path / "ids.txt"
     ids.write_text("gene1\n", encoding="utf-8")
     out = tmp_path / "promoters.fa"
 
     args = Namespace(
-        fa=str(fa), gff=str(gff), ids=str(ids), o=str(out),
-        id="ID", feature="gene", up=5, down=0,
+        fa=str(fa),
+        gff=str(gff),
+        ids=str(ids),
+        o=str(out),
+        id="ID",
+        feature="gene",
+        up=5,
+        down=0,
     )
     cmd(args)
 
