@@ -6,12 +6,12 @@ from Bio import SeqIO
 def _pick_record(path: str, seq_id: str | None):
     records = list(SeqIO.parse(path, "fasta"))
     if not records:
-        raise ValueError("No sequences found in FASTA")
+        raise SystemExit("No sequences found in FASTA")
     if seq_id:
         for rec in records:
             if rec.id == seq_id or rec.id.split()[0] == seq_id:
                 return rec
-        raise ValueError(f"Sequence ID not found: {seq_id}")
+        raise SystemExit(f"Sequence ID not found: {seq_id}")
     return max(records, key=lambda r: len(r.seq))
 
 

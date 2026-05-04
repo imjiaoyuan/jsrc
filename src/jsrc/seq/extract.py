@@ -2,7 +2,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.common.gff import parse_gff_attributes
 
 
 def _load_target_ids(path: str) -> list[str]:
@@ -25,7 +25,13 @@ def _merge_regions(regions: list[tuple[int, int]]) -> list[tuple[int, int]]:
 
 
 def cmd(args):
+    if not args.feature.strip():
+        raise SystemExit("-feature must be a non-empty string")
+    if not args.match.strip():
+        raise SystemExit("-match must be a non-empty string")
     targets = _load_target_ids(args.ids)
+    if not targets:
+        raise SystemExit("No target IDs found in -ids file")
     target_set = set(targets)
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     grouped: dict[str, list[tuple[str, int, int, str]]] = {tid: [] for tid in targets}

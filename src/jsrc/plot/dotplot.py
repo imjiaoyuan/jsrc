@@ -8,7 +8,7 @@ plt = setup_matplotlib()
 def _first_seq(path: str) -> str:
     rec = next(SeqIO.parse(path, "fasta"), None)
     if rec is None:
-        raise ValueError(f"No sequence found in {path}")
+        raise SystemExit(f"No sequence found in {path}")
     return str(rec.seq).upper().replace("U", "T")
 
 

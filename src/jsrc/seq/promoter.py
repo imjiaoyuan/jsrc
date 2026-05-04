@@ -2,7 +2,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.common.gff import parse_gff_attributes
 
 
 def _read_target_ids(path: str) -> set[str]:
@@ -12,7 +12,7 @@ def _read_target_ids(path: str) -> set[str]:
 
 def cmd(args):
     if args.up < 0 or args.down < 0:
-        raise ValueError("-up and -down must be non-negative.")
+        raise SystemExit("-up and -down must be non-negative.")
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     targets = _read_target_ids(args.ids)
     promoters: list[SeqRecord] = []

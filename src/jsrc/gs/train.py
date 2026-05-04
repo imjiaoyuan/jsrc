@@ -49,6 +49,10 @@ def _metrics(y_true: np.ndarray, y_pred: np.ndarray, y_score: np.ndarray) -> dic
 
 
 def cmd(args):
+    if args.folds <= 0:
+        raise SystemExit("--folds must be a positive integer")
+    if args.select_k <= 0:
+        raise SystemExit("--select-k must be a positive integer")
     data_dir = Path(args.input)
     x_path = data_dir / "X.npy"
     y_path = data_dir / "y.npy"

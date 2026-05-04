@@ -2,6 +2,7 @@ import re
 
 
 from matplotlib.patches import Rectangle
+from jsrc.common.gff import parse_gff_attributes
 
 
 def setup_matplotlib():
@@ -11,19 +12,6 @@ def setup_matplotlib():
     import matplotlib.pyplot as plt
 
     return plt
-
-
-def parse_gff_attributes(attr_string: str) -> dict[str, str]:
-    attrs = {}
-    for item in attr_string.strip().strip(";").split(";"):
-        if "=" in item:
-            key, value = item.strip().split("=", 1)
-            attrs[key] = value.strip('"')
-        elif " " in item:
-            parts = item.strip().split(None, 1)
-            if len(parts) == 2:
-                attrs[parts[0]] = parts[1].strip('"')
-    return attrs
 
 
 def natural_sort_key(value: str):
@@ -91,4 +79,3 @@ def get_gene_structure(gff_file: str, gene_ids: list[str], feature_types: list[s
                 elif pid in target_set:
                     coords[pid].append((int(parts[3]), int(parts[4])))
     return coords
-

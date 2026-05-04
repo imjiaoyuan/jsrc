@@ -17,7 +17,7 @@ def _build_tree(records, algo: str):
 def cmd(args):
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
-        raise ValueError("At least 2 sequences are required.")
+        raise SystemExit("At least 2 sequences are required.")
     tree = _build_tree(records, args.a)
     Phylo.write(tree, args.o, "newick")
     print(f"Phylogenetic tree ({args.a}) saved to {args.o}")

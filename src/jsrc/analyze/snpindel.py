@@ -9,7 +9,7 @@ def _pick(records, seq_id, index):
         for rec in records:
             if rec.id == seq_id or rec.id.split()[0] == seq_id:
                 return rec
-        raise ValueError(f"ID not found: {seq_id}")
+        raise SystemExit(f"ID not found: {seq_id}")
     return records[index]
 
 

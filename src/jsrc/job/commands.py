@@ -378,10 +378,10 @@ def _parse_env(items: list[str]) -> dict[str, str]:
     extra = {}
     for item in items:
         if "=" not in item:
-            raise ValueError(f"invalid --env value: {item!r}, expected KEY=VAL")
+            raise SystemExit(f"invalid --env value: {item!r}, expected KEY=VAL")
         k, v = item.split("=", 1)
         if not k:
-            raise ValueError(f"invalid --env key in {item!r}")
+            raise SystemExit(f"invalid --env key in {item!r}")
         extra[k] = v
     return extra
 

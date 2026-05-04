@@ -1,4 +1,5 @@
-from jsrc.plot.core import natural_sort_key, parse_gff_attributes, setup_matplotlib
+from jsrc.common.gff import parse_gff_attributes
+from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 plt = setup_matplotlib()
 
@@ -35,7 +36,7 @@ def cmd(args):
                         chr_lengths[chrom] = max(chr_lengths.get(chrom, 0), end)
 
     if target_ids is not None and not gene_positions:
-        raise ValueError("No matching genes found for provided -ids list.")
+        raise SystemExit("No matching genes found for provided -ids list.")
 
     chr_sorted = sorted(chr_lengths.keys(), key=natural_sort_key)
     fig, ax = plt.subplots(figsize=(12, max(6, len(chr_sorted) * 0.5)))

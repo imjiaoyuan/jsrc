@@ -1,7 +1,5 @@
 import csv
-import sys
-
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.common.gff import parse_gff_attributes
 
 
 def _load_csv_mapping(path: str) -> dict[str, str]:
@@ -44,13 +42,11 @@ def cmd(args):
     mode = args.mode
     if mode == "csv":
         if not args.map:
-            print("Error: mode=csv requires -map", file=sys.stderr)
-            sys.exit(2)
+            raise SystemExit("Error: mode=csv requires -map")
         mapping = _load_csv_mapping(args.map)
     else:
         if not args.gff or not args.parent:
-            print("Error: mode=gff requires -gff and -parent", file=sys.stderr)
-            sys.exit(2)
+            raise SystemExit("Error: mode=gff requires -gff and -parent")
         mapping = _load_gff_mapping(args.gff, args.parent)
 
     _apply_mapping(args.fa, args.o, mapping)

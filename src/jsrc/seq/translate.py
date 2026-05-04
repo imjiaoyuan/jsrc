@@ -4,7 +4,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.common.gff import parse_gff_attributes
 
 
 def cmd(args):
@@ -46,4 +46,3 @@ def cmd(args):
             print(f"Warning: Failed to translate {gene_id}: {exc}", file=sys.stderr)
     SeqIO.write(proteins, args.o, "fasta")
     print(f"Translated {len(proteins)} genes to {args.o}")
-

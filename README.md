@@ -26,6 +26,41 @@ Run `jsrc --help` to get started.
 
 For detailed usage, see the [Documentation](docs/en/index.md).中文文档请参阅 [文档](docs/zh/index.md)。
 
+## Quick Start
+
+```bash
+jsrc --help
+jsrc <module> --help
+jsrc <module> <subcommand> --help
+```
+
+Examples:
+
+```bash
+jsrc seq --help
+jsrc analyze phylo --help
+jsrc vision extract --help
+```
+
+## Module Overview
+
+| module | focus | typical use |
+|---|---|---|
+| `seq` | Sequence extraction, translation, QC, k-mer, sliding window | `jsrc seq extract ...` |
+| `plot` | Gene/exon/chromosome/domain and other plots | `jsrc plot gene ...` |
+| `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC | `jsrc analyze phylo ...` |
+| `gs` | Genomic selection dataset build/split/train | `jsrc gs train ...` |
+| `grn` | GRN conversion, centrality, local viewer | `jsrc grn net2json ...` |
+| `vision` | Object extraction, morphology traits, EFD | `jsrc vision extract ...` |
+| `job` | Background job submit/list/log/kill/history | `jsrc job submit "cmd"` |
+| `math` | Statistics and ML-style CLI utilities | `jsrc math statistics ...` |
+
+## Error Output Conventions
+
+- Input and validation failures are reported in unified format: `Error: <message>`.
+- Missing files, invalid parameters, and incompatible inputs follow the same style across subcommands.
+- Use `--help` on the target module/subcommand first when argument combinations are unclear.
+
 ## A Glance of jsrc's Functions
 
 **vision module**

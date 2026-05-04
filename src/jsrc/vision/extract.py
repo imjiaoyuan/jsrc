@@ -12,9 +12,9 @@ def _validate_image_file(input_path: str) -> Path:
     if not path.exists():
         raise FileNotFoundError(f"Input path not found: {input_path}")
     if not path.is_file():
-        raise ValueError(f"Input must be a single image file, got directory: {input_path}")
+        raise SystemExit(f"Input must be a single image file, got directory: {input_path}")
     if path.suffix.lower() not in IMAGE_SUFFIXES:
-        raise ValueError(f"Unsupported image format: {path.suffix}")
+        raise SystemExit(f"Unsupported image format: {path.suffix}")
     return path
 
 
@@ -81,6 +81,12 @@ def _extract_contours(args, image_path: Path, output_dir: Path):
 
 
 def cmd(args):
+    if args.min_area_ratio < 0 or args.max_area_ratio < 0 or args.min_area_ratio > args.max_area_ratio:
+        raise SystemExit("Invalid area ratio range: require 0 <= min_area_ratio <= max_area_ratio")
+    if args.max_area_ratio > 1:
+        raise SystemExit("Invalid max_area_ratio: must be <= 1")
+    if args.min_aspect_ratio <= 0 or args.max_aspect_ratio <= 0 or args.min_aspect_ratio > args.max_aspect_ratio:
+        raise SystemExit("Invalid aspect ratio range: require 0 < min_aspect_ratio <= max_aspect_ratio")
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
     image_path = _validate_image_file(args.input)

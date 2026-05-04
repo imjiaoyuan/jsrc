@@ -1,6 +1,4 @@
 import csv
-import sys
-
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 plt = setup_matplotlib()
@@ -11,8 +9,7 @@ def cmd(args):
         rows = list(csv.DictReader(f, delimiter="\t"))
     required = {"protein", "domain", "start", "end"}
     if not rows or not required.issubset(rows[0].keys()):
-        print("Error: TSV must have columns protein,domain,start,end", file=sys.stderr)
-        sys.exit(1)
+        raise SystemExit("Error: TSV must have columns protein,domain,start,end")
 
     proteins = sorted({row["protein"] for row in rows}, key=natural_sort_key)
     fig, ax = plt.subplots(figsize=(12, max(6, len(proteins) * 0.5)))
@@ -35,4 +32,3 @@ def cmd(args):
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
     print(f"Protein domain plot saved to {args.o}")
-
