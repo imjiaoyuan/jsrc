@@ -56,10 +56,6 @@ Extras in `pyproject.toml`:
 - CI (`.github/workflows/ci.yml`): lint + test + build on push/PR to main
 - Publishing (`.github/workflows/publish.yml`): triggers on `v*` tags
 
-## Release
-
-See [RELEASE.md](RELEASE.md).
-
 ## Architecture
 
 `jsrc` is a modular CLI toolkit organized as a namespace package under `src/jsrc/`.

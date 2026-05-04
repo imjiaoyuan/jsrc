@@ -28,6 +28,11 @@ all = [
 ]
 dev = ["pytest>=7.0", "black>=22.0", "ruff>=0.1"]
 
+[project.urls]
+Documentation = "https://github.com/imjiaoyuan/jsrc/tree/main/docs"
+Source = "https://github.com/imjiaoyuan/jsrc"
+Issues = "https://github.com/imjiaoyuan/jsrc/issues"
+
 [project.scripts]
 jsrc = "jsrc.cli:main"
 

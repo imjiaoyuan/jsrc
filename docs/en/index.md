@@ -36,8 +36,3 @@ jsrc <module> <subcommand> --help
 - [GRN Module](./module-grn.md)
 - [Vision Module](./module-vision.md)
 - [Job Module](./module-job.md)
-
-## Reference
-
-- [Stability Policy](./stability.md)
-- [Release Checklist](../../RELEASE.md)
