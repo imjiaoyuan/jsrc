@@ -195,3 +195,21 @@ def cmd(args):
             )
 
         print(f"Processed: {file_name}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "efd", help="Convert extracted contours (.npy) to EFD descriptors"
+    )
+    p.add_argument("-i", "--input", required=True, help="Input .npy file or directory")
+    p.add_argument(
+        "-o", dest="output", required=True, help="Output directory for CSV/plot files"
+    )
+    p.add_argument("--harmonics", type=int, default=20, help="Number of EFD harmonics")
+    p.add_argument(
+        "--points", type=int, default=300, help="Reconstruction points for preview plot"
+    )
+    p.add_argument(
+        "--no-plot", action="store_true", help="Skip reconstruction plot output"
+    )
+    p.set_defaults(func=cmd)

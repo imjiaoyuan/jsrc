@@ -48,3 +48,20 @@ def cmd(args):
     print(f"circularity\t{circularity:.6f}")
     print(f"extent\t{extent:.6f}")
     print(f"solidity\t{solidity:.6f}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "traits", help="Compute morphology traits from image object"
+    )
+    p.add_argument("-i", "--input", required=True, help="Input image file")
+    p.add_argument(
+        "--channel",
+        choices=["gray", "a", "b", "s", "v"],
+        default="gray",
+        help="Threshold channel",
+    )
+    p.add_argument("--invert", action="store_true", help="Invert threshold")
+    p.add_argument("--blur", type=int, default=5, help="Gaussian blur size (odd)")
+    p.add_argument("--kernel", type=int, default=3, help="Morphology kernel size")
+    p.set_defaults(func=cmd)
