@@ -1,9 +1,12 @@
+import logging
 from argparse import Namespace
 from typing import Any
+
 
 from jsrc.seq.core import parse_gff_attributes
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
+logger = logging.getLogger(__name__)
 plt = setup_matplotlib()
 
 
@@ -63,7 +66,7 @@ def cmd(args: Namespace) -> None:
     plt.tight_layout()
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
-    print(f"Chromosome map saved to {args.o}")
+    logger.info(f"Chromosome map saved to {args.o}")
 
 
 def register(subparsers: Any) -> None:

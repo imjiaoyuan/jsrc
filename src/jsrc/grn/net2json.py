@@ -1,13 +1,17 @@
 import csv
+import logging
 import zipfile
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 from jsrc.grn.anno2json import annotation_to_json
+
 from jsrc.grn.core import write_json
+
 from jsrc.grn.viewer import sync_viewer_assets
 
+logger = logging.getLogger(__name__)
 
 def network_to_json(input_path: str, output_path: str) -> tuple[list[dict[str, Any]], int]:
     links = []
@@ -28,8 +32,8 @@ def network_to_json(input_path: str, output_path: str) -> tuple[list[dict[str, A
     for item in links:
         nodes.add(item["source"])
         nodes.add(item["target"])
-    print(f"Network JSON written: {output_path}")
-    print(f"Genes: {len(nodes)} | Edges: {len(links)}")
+    logger.info("Network JSON written: %s", output_path)
+    logger.info("Genes: %d | Edges: %d", len(nodes), len(links))
     return links, len(nodes)
 
 
@@ -54,7 +58,7 @@ def _zip_viewer(viewer_dir: Path, zip_output: str) -> None:
         for f in wanted:
             if f.exists():
                 zf.write(f, arcname=str(f.relative_to(viewer_dir)))
-    print(f"Viewer ZIP written: {zip_path}")
+    logger.info("Viewer ZIP written: %s", zip_path)
 
 
 def cmd(args: Namespace) -> None:
@@ -83,7 +87,7 @@ def cmd(args: Namespace) -> None:
         )
     elif not (viewer_dir / "json" / "annotation.json").exists():
         write_json(str(viewer_dir / "json" / "annotation.json"), {})
-    print(f"Viewer assets written: {viewer_dir}")
+    logger.info("Viewer assets written: %s", viewer_dir)
     if args.zip_output:
         _zip_viewer(viewer_dir, args.zip_output)
 

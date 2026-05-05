@@ -1,4 +1,5 @@
 import json
+import logging
 from argparse import Namespace
 
 from jsrc.analyze.motif import cmd as motif_cmd
@@ -62,15 +63,15 @@ class TestAnalyzeQC:
 
 
 class TestAnalyzeMotif:
-    def test_motif_basic(self, tmp_path, capsys):
+    def test_motif_basic(self, tmp_path, caplog):
+        caplog.set_level(logging.INFO)
         fa = tmp_path / "seqs.fa"
         fa.write_text(">s1\nATGCATGC\n>s2\nATGCGGCC\n", encoding="utf-8")
 
         args = Namespace(fa=str(fa), o=str(tmp_path), nmotifs=3, minw=3, maxw=4)
         motif_cmd(args)
 
-        out = capsys.readouterr().out
-        assert "Motif analysis complete" in out
+        assert "Motif analysis complete" in caplog.text
 
         tsv = tmp_path / "motifs.tsv"
         assert tsv.exists()

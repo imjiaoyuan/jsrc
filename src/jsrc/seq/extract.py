@@ -1,5 +1,7 @@
+import logging
 from argparse import Namespace
 from typing import Any
+
 
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -7,6 +9,7 @@ from Bio.SeqRecord import SeqRecord
 
 from jsrc.seq.core import parse_gff_attributes
 
+logger = logging.getLogger(__name__)
 
 def _load_target_ids(path: str) -> list[str]:
     with open(path, "r", encoding="utf-8") as f:
@@ -89,7 +92,7 @@ def cmd(args: Namespace) -> None:
     finally:
         genome.close()
 
-    print(f"Extracted {extracted}/{len(targets)} sequences to {args.o}")
+    logger.info(f"Extracted {extracted}/{len(targets)} sequences to %s", args.o)
 
 
 def register(subparsers: Any) -> None:

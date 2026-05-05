@@ -1,3 +1,4 @@
+import logging
 from argparse import Namespace
 from typing import Any
 
@@ -5,6 +6,8 @@ from Bio import Phylo, SeqIO
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 
 from jsrc.analyze.core import pad_alignment
+
+logger = logging.getLogger(__name__)
 
 
 def _build_tree(records, algo: str):
@@ -23,7 +26,7 @@ def cmd(args: Namespace) -> None:
         raise SystemExit("At least 2 sequences are required.")
     tree = _build_tree(records, args.a)
     Phylo.write(tree, args.o, "newick")
-    print(f"Phylogenetic tree ({args.a}) saved to {args.o}")
+    logger.info("Phylogenetic tree (%s) saved to %s", args.a, args.o)
 
 
 def register(subparsers: Any) -> None:

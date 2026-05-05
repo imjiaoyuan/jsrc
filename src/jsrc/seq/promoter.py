@@ -1,3 +1,4 @@
+import logging
 from argparse import Namespace
 from typing import Any
 
@@ -6,6 +7,8 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from jsrc.seq.core import parse_gff_attributes
+
+logger = logging.getLogger(__name__)
 
 
 def _read_target_ids(path: str) -> set[str]:
@@ -55,7 +58,7 @@ def cmd(args: Namespace) -> None:
             promoters.append(SeqRecord(Seq(str(seq)), id=gene_id, description=desc))
 
     SeqIO.write(promoters, args.o, "fasta")
-    print(f"Extracted {len(promoters)} promoter sequences to {args.o}")
+    logger.info("Extracted %d promoter sequences to %s", len(promoters), args.o)
 
 
 def register(subparsers: Any) -> None:

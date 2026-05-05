@@ -1,10 +1,13 @@
+import logging
 import time
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+
 import pandas as pd
+
 from sklearn.ensemble import (
     AdaBoostClassifier,
     ExtraTreesClassifier,
@@ -19,6 +22,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
+logger = logging.getLogger(__name__)
 
 def _models(seed: int) -> dict[str, Any]:
     return {
@@ -153,8 +157,8 @@ def cmd(args: Namespace) -> None:
     )
     summary.to_csv(summary_path)
 
-    print(f"Training complete. Results: {results_path}")
-    print(f"Summary: {summary_path}")
+    logger.info("Training complete. Results: %s", results_path)
+    logger.info("Summary: %s", summary_path)
 
 
 def register(subparsers: Any) -> None:

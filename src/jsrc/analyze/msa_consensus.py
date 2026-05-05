@@ -1,4 +1,5 @@
 import json
+import logging
 from argparse import Namespace
 from collections import Counter
 from typing import Any
@@ -6,6 +7,8 @@ from typing import Any
 from Bio import SeqIO
 
 from jsrc.analyze.core import pad_alignment
+
+logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:
@@ -15,9 +18,11 @@ def cmd(args: Namespace) -> None:
     lengths = [len(r.seq) for r in records]
     min_len, max_len = min(lengths), max(lengths)
     if max_len > min_len * 1.2:
-        print(
-            f"Warning: Sequence lengths differ significantly (min={min_len}, max_len={max_len}). "
-            f"Input may not be pre-aligned; shorter sequences will be padded with gaps."
+        logger.warning(
+            "Sequence lengths differ significantly (min=%s, max_len=%s). "
+            "Input may not be pre-aligned; shorter sequences will be padded with gaps.",
+            min_len,
+            max_len,
         )
     seqs = [str(r.seq) for r in pad_alignment(records)]
     consensus_chars = []

@@ -1,4 +1,5 @@
 import json
+import logging
 from argparse import Namespace
 
 import pytest
@@ -8,16 +9,17 @@ from jsrc.seq.kmer import cmd as kmer_cmd
 
 
 class TestCodonUsage:
-    def test_codon_basic(self, tmp_path, capsys):
+    def test_codon_basic(self, tmp_path, capsys, caplog):
+        caplog.set_level(logging.INFO)
         fa = tmp_path / "cds.fa"
         fa.write_text(">g1\nATGGCCACTTAA\n", encoding="utf-8")
 
         args = Namespace(fa=str(fa), top=20, json=False)
         codon_cmd(args)
 
-        out = capsys.readouterr().out
-        assert "total_codons" in out
-        assert "codon\tcount\tfreq\trscu" in out
+        captured = capsys.readouterr()
+        assert "total_codons" in caplog.text
+        assert "codon\tcount\tfreq\trscu" in captured.out
         # ATG(M) GCC(A) ACT(T) TAA(*)
         # After skipping stop codons: 3 codons
 

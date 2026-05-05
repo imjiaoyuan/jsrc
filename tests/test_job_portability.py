@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 from jsrc.job import core
@@ -35,10 +36,10 @@ def test_non_linux_rss_uses_ps(monkeypatch):
     assert core.get_rss_kb_from_status(999) == 456
 
 
-def test_portability_warning_only_once(monkeypatch, capsys):
+def test_portability_warning_only_once(monkeypatch, caplog):
+    caplog.set_level(logging.WARNING)
     monkeypatch.setattr(core, "IS_LINUX", False)
     monkeypatch.setattr(core, "_PLATFORM_NOTE_EMITTED", False)
     core.warn_portability_limits()
     core.warn_portability_limits()
-    err = capsys.readouterr().err
-    assert err.count("non-Linux platform detected") == 1
+    assert caplog.text.count("non-Linux platform detected") == 1

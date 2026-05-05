@@ -1,15 +1,18 @@
 from __future__ import annotations
 
+import logging
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 import matplotlib
 
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+logger = logging.getLogger(__name__)
 
 class EllipticFourier:
     @staticmethod
@@ -196,7 +199,7 @@ def cmd(args: Namespace) -> None:
                 args.harmonics,
             )
 
-        print(f"Processed: {file_name}")
+        logger.info("Processed: %s", file_name)
 
 
 def register(subparsers: Any) -> None:

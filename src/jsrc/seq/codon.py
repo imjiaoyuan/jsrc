@@ -1,9 +1,12 @@
 import json
+import logging
 from argparse import Namespace
 from collections import Counter, defaultdict
 from typing import Any, Iterator
 
 from Bio import SeqIO
+
+logger = logging.getLogger(__name__)
 
 AA_TABLE = {
     "TTT": "F",
@@ -116,7 +119,7 @@ def cmd(args: Namespace) -> None:
         print(json.dumps(payload, ensure_ascii=False, indent=2))
         return
 
-    print(f"total_codons\t{total_codons:,}")
+    logger.info("total_codons\t%s", f"{total_codons:,}")
     print("codon\tcount\tfreq\trscu")
     for codon, count in counts.most_common(args.top):
         freq = count / total_codons if total_codons else 0.0

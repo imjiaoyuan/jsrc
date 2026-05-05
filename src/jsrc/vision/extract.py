@@ -1,11 +1,15 @@
+import logging
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 import cv2
+
 import numpy as np
+
 from jsrc.vision.core import ensure_odd, get_channel_image
 
+logger = logging.getLogger(__name__)
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"}
 
 
@@ -25,7 +29,7 @@ def _validate_image_file(input_path: str) -> Path:
 def _extract_contours(args: Namespace, image_path: Path, output_dir: Path) -> None:
     img = cv2.imread(str(image_path))
     if img is None:
-        print(f"Skip unreadable image: {image_path}")
+        logger.warning("Skip unreadable image: %s", image_path)
         return
 
     blur_ksize = ensure_odd(args.blur)
@@ -85,7 +89,7 @@ def _extract_contours(args: Namespace, image_path: Path, output_dir: Path) -> No
         cv2.imwrite(str(output_dir / f"{base}_{i}_edge.png"), edge_canvas)
         np.save(output_dir / f"{base}_{i}.npy", cnt)
 
-    print(f"{image_path.name}: extracted {len(valid_contours)} contour(s)")
+    logger.info("%s: extracted %d contour(s)", image_path.name, len(valid_contours))
 
 
 def cmd(args: Namespace) -> None:

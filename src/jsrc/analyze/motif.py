@@ -1,10 +1,13 @@
 import collections
+import logging
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 from Bio import SeqIO
 from jsrc.analyze.core import normalize_sequence
+
+logger = logging.getLogger(__name__)
 
 
 def _kmer_counts(seqs: list[str], k: int) -> collections.Counter:
@@ -31,7 +34,7 @@ def cmd(args: Namespace) -> None:
         f.write("motif\tcount\tlength\n")
         for motif, count in top:
             f.write(f"{motif}\t{count}\t{len(motif)}\n")
-    print(f"Motif analysis complete. Results in {out_tsv}")
+    logger.info("Motif analysis complete. Results in %s", out_tsv)
 
 
 def register(subparsers: Any) -> None:

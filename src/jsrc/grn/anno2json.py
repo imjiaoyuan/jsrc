@@ -1,8 +1,11 @@
 import csv
+import logging
 from argparse import Namespace
 from typing import Any
 
 from jsrc.grn.core import write_json
+
+logger = logging.getLogger(__name__)
 
 
 def annotation_to_json(input_path: str, output_path: str) -> dict[str, dict[str, str]]:
@@ -17,7 +20,7 @@ def annotation_to_json(input_path: str, output_path: str) -> dict[str, dict[str,
             desc = str(row[2]) if len(row) > 2 else ""
             anno[gid] = {"p": ptr, "d": desc}
     write_json(output_path, anno)
-    print(f"Annotation JSON written: {output_path}")
+    logger.info("Annotation JSON written: %s", output_path)
     return anno
 
 

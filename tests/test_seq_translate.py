@@ -1,3 +1,4 @@
+import logging
 from argparse import Namespace
 
 from Bio import SeqIO
@@ -5,7 +6,8 @@ from Bio import SeqIO
 from jsrc.seq.translate import cmd
 
 
-def test_seq_translate_basic(tmp_path, capsys):
+def test_seq_translate_basic(tmp_path, capsys, caplog):
+    caplog.set_level(logging.INFO)
     fa = tmp_path / "genome.fa"
     fa.write_text(">chr1\nATGGCCACTTAA\n", encoding="utf-8")
     gff = tmp_path / "anno.gff"
@@ -21,8 +23,7 @@ def test_seq_translate_basic(tmp_path, capsys):
     args = Namespace(fa=str(fa), gff=str(gff), id="Parent", o=str(out))
     cmd(args)
 
-    captured = capsys.readouterr().out
-    assert "Translated 1 genes" in captured
+    assert "Translated 1 genes" in caplog.text
     recs = list(SeqIO.parse(str(out), "fasta"))
     assert len(recs) == 1
     assert recs[0].id == "gene1"

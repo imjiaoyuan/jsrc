@@ -1,9 +1,15 @@
 import argparse
 import importlib
+import logging
 import os
 import sys
 
 from jsrc import __version__
+
+
+def setup_logging(verbose: bool = False) -> None:
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level, format="%(message)s", stream=sys.stderr, force=True)
 
 
 def _dispatch(module_name: str, func_name: str = "cmd") -> argparse.Action:
@@ -55,10 +61,13 @@ def _register_modules(subparsers: argparse.Action, *, debug: bool = False) -> tu
 
 def main() -> None:
     debug_mode = "--debug" in sys.argv[1:]
+    verbose = "--verbose" in sys.argv[1:] or debug_mode
+    setup_logging(verbose=verbose)
     parser = argparse.ArgumentParser(
         prog="jsrc", description="General-purpose bioinformatics and data toolkit"
     )
     parser.add_argument("-v", "--version", action="version", version=__version__)
+    parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     parser.add_argument(
         "--debug",
         action="store_true",
@@ -68,11 +77,11 @@ def main() -> None:
 
     loaded, errors = _register_modules(subparsers, debug=debug_mode)
     if errors:
-        print("Warning: some modules failed to load:", file=sys.stderr)
+        logging.warning("some modules failed to load:")
         for item in errors:
-            print(f"  - {item}", file=sys.stderr)
+            logging.warning("  - %s", item)
     if not loaded:
-        print("Error: no module loaded", file=sys.stderr)
+        logging.error("no module loaded")
         sys.exit(2)
 
     args = parser.parse_args()
@@ -93,17 +102,17 @@ def main() -> None:
             msg = str(code).strip()
             if not msg.startswith("Error:"):
                 msg = f"Error: {msg}"
-            print(msg, file=sys.stderr)
+            logging.error(msg)
             sys.exit(2)
         except (FileNotFoundError, ValueError) as exc:
             if args.debug:
                 raise
-            print(f"Error: {exc}", file=sys.stderr)
+            logging.error("Error: %s", exc)
             sys.exit(2)
         except Exception as exc:
             if args.debug:
                 raise
-            print(f"Error: {exc}", file=sys.stderr)
+            logging.error("Error: %s", exc)
             sys.exit(2)
         return
     group_parser = getattr(args, "_group_parser", None)

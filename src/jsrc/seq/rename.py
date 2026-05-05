@@ -1,8 +1,11 @@
 import csv
+import logging
 from argparse import Namespace
 from typing import Any
 
 from jsrc.seq.core import parse_gff_attributes
+
+logger = logging.getLogger(__name__)
 
 
 def _load_csv_mapping(path: str) -> dict[str, str]:
@@ -62,7 +65,7 @@ def cmd(args: Namespace) -> None:
         mapping = _load_gff_mapping(args.gff, args.parent)
 
     renamed = _apply_mapping(args.fa, args.o, mapping)
-    print(f"Renamed {renamed} IDs to {args.o}")
+    logger.info("Renamed %d IDs to %s", renamed, args.o)
 
 
 def register(subparsers: Any) -> None:

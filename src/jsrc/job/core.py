@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import csv
 import json
+import logging
 import os
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 IS_LINUX = sys.platform.startswith("linux")
 _PLATFORM_NOTE_EMITTED = False
@@ -197,9 +200,8 @@ def warn_portability_limits() -> None:
     global _PLATFORM_NOTE_EMITTED
     if IS_LINUX or _PLATFORM_NOTE_EMITTED:
         return
-    print(
-        "Note: non-Linux platform detected; /proc-based metrics may be limited.",
-        file=sys.stderr,
+    logger.warning(
+        "Note: non-Linux platform detected; /proc-based metrics may be limited."
     )
     _PLATFORM_NOTE_EMITTED = True
 

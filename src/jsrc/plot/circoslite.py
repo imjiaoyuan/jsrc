@@ -1,11 +1,14 @@
+import logging
 import math
 from argparse import Namespace
 from typing import Any
+
 
 from Bio import SeqIO
 
 from jsrc.plot.core import setup_matplotlib
 
+logger = logging.getLogger(__name__)
 plt = setup_matplotlib()
 
 
@@ -75,7 +78,7 @@ def cmd(args: Namespace) -> None:
     if args.o:
         plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
         plt.close(fig)
-        print(f"CircosLite plot saved to {args.o}")
+        logger.info(f"CircosLite plot saved to {args.o}")
         return
     plt.show()
 

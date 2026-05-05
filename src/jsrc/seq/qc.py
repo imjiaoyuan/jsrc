@@ -1,9 +1,12 @@
 import gzip
 import json
+import logging
 from argparse import Namespace
 from typing import Any, IO
 
 from Bio import SeqIO
+
+logger = logging.getLogger(__name__)
 
 
 def _open_text(path: str) -> IO[str]:

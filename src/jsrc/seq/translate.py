@@ -1,4 +1,4 @@
-import sys
+import logging
 from argparse import Namespace
 from typing import Any
 
@@ -8,6 +8,8 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from jsrc.seq.core import parse_gff_attributes
+
+logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:
@@ -48,9 +50,9 @@ def cmd(args: Namespace) -> None:
             if len(protein_seq) > 0:
                 proteins.append(SeqRecord(protein_seq, id=gene_id, description=""))
         except (TranslationError, ValueError) as exc:
-            print(f"Warning: Failed to translate {gene_id}: {exc}", file=sys.stderr)
+            logger.error("Failed to translate %s: %s", gene_id, exc)
     SeqIO.write(proteins, args.o, "fasta")
-    print(f"Translated {len(proteins)} genes to {args.o}")
+    logger.info("Translated %d genes to %s", len(proteins), args.o)
 
 
 def register(subparsers: Any) -> None:

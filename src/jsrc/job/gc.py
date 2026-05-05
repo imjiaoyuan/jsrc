@@ -1,8 +1,11 @@
+import logging
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 from jsrc.job.core import load_jobs, now_iso, runtime_seconds, state_dir, write_jobs
+
+logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:

@@ -1,3 +1,4 @@
+import logging
 from argparse import Namespace
 
 from Bio import SeqIO
@@ -5,7 +6,8 @@ from Bio import SeqIO
 from jsrc.seq.extract import cmd
 
 
-def test_seq_extract_basic_flow(tmp_path, capsys):
+def test_seq_extract_basic_flow(tmp_path, capsys, caplog):
+    caplog.set_level(logging.INFO)
     fa = tmp_path / "genome.fa"
     gff = tmp_path / "anno.gff"
     ids = tmp_path / "ids.txt"
@@ -29,8 +31,7 @@ def test_seq_extract_basic_flow(tmp_path, capsys):
     )
     cmd(args)
 
-    captured = capsys.readouterr().out
-    assert "Extracted 1/1 sequences" in captured
+    assert "Extracted 1/1 sequences" in caplog.text
     recs = list(SeqIO.parse(str(out), "fasta"))
     assert len(recs) == 1
     assert recs[0].id == "gene1"

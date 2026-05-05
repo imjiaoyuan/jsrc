@@ -1,5 +1,7 @@
+import logging
 from argparse import Namespace
 from typing import Any
+
 
 from jsrc.plot.core import (
     get_gene_structure,
@@ -8,6 +10,7 @@ from jsrc.plot.core import (
     setup_matplotlib,
 )
 
+logger = logging.getLogger(__name__)
 plt = setup_matplotlib()
 
 
@@ -28,7 +31,7 @@ def cmd(args: Namespace) -> None:
     plt.tight_layout()
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
-    print(f"Gene structure plot saved to {args.o}")
+    logger.info(f"Gene structure plot saved to {args.o}")
 
 
 def register(subparsers: Any) -> None:

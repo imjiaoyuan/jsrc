@@ -1,6 +1,8 @@
+import logging
 import random
 from argparse import Namespace
 from typing import Any
+
 
 from Bio import Phylo, SeqIO
 from Bio.Align import MultipleSeqAlignment
@@ -10,6 +12,7 @@ from Bio.SeqRecord import SeqRecord
 
 from jsrc.analyze.core import pad_alignment
 
+logger = logging.getLogger(__name__)
 
 def _tree_from_alignment(aln: MultipleSeqAlignment):
     calculator = DistanceCalculator("identity")
@@ -63,10 +66,10 @@ def cmd(args: Namespace) -> None:
 
     if args.o:
         Phylo.write(base_tree, args.o, "newick")
-        print(f"Bootstrap NJ tree saved to {args.o}")
+        logger.info("Bootstrap NJ tree saved to %s", args.o)
     else:
         print(base_tree.format("newick").strip())
-    print(f"bootstrap_replicates\t{args.n}")
+    logger.info("Bootstrap replicates: %s", args.n)
 
 
 def register(subparsers: Any) -> None:

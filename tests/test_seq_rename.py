@@ -1,9 +1,11 @@
+import logging
 from argparse import Namespace
 
 from jsrc.seq.rename import cmd
 
 
-def test_seq_rename_csv_mode(tmp_path, capsys):
+def test_seq_rename_csv_mode(tmp_path, capsys, caplog):
+    caplog.set_level(logging.INFO)
     fa = tmp_path / "in.fa"
     fa.write_text(">old1\nATGC\n>old2\nGGCC\n", encoding="utf-8")
     mapping = tmp_path / "map.csv"
@@ -15,7 +17,7 @@ def test_seq_rename_csv_mode(tmp_path, capsys):
     )
     cmd(args)
 
-    assert "Renamed 2 IDs" in capsys.readouterr().out
+    assert "Renamed 2 IDs" in caplog.text
     content = out.read_text()
     assert ">new1" in content
     assert ">new2" in content
@@ -40,7 +42,8 @@ def test_seq_rename_csv_partial(tmp_path, capsys):
     assert ">unmatched" in out_text
 
 
-def test_seq_rename_gff_mode(tmp_path, capsys):
+def test_seq_rename_gff_mode(tmp_path, caplog):
+    caplog.set_level(logging.INFO)
     fa = tmp_path / "in.fa"
     fa.write_text(">tx1\nATGC\n>tx2\nGGCC\n", encoding="utf-8")
     gff = tmp_path / "anno.gff"
@@ -56,7 +59,7 @@ def test_seq_rename_gff_mode(tmp_path, capsys):
     )
     cmd(args)
 
-    assert "Renamed 2 IDs" in capsys.readouterr().out
+    assert "Renamed 2 IDs" in caplog.text
     content = out.read_text()
     assert ">gene1" in content
     assert ">gene2" in content

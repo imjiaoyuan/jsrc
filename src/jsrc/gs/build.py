@@ -1,13 +1,17 @@
+import logging
 import subprocess
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+
 import pandas as pd
+
 from sklearn.feature_selection import f_classif
 from sklearn.linear_model import RidgeCV
 
+logger = logging.getLogger(__name__)
 
 def _run_ld_pruning(plink_bin: str, input_prefix: str, out_dir: Path) -> str:
     prune_out = out_dir / "pruning"
@@ -155,7 +159,7 @@ def cmd(args: Namespace) -> None:
     )
     (out_dir / "snp_ids.txt").write_text("\n".join(snp_ids) + "\n", encoding="utf-8")
 
-    print(f"Dataset built in {out_dir}")
+    logger.info("Dataset built in %s", out_dir)
     print(f"samples\t{x_final.shape[0]}")
     print(f"snps\t{x_final.shape[1]}")
     print(f"real_samples\t{len(valid_iids)}")
