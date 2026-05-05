@@ -61,3 +61,12 @@ def cmd(args):
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
     print(f"Chromosome map saved to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("chromosome", help="Plot chromosome map")
+    p.add_argument("-gff", required=True, help="GFF annotation file")
+    p.add_argument("-ids", help="Optional gene ID list file")
+    p.add_argument("-o", required=True, help="Output PNG file")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=cmd)

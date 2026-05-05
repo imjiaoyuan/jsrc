@@ -46,3 +46,11 @@ def cmd(args):
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
     print(f"Protein domain plot saved to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("domain", help="Plot protein domain architecture")
+    p.add_argument("-tsv", required=True, help="Domain TSV file")
+    p.add_argument("-o", required=True, help="Output PNG file")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=cmd)

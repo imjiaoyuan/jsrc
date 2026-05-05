@@ -26,3 +26,12 @@ def cmd(args):
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
     print(f"Gene structure plot saved to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("gene", help="Plot gene structure diagram")
+    p.add_argument("-gff", required=True, help="GFF annotation file")
+    p.add_argument("-ids", required=True, help="Gene ID list file")
+    p.add_argument("-o", required=True, help="Output PNG file")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=cmd)

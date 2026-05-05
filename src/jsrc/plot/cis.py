@@ -41,3 +41,11 @@ def cmd(args):
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
     print(f"Cis-element plot saved to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("cis", help="Plot cis-regulatory elements")
+    p.add_argument("-bed", required=True, help="BED file")
+    p.add_argument("-o", required=True, help="Output PNG file")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=cmd)

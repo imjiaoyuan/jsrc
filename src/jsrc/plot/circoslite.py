@@ -76,3 +76,14 @@ def cmd(args):
         print(f"CircosLite plot saved to {args.o}")
         return
     plt.show()
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "circoslite", help="Simple circular tracks for genome stats"
+    )
+    p.add_argument("-fa", required=True, help="Genome FASTA")
+    p.add_argument("-w", type=int, default=100000, help="Window size")
+    p.add_argument("-o", help="Optional output PNG")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=cmd)

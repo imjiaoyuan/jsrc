@@ -28,3 +28,8 @@ def cmd(args):
         plt.pause(0.003)
 
     plt.show()
+
+
+def register(subparsers):
+    p = subparsers.add_parser("heart", help="Plot heart curve")
+    p.set_defaults(func=cmd)

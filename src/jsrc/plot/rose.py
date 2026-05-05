@@ -55,3 +55,8 @@ def cmd(args):
         margin={"l": 0, "r": 0, "b": 0, "t": 0},
     )
     fig.show()
+
+
+def register(subparsers):
+    p = subparsers.add_parser("rose", help="Plot 3D rose model")
+    p.set_defaults(func=cmd)

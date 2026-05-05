@@ -45,3 +45,13 @@ def cmd(args):
         print(f"Dotplot saved to {args.o}")
         return
     plt.show()
+
+
+def register(subparsers):
+    p = subparsers.add_parser("dotplot", help="Sequence dotplot by exact k-mer matches")
+    p.add_argument("-fa1", required=True, help="FASTA file 1")
+    p.add_argument("-fa2", required=True, help="FASTA file 2")
+    p.add_argument("-k", type=int, default=10, help="k-mer size")
+    p.add_argument("-o", help="Optional output PNG")
+    p.add_argument("-dpi", type=int, default=300, help="DPI")
+    p.set_defaults(func=cmd)
