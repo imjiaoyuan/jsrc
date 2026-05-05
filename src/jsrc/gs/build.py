@@ -158,3 +158,26 @@ def cmd(args):
     print(f"snps\t{x_final.shape[1]}")
     print(f"real_samples\t{len(valid_iids)}")
     print(f"sim_samples\t{len(y_sim)}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "build", help="Build GS dataset from GWAS PLINK + phenotype"
+    )
+    p.add_argument(
+        "-pheno", required=True, help="Phenotype file with IID and PHENO columns"
+    )
+    p.add_argument(
+        "-plink", required=True, help="PLINK binary prefix (without .bed/.bim/.fam)"
+    )
+    p.add_argument("-o", required=True, help="Output dataset directory")
+    p.add_argument("--plink-bin", default="plink", help="Path to plink executable")
+    p.add_argument("--n-sim", type=int, default=500, help="Number of simulated samples")
+    p.add_argument(
+        "--top-k", type=int, default=2000, help="Top markers used as causal candidates"
+    )
+    p.add_argument(
+        "--h2", type=float, default=0.5, help="Target heritability for simulation"
+    )
+    p.add_argument("--seed", type=int, default=42, help="Random seed")
+    p.set_defaults(func=cmd)

@@ -50,3 +50,18 @@ def cmd(args):
     print(f"folds\t{args.folds}")
     print(f"real_samples\t{len(real_indices)}")
     print(f"sim_samples\t{len(sim_indices)}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "split", help="Generate CV split indices (real samples for test, sim in train)"
+    )
+    p.add_argument(
+        "-i",
+        "--input",
+        required=True,
+        help="Dataset directory containing y.npy and sample_ids.txt",
+    )
+    p.add_argument("--folds", type=int, default=5, help="Number of CV folds")
+    p.add_argument("--seed", type=int, default=2024, help="Random seed")
+    p.set_defaults(func=cmd)
