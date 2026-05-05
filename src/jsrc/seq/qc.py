@@ -90,3 +90,14 @@ def cmd(args):
         return
     for section, stats in out.items():
         _print_kv(section, stats)
+
+
+def register(subparsers):
+    p = subparsers.add_parser("qc", help="Quick FASTA/FASTQ sequence QC stats")
+    p.add_argument("-fa", help="Input FASTA file")
+    p.add_argument("-fq", nargs="+", help="Input FASTQ/FASTQ.GZ file(s)")
+    p.add_argument(
+        "-gs", type=int, help="Genome size (bp), used with -fq for depth estimate"
+    )
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=cmd)

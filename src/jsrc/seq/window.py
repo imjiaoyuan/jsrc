@@ -77,3 +77,14 @@ def cmd(args):
             f"{row['start']}\t{row['end']}\t{row['len']}\t"
             f"{row['gc_percent']:.4f}\t{row['at_skew']:.6f}\t{row['gc_skew']:.6f}"
         )
+
+
+def register(subparsers):
+    p = subparsers.add_parser("window", help="Sliding-window GC and AT skew")
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("-id", help="Target sequence ID (default: longest sequence)")
+    p.add_argument("-w", type=int, default=1000, help="Window size")
+    p.add_argument("-s", type=int, default=200, help="Step size")
+    p.add_argument("--head", type=int, default=10, help="Print first N windows")
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=cmd)

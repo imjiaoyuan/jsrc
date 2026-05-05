@@ -49,3 +49,12 @@ def cmd(args):
             print(f"Warning: Failed to translate {gene_id}: {exc}", file=sys.stderr)
     SeqIO.write(proteins, args.o, "fasta")
     print(f"Translated {len(proteins)} genes to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("translate", help="Extract CDS and translate to protein")
+    p.add_argument("-fa", required=True, help="Genome FASTA file")
+    p.add_argument("-gff", required=True, help="GFF annotation file")
+    p.add_argument("-id", required=True, help="Gene ID field in GFF")
+    p.add_argument("-o", required=True, help="Output protein FASTA")
+    p.set_defaults(func=cmd)

@@ -53,3 +53,18 @@ def cmd(args):
 
     SeqIO.write(promoters, args.o, "fasta")
     print(f"Extracted {len(promoters)} promoter sequences to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "promoter", help="Extract promoter sequences from genome and GFF"
+    )
+    p.add_argument("-fa", required=True, help="Genome FASTA file")
+    p.add_argument("-gff", required=True, help="GFF annotation file")
+    p.add_argument("-ids", required=True, help="Target gene ID list file")
+    p.add_argument("-o", required=True, help="Output promoter FASTA file")
+    p.add_argument("-id", default="ID", help="ID field in GFF attributes")
+    p.add_argument("-feature", default="gene", help="GFF feature type to use")
+    p.add_argument("-up", type=int, default=2000, help="Upstream bp")
+    p.add_argument("-down", type=int, default=0, help="Downstream bp")
+    p.set_defaults(func=cmd)

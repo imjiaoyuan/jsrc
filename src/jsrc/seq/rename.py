@@ -60,3 +60,14 @@ def cmd(args):
 
     renamed = _apply_mapping(args.fa, args.o, mapping)
     print(f"Renamed {renamed} IDs to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("rename", help="Rename FASTA IDs (CSV or GFF mapping)")
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("-mode", choices=["csv", "gff"], default="csv", help="Mapping mode")
+    p.add_argument("-map", help="CSV mapping file old,new (for mode=csv)")
+    p.add_argument("-gff", help="GFF annotation file (for mode=gff)")
+    p.add_argument("-parent", help="Parent attribute field name (for mode=gff)")
+    p.add_argument("-o", required=True, help="Output FASTA file")
+    p.set_defaults(func=cmd)

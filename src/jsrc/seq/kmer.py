@@ -75,3 +75,16 @@ def cmd(args):
     for i, name in enumerate(names):
         vals = "\t".join(f"{v:.6f}" for v in matrix[i])
         print(f"{name}\t{vals}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "kmer", help="k-mer profile and optional sample distances"
+    )
+    p.add_argument("-fa", nargs="+", required=True, help="One or more FASTA files")
+    p.add_argument("-k", type=int, default=5, help="k-mer size")
+    p.add_argument(
+        "--top", type=int, default=20, help="Show top N k-mers for single FASTA"
+    )
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=cmd)

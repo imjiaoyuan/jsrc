@@ -119,3 +119,11 @@ def cmd(args):
     for codon, count in counts.most_common(args.top):
         freq = count / total_codons if total_codons else 0.0
         print(f"{codon}\t{count}\t{freq:.6f}\t{rscu[codon]:.4f}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("codon", help="Codon usage and RSCU from CDS FASTA")
+    p.add_argument("-fa", required=True, help="CDS FASTA file")
+    p.add_argument("--top", type=int, default=20, help="Show top N codons")
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=cmd)

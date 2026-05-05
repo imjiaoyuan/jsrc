@@ -87,3 +87,22 @@ def cmd(args):
         genome.close()
 
     print(f"Extracted {extracted}/{len(targets)} sequences to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "extract", help="Extract feature sequences by IDs from genome+GFF"
+    )
+    p.add_argument("-fa", required=True, help="Genome FASTA file")
+    p.add_argument("-gff", required=True, help="GFF annotation file")
+    p.add_argument("-ids", required=True, help="ID list file")
+    p.add_argument("-o", required=True, help="Output FASTA file")
+    p.add_argument(
+        "-feature", default="CDS", help="Feature type in GFF (e.g. CDS,gene,exon,mRNA)"
+    )
+    p.add_argument(
+        "-match",
+        default="Parent",
+        help="Attribute key used to match IDs (e.g. Parent,ID,gene_id)",
+    )
+    p.set_defaults(func=cmd)
