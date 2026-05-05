@@ -1,7 +1,6 @@
 import gzip
 import json
 import logging
-import os
 from argparse import Namespace
 from typing import Any, IO
 

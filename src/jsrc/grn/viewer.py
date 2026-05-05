@@ -4,7 +4,7 @@ import pathlib
 from jsrc.grn.core import ensure_dir, write_json, write_text
 
 _SCRIPT_TEMPLATE = (
-    pathlib.Path(__file__).parent / "viewer_resources" / "script.js"
+    pathlib.Path(__file__).parent / "sources" / "script.js"
 ).read_text(encoding="utf-8")
 
 INDEX_HTML = """<!DOCTYPE html>
