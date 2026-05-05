@@ -42,6 +42,62 @@ def test_cli_debug_mode_raises_original_exception(monkeypatch):
         cli.main()
 
 
+def test_cli_plot_help_imports_only_plot_module(monkeypatch):
+    imported: list[str] = []
+    real_import = cli.importlib.import_module
+
+    def _spy(name: str):
+        imported.append(name)
+        return real_import(name)
+
+    monkeypatch.setattr(cli.importlib, "import_module", _spy)
+    monkeypatch.setattr(sys, "argv", ["jsrc", "plot", "-h"])
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert exc.value.code == 0
+    assert imported == ["jsrc.plot"]
+
+
+def test_cli_root_help_does_not_import_modules(monkeypatch):
+    imported: list[str] = []
+    real_import = cli.importlib.import_module
+
+    def _spy(name: str):
+        imported.append(name)
+        return real_import(name)
+
+    monkeypatch.setattr(cli.importlib, "import_module", _spy)
+    monkeypatch.setattr(sys, "argv", ["jsrc", "-h"])
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert exc.value.code == 0
+    assert imported == []
+
+
+@pytest.mark.parametrize(
+    ("argv", "expected_imports"),
+    [
+        (["jsrc", "plot", "heart", "-h"], ["jsrc.plot", "jsrc.plot.heart"]),
+        (["jsrc", "seq", "window", "-h"], ["jsrc.seq", "jsrc.seq.window"]),
+        (["jsrc", "grn", "centrality", "-h"], ["jsrc.grn", "jsrc.grn.centrality"]),
+    ],
+)
+def test_cli_imports_only_selected_subcommand(monkeypatch, argv, expected_imports):
+    imported: list[str] = []
+    real_import = cli.importlib.import_module
+
+    def _spy(name: str):
+        imported.append(name)
+        return real_import(name)
+
+    monkeypatch.setattr(cli.importlib, "import_module", _spy)
+    monkeypatch.setattr(sys, "argv", argv)
+    with pytest.raises(SystemExit) as exc:
+        cli.main()
+    assert exc.value.code == 0
+    assert imported == expected_imports
+
+
 def test_job_submit_and_list_flow(tmp_path, capsys, monkeypatch):
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "xdg"))
     monkeypatch.setenv("JSRC_JOBS_FILE", str(tmp_path / "jobs.tsv"))
