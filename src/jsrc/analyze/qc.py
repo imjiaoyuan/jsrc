@@ -193,3 +193,20 @@ def cmd(args):
         print(json.dumps(stats, ensure_ascii=False, indent=2))
         return
     _print_human(stats)
+
+
+def register(subparsers):
+    p = subparsers.add_parser("qc", help="Assembly/mapping/variant quick stats")
+    p.add_argument("-fa", help="Assembly FASTA for contig/N50/GC stats")
+    p.add_argument("-sam", help="SAM/SAM.GZ for mapping rate and depth")
+    p.add_argument("-vcf", help="VCF/VCF.GZ for SNP/INDEL counts")
+    p.add_argument(
+        "-fq", nargs="+", help="FASTQ/FASTQ.GZ files for read/base/depth stats"
+    )
+    p.add_argument(
+        "-gs", type=int, help="Genome size (bp), used with -fq for depth estimate"
+    )
+    p.add_argument(
+        "--json", action="store_true", help="Print JSON instead of text table"
+    )
+    p.set_defaults(func=cmd)

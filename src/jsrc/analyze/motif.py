@@ -30,3 +30,13 @@ def cmd(args):
         for motif, count in top:
             f.write(f"{motif}\t{count}\t{len(motif)}\n")
     print(f"Motif analysis complete. Results in {out_tsv}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("motif", help="Motif analysis")
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("-o", required=True, help="Output directory")
+    p.add_argument("-nmotifs", type=int, default=5, help="Number of motifs")
+    p.add_argument("-minw", type=int, default=6, help="Min motif width")
+    p.add_argument("-maxw", type=int, default=12, help="Max motif width")
+    p.set_defaults(func=cmd)

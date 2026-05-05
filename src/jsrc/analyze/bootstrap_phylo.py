@@ -65,3 +65,14 @@ def cmd(args):
     else:
         print(base_tree.format("newick").strip())
     print(f"bootstrap_replicates\t{args.n}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "bootstrap_phylo", help="Bootstrap support for NJ phylogeny"
+    )
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("-n", type=int, default=100, help="Bootstrap replicates")
+    p.add_argument("-seed", type=int, default=42, help="Random seed")
+    p.add_argument("-o", help="Optional output Newick file")
+    p.set_defaults(func=cmd)

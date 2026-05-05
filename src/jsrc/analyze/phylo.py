@@ -21,3 +21,11 @@ def cmd(args):
     tree = _build_tree(records, args.a)
     Phylo.write(tree, args.o, "newick")
     print(f"Phylogenetic tree ({args.a}) saved to {args.o}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("phylo", help="Build phylogenetic tree")
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("-o", required=True, help="Output Newick tree")
+    p.add_argument("-a", choices=["nj", "upgma"], default="nj", help="Algorithm")
+    p.set_defaults(func=cmd)

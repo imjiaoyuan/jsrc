@@ -45,3 +45,12 @@ def cmd(args):
     print(f"alignment_length\t{payload['alignment_length']}")
     print(f"mean_conservation\t{payload['mean_conservation']:.6f}")
     print(f"consensus\t{payload['consensus']}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "msa_consensus", help="Consensus and conservation from FASTA"
+    )
+    p.add_argument("-fa", required=True, help="Input FASTA file")
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=cmd)

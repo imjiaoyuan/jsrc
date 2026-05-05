@@ -66,3 +66,12 @@ def cmd(args):
         return
     for k, v in out.items():
         print(f"{k}\t{v}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("snpindel", help="Pairwise SNP/INDEL summary")
+    p.add_argument("-fa", required=True, help="FASTA containing at least two sequences")
+    p.add_argument("-id1", help="Sequence 1 ID (default: first record)")
+    p.add_argument("-id2", help="Sequence 2 ID (default: second record)")
+    p.add_argument("--json", action="store_true", help="Print JSON")
+    p.set_defaults(func=cmd)
