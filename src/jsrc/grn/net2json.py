@@ -2,11 +2,12 @@ import csv
 import zipfile
 from pathlib import Path
 
+from jsrc.grn.anno2json import annotation_to_json
 from jsrc.grn.core import write_json
 from jsrc.grn.viewer import sync_viewer_assets
 
 
-def _network_to_json(input_path: str, output_path: str):
+def network_to_json(input_path: str, output_path: str):
     links = []
     with open(input_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
@@ -28,22 +29,6 @@ def _network_to_json(input_path: str, output_path: str):
     print(f"Network JSON written: {output_path}")
     print(f"Genes: {len(nodes)} | Edges: {len(links)}")
     return links, len(nodes)
-
-
-def _annotation_to_json(input_path: str, output_path: str):
-    anno = {}
-    with open(input_path, "r", encoding="utf-8") as f:
-        reader = csv.reader(f, delimiter="\t")
-        for row in reader:
-            if not row:
-                continue
-            gid = str(row[0]).replace("_", "-")
-            ptr = str(row[1]) if len(row) > 1 else ""
-            desc = str(row[2]) if len(row) > 2 else ""
-            anno[gid] = {"p": ptr, "d": desc}
-    write_json(output_path, anno)
-    print(f"Annotation JSON written: {output_path}")
-    return anno
 
 
 def _infer_viewer_dir(output_json: str) -> Path:
@@ -70,8 +55,8 @@ def _zip_viewer(viewer_dir: Path, zip_output: str):
     print(f"Viewer ZIP written: {zip_path}")
 
 
-def cmd_network(args):
-    links, _ = _network_to_json(args.input, args.output)
+def cmd(args):
+    links, _ = network_to_json(args.input, args.output)
     need_viewer = bool(args.zip_output or args.viewer_dir or args.annotation_input)
     if not need_viewer:
         return
@@ -91,7 +76,7 @@ def cmd_network(args):
     )
     write_json(str(viewer_dir / "json" / "grn.json"), links)
     if args.annotation_input:
-        _annotation_to_json(
+        annotation_to_json(
             args.annotation_input, str(viewer_dir / "json" / "annotation.json")
         )
     elif not (viewer_dir / "json" / "annotation.json").exists():
@@ -99,7 +84,3 @@ def cmd_network(args):
     print(f"Viewer assets written: {viewer_dir}")
     if args.zip_output:
         _zip_viewer(viewer_dir, args.zip_output)
-
-
-def cmd_annotation(args):
-    _annotation_to_json(args.input, args.output)

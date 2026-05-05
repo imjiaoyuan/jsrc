@@ -51,14 +51,14 @@ def register_subparser(subparsers):
         default=0,
         help="Max nodes to display in full view mode (0 = all)",
     )
-    p.set_defaults(func=_dispatch("jsrc.grn.convert", "cmd_network"))
+    p.set_defaults(func=_dispatch("jsrc.grn.net2json"))
 
     p = grn_sub.add_parser(
         "anno2json", help="Convert annotation table to annotation.json"
     )
     p.add_argument("-i", "--input", required=True, help="Input file")
     p.add_argument("-o", dest="output", required=True, help="Output JSON")
-    p.set_defaults(func=_dispatch("jsrc.grn.convert", "cmd_annotation"))
+    p.set_defaults(func=_dispatch("jsrc.grn.anno2json"))
 
     p = grn_sub.add_parser("serve", help="Start GRN viewer service")
     p.add_argument(

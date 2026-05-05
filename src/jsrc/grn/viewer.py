@@ -874,5 +874,3 @@ def sync_viewer_assets(
     anno_path = os.path.join(base, "json/annotation.json")
     if not os.path.exists(anno_path):
         write_json(anno_path, {})
-
-
