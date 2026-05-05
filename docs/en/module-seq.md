@@ -100,6 +100,37 @@ jsrc seq kmer -fa a.fa b.fa -k 7 --top 30 --json
 - `--top`: top N k-mers for single-file mode (default: `20`).
 - `--json`: print JSON output.
 
+## fetch
+
+Fetch sequences from NCBI databases using accession IDs (requires internet and an email address for NCBI Entrez).
+
+```bash
+jsrc seq fetch -ids NM_001301717 NR_146152 --email user@example.com -o sequences.fa
+jsrc seq fetch -ids ids.txt --format genbank --email user@example.com --json
+```
+
+- `-ids`: accession IDs or files containing IDs (one per line).
+- `-o`: output file (default: stdout).
+- `--format`: output format, `fasta` or `genbank` (default: `fasta`).
+- `-db`: NCBI database (default: `nucleotide`).
+- `--email`: email address (required by NCBI policy).
+- `--json`: print JSON summary instead of sequences.
+
+## digest
+
+Simulate restriction enzyme digestion on a sequence. Supports linear and circular DNA with any combination of enzymes from Biopython's Restriction database.
+
+```bash
+jsrc seq digest -fa plasmid.fa -e EcoRI,HindIII --circular --json
+jsrc seq digest -fa seq.fa -e EcoRI --min-size 50
+```
+
+- `-fa`: input FASTA file.
+- `-e` / `--enzymes`: comma-separated enzyme names (e.g., `EcoRI,HindIII`).
+- `--circular`: treat sequence as circular (default: linear).
+- `--min-size`: minimum fragment size to report (default: `0`).
+- `--json`: print JSON output.
+
 ## window
 
 This command computes sliding-window sequence metrics like GC and skew values. It is useful for regional pattern scanning without opening a full plotting pipeline.

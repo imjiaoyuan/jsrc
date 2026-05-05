@@ -1,6 +1,17 @@
 from typing import Any
 
-from jsrc.seq import codon, extract, kmer, promoter, qc, rename, translate, window
+from jsrc.seq import (
+    codon,
+    digest,
+    extract,
+    fetch,
+    kmer,
+    promoter,
+    qc,
+    rename,
+    translate,
+    window,
+)
 
 
 def register_subparser(subparsers: Any) -> None:
@@ -9,6 +20,8 @@ def register_subparser(subparsers: Any) -> None:
     seq_parser.set_defaults(_group_parser=seq_parser)
 
     extract.register(seq_sub)
+    fetch.register(seq_sub)
+    digest.register(seq_sub)
     rename.register(seq_sub)
     translate.register(seq_sub)
     promoter.register(seq_sub)

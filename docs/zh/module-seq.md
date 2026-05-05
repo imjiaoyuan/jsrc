@@ -100,6 +100,37 @@ jsrc seq kmer -fa a.fa b.fa -k 7 --top 30 --json
 - `--top`：单样本时显示前 N 个，默认 `20`。
 - `--json`：JSON 输出。
 
+## fetch
+
+通过 NCBI Entrez 按 accession ID 批量下载序列（需要网络，NCBI 要求提供邮箱）。
+
+```bash
+jsrc seq fetch -ids NM_001301717 NR_146152 --email user@example.com -o sequences.fa
+jsrc seq fetch -ids ids.txt --format genbank --email user@example.com --json
+```
+
+- `-ids`：accession ID 或 ID 文件（一行一个）。
+- `-o`：输出文件（默认标准输出）。
+- `--format`：输出格式，`fasta` 或 `genbank`（默认 `fasta`）。
+- `-db`：NCBI 数据库（默认 `nucleotide`）。
+- `--email`：邮箱（NCBI 要求提供）。
+- `--json`：输出 JSON 摘要。
+
+## digest
+
+模拟限制性内切酶对 DNA 序列的酶切。支持线性和环状两种模式，酶来自 Biopython Restriction 数据库。
+
+```bash
+jsrc seq digest -fa plasmid.fa -e EcoRI,HindIII --circular --json
+jsrc seq digest -fa seq.fa -e EcoRI --min-size 50
+```
+
+- `-fa`：输入 FASTA 文件。
+- `-e` / `--enzymes`：逗号分隔的酶名称（如 `EcoRI,HindIII`）。
+- `--circular`：环状 DNA（默认线性）。
+- `--min-size`：报告的最小片段长度（默认 `0`）。
+- `--json`：JSON 输出。
+
 ## window
 
 当你需要看序列在局部窗口内的 GC 与偏斜变化，这个命令会给出可直接下游使用的滑窗统计结果。
