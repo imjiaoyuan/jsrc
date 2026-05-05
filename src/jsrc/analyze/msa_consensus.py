@@ -7,6 +7,7 @@ from typing import Any
 from Bio import SeqIO
 
 from jsrc.analyze.core import pad_alignment
+from jsrc.core import progressbar
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +26,11 @@ def cmd(args: Namespace) -> None:
             max_len,
         )
     seqs = [str(r.seq) for r in pad_alignment(records)]
+    seq_len = len(seqs[0])
     consensus_chars = []
     conservation = []
-    for i in range(len(seqs[0])):
+    bar = progressbar(total=seq_len, desc="Consensus")
+    for i in range(seq_len):
         col = [s[i] for s in seqs if s[i] != "-"]
         if not col:
             consensus_chars.append("N")
@@ -37,7 +40,9 @@ def cmd(args: Namespace) -> None:
         base, c = cnt.most_common(1)[0]
         consensus_chars.append(base)
         conservation.append(c / len(col))
+        bar.update()
     consensus = "".join(consensus_chars)
+    bar.finish()
     avg_cons = sum(conservation) / len(conservation) if conservation else 0.0
     payload = {
         "sequence_count": len(records),

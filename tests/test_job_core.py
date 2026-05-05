@@ -376,7 +376,7 @@ class TestToRowView:
             "rss_samples": "0",
         }
         view = core.to_row_view(row, {})
-        assert view["rss_avg_mb"] == "10.0"  # falls back to rss_kb_last
+        assert view["rss_avg_mb"] == "10.0"
 
 
 class TestRefreshJobs:

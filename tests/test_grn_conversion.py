@@ -88,7 +88,7 @@ class TestAnnotationToJson:
         out = tmp_path / "annotation.json"
 
         anno = annotation_to_json(str(tsv), str(out))
-        # underscore replaced with hyphen by annotation_to_json
+
         assert anno["just-id"]["p"] == ""
         assert anno["just-id"]["d"] == ""
 

@@ -32,16 +32,11 @@ def test_seq_promoter_forward_strand(tmp_path, caplog):
     recs = list(SeqIO.parse(str(out), "fasta"))
     assert len(recs) == 1
     assert recs[0].id == "gene1"
-    assert (
-        str(recs[0].seq) == "NNNNN"
-    )  # 5 bp upstream of start (position 11 -> 10 -> 5 upstream = start-5 to start-1)
+    assert str(recs[0].seq) == "NNNNN"
 
 
 def test_seq_promoter_reverse_strand(tmp_path):
-    # Gene at 1..5 on - strand; upstream (5' of gene) = bases after end=5
-    # chr1: AA AA C CC C T T T T T G G G G G (20 bp)
-    # Gene on - strand at 1..5 (A A A A C)
-    # Upstream 5bp of end=5 → chr[5:10] = "C T T T T" → rev_comp = "A A A A G"
+
     fa = tmp_path / "genome.fa"
     fa.write_text(">chr1\nAAAACCTTTTGGGGGCCCCC\n", encoding="utf-8")
     gff = tmp_path / "anno.gff"
@@ -65,9 +60,5 @@ def test_seq_promoter_reverse_strand(tmp_path):
     recs = list(SeqIO.parse(str(out), "fasta"))
     assert len(recs) == 1
     assert recs[0].id == "gene1"
-    # rev_comp of CTTTT = AAAG (wait, let me re-check)
-    # seq[5:10] = "CTTTT" → rev_comp of CTTTT = AAAG... no
-    # C→G, T→A, T→A, T→A, T→A → GAAAA
-    # Actually: C complement = G, T complement = A
-    # CTTTT → complement = GAAAA, reverse = AAAAG
+
     assert str(recs[0].seq) == "AAAAG"

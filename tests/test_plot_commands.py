@@ -208,11 +208,10 @@ class TestPlotCis:
         assert out.exists()
 
     def test_cis_short_bed_line_skipped(self, tmp_path):
-        """BED lines with fewer than 4 columns are skipped gracefully."""
         pytest.importorskip("matplotlib")
         bed = tmp_path / "elements.bed"
         bed.write_text(
-            "chr1\t10\t50\tTATA\n" "chr1\t100\t120\n",  # too short, should skip
+            "chr1\t10\t50\tTATA\n" "chr1\t100\t120\n",
             encoding="utf-8",
         )
         out = tmp_path / "cis.png"

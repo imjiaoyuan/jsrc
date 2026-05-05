@@ -42,7 +42,6 @@ class TestGetGeneStructure:
         assert coords["gene1"][1] == (60, 100)
 
     def test_direct_cds_parent_no_mrna(self, tmp_path):
-        """CDS Parent points directly to gene ID (no mRNA intermediary)."""
         gff = tmp_path / "test.gff"
         gff.write_text(
             "chr1\tsrc\tCDS\t10\t30\t.\t+\t.\tParent=gene1;\n"
@@ -93,7 +92,5 @@ class TestGetGeneStructure:
             "chr1\tsrc\tUTR\t11\t20\t.\t+\t.\tParent=gene1;\n",
             encoding="utf-8",
         )
-        coords = get_gene_structure(
-            str(gff), ["gene1"], feature_types=["CDS"]  # exclude UTR
-        )
+        coords = get_gene_structure(str(gff), ["gene1"], feature_types=["CDS"])
         assert len(coords["gene1"]) == 1

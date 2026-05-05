@@ -77,7 +77,7 @@ class TestAnalyzeMotif:
         assert tsv.exists()
         lines = tsv.read_text().strip().split("\n")
         assert lines[0] == "motif\tcount\tlength"
-        assert len(lines) > 1  # at least one motif found
+        assert len(lines) > 1
 
 
 class TestAnalyzeMsaConsensus:
@@ -103,7 +103,7 @@ class TestAnalyzeMsaConsensus:
         assert payload["sequence_count"] == 2
         assert payload["alignment_length"] == 4
         assert payload["consensus"] == "ATGC"
-        # Position 0: A,A -> A, pos1: T,T -> T, pos2: G,C -> G (2/2), pos3: C,C -> C
+
         assert payload["mean_conservation"] > 0
 
     def test_msa_fewer_than_two_raises(self, tmp_path):
@@ -129,9 +129,7 @@ class TestAnalyzeSnpIndel:
         payload = json.loads(capsys.readouterr().out)
         assert payload["seq1"] == "s1"
         assert payload["seq2"] == "s2"
-        assert (
-            payload["snp_count"] == 3
-        )  # PairwiseAligner reports 3 mismatches for these 8-mers
+        assert payload["snp_count"] == 3
 
     def test_snpindel_with_ids(self, tmp_path, capsys):
         fa = tmp_path / "seqs.fa"

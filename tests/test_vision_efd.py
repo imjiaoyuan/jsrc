@@ -10,7 +10,6 @@ from jsrc.vision.efd import (
 
 class TestEllipticFourier:
     def test_calculate_square_contour(self):
-        """A square contour should produce non-zero coefficients."""
         contour = np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)
         coeffs = EllipticFourier.calculate(contour, order=5, normalize=False)
         assert coeffs.shape == (5, 4)
@@ -28,11 +27,10 @@ class TestEllipticFourier:
         assert coeffs_norm.shape == (5, 4)
 
     def test_normalize_rotation_invariant(self):
-        """Normalized EFD should be similar regardless of rotation."""
         contour = np.array(
             [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]], dtype=np.float32
         )
-        # Rotated version
+
         theta = np.radians(45)
         c, s = np.cos(theta), np.sin(theta)
         rot = np.array([[c, -s], [s, c]])
@@ -41,7 +39,6 @@ class TestEllipticFourier:
         coeffs1 = EllipticFourier.calculate(contour, order=10, normalize=True)
         coeffs2 = EllipticFourier.calculate(contour_rot, order=10, normalize=True)
 
-        # First harmonic should be similar (not identical due to discretization)
         assert np.abs(coeffs1[0, 0] - coeffs2[0, 0]) < 1.0
 
     def test_normalize_empty_coeffs(self):
@@ -50,7 +47,7 @@ class TestEllipticFourier:
 
     def test_normalize_zero_scale_handled(self):
         coeffs = np.zeros((3, 4))
-        # All zeros → scale = 0, falls back to 1.0
+
         result = EllipticFourier.normalize(coeffs)
         assert result.shape == (3, 4)
         assert not np.any(np.isnan(result))
@@ -69,7 +66,6 @@ class TestEllipticFourier:
         assert not np.any(np.isnan(pts))
 
     def test_calculate_and_reconstruct_roundtrip(self):
-        """After calculate + reconstruct, should get close to original shape."""
         contour = np.array(
             [
                 [0, 0],
@@ -85,7 +81,7 @@ class TestEllipticFourier:
         )
         coeffs = EllipticFourier.calculate(contour, order=8, normalize=False)
         reconstructed = EllipticFourier.reconstruct(coeffs, num_points=200)
-        # Check that reconstructed values are in a reasonable range
+
         assert np.max(np.abs(reconstructed)) < 15
         assert not np.any(np.isnan(reconstructed))
 
@@ -95,9 +91,9 @@ class TestCenterContour:
         contour = np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)
         centered = _center_contour(contour)
         assert centered.shape == (4, 2)
-        # Centroid should be at (0, 0) after centering
+
         assert np.mean(centered[:, 0]) == pytest.approx(0.0, abs=1e-10)
-        # y-axis is inverted
+
         assert np.mean(centered[:, 1]) == pytest.approx(0.0, abs=1e-10)
 
     def test_center_invalid_shape_raises(self):
@@ -164,7 +160,7 @@ class TestEFDCmd:
         with open(csv_file) as f:
             reader = csv_mod.DictReader(f)
             rows = list(reader)
-        assert len(rows) == 10  # 10 harmonics
+        assert len(rows) == 10
 
     def test_efd_cmd_no_plot(self, tmp_path):
         from jsrc.vision.efd import cmd
@@ -188,7 +184,7 @@ class TestEFDCmd:
 
         csv_file = out_dir / "leaf_01_efd.csv"
         assert csv_file.exists()
-        # No analysis.png should exist when --no-plot
+
         assert not list(out_dir.glob("*analysis*"))
 
     def test_efd_empty_directory_raises(self, tmp_path):

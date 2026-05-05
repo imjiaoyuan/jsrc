@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 def _calc_fragments(
     cut_positions: list[int], seq_length: int, circular: bool
 ) -> list[int]:
-    """Calculate fragment sizes from sorted unique cut positions."""
     positions = sorted(set(cut_positions))
     if not positions:
         return [seq_length]

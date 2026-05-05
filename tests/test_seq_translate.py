@@ -31,7 +31,7 @@ def test_seq_translate_basic(tmp_path, capsys, caplog):
 
 
 def test_seq_translate_reverse_strand(tmp_path, capsys):
-    # CDS 1-12 on - strand → rev_comp = ATGCCACTTAA → translates to MPL*
+
     fa = tmp_path / "genome.fa"
     fa.write_text(">chr1\nTTAAGTGGCAT\n", encoding="utf-8")
     gff = tmp_path / "anno.gff"

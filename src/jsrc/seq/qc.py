@@ -1,10 +1,13 @@
 import gzip
 import json
 import logging
+import os
 from argparse import Namespace
 from typing import Any, IO
 
 from Bio import SeqIO
+
+from jsrc.core import progressbar
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +57,7 @@ def _fasta_stats(path: str) -> dict[str, float | int]:
 def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float | int]:
     reads = 0
     bases = 0
+    bar = progressbar(total=0, desc="FASTQ reads")
     for path in paths:
         with _open_text(path) as f:
             line_no = 0
@@ -62,6 +66,7 @@ def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float |
                 if line_no % 4 == 2:
                     reads += 1
                     bases += len(line.strip())
+                    bar.update()
     out: dict[str, float | int] = {
         "reads": reads,
         "bases": bases,

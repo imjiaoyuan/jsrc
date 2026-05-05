@@ -6,15 +6,21 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import progressbar
+
 
 def _kmer_counter(path: str, k: int) -> Counter:
     c = Counter()
-    for rec in SeqIO.parse(path, "fasta"):
+    records = list(SeqIO.parse(path, "fasta"))
+    bar = progressbar(total=len(records), desc=f"  {path}")
+    for rec in records:
         seq = str(rec.seq).upper().replace("U", "T")
         for i in range(0, len(seq) - k + 1):
             kmer = seq[i : i + k]
             if set(kmer) <= {"A", "C", "G", "T"}:
                 c[kmer] += 1
+        bar.update()
+    bar.finish()
     return c
 
 

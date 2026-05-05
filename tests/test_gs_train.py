@@ -36,7 +36,7 @@ class TestGSSimulate:
             y_real=y_real,
             rng=rng,
             n_sim=5,
-            top_k=999,  # capped to n_features=5
+            top_k=999,
             h2=0.5,
         )
         assert x_sim.shape == (5, 5)
@@ -126,7 +126,7 @@ class TestGSTrain:
         import pandas as pd
 
         df = pd.read_csv(results_csv)
-        assert len(df) == 2  # 2 folds
+        assert len(df) == 2
         assert list(df["model"]) == ["rf", "rf"]
 
     def test_train_invalid_folds_raises(self, tmp_path):
@@ -199,7 +199,6 @@ class TestGSTrain:
             cmd(args)
 
     def test_train_all_models(self, tmp_path):
-        """Quick check that all 8 model types run without error."""
         pytest.importorskip("sklearn")
         rng = np.random.default_rng(42)
         np.save(tmp_path / "X.npy", rng.integers(0, 3, (20, 10)).astype(np.float32))

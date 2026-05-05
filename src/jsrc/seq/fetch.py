@@ -10,11 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 def _parse_ids(raw: list[str]) -> list[str]:
-    """Parse accession IDs from command-line arguments.
-
-    Each item is treated as a literal ID unless it refers to an existing
-    file, in which case whitespace-stripped non-empty lines are read.
-    """
     ids: list[str] = []
     for item in raw:
         try:

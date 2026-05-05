@@ -20,8 +20,6 @@ class TestCodonUsage:
         captured = capsys.readouterr()
         assert "total_codons" in caplog.text
         assert "codon\tcount\tfreq\trscu" in captured.out
-        # ATG(M) GCC(A) ACT(T) TAA(*)
-        # After skipping stop codons: 3 codons
 
     def test_codon_json(self, tmp_path, capsys):
         fa = tmp_path / "cds.fa"
@@ -67,7 +65,7 @@ class TestKmer:
         payload = json.loads(capsys.readouterr().out)
         assert payload["k"] == 3
         assert payload["total_kmers"] == 6
-        assert len(payload["top_kmers"]) == 4  # 4 distinct 3-mers from ATGCATGC
+        assert len(payload["top_kmers"]) == 4
 
     def test_kmer_multiple_files_distance(self, tmp_path, capsys):
         fa1 = tmp_path / "a.fa"
@@ -81,7 +79,7 @@ class TestKmer:
         payload = json.loads(capsys.readouterr().out)
         assert "cosine_distance_matrix" in payload
         assert payload["samples"] == [str(fa1), str(fa2)]
-        # Self-distance should be approximately 0.0
+
         assert payload["cosine_distance_matrix"][0][0] == pytest.approx(0.0, abs=1e-10)
         assert payload["cosine_distance_matrix"][1][1] == pytest.approx(0.0, abs=1e-10)
 

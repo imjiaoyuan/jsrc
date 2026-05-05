@@ -73,7 +73,6 @@ class TestVisionExtractValidate:
 class TestVisionExtractContours:
     @staticmethod
     def _white_square(size=100, margin=10):
-        """Create a white square on black background."""
         img = np.zeros((size, size, 3), dtype=np.uint8)
         cv2.rectangle(
             img, (margin, margin), (size - margin, size - margin), (255, 255, 255), -1
@@ -185,7 +184,6 @@ class TestVisionExtractContours:
         assert len(npy_files) == 2
 
     def test_extract_inverted_threshold(self, tmp_path):
-        """Black square on white background with invert flag."""
         img = np.full((100, 100, 3), 255, dtype=np.uint8)
         cv2.rectangle(img, (30, 30), (70, 70), (0, 0, 0), -1)
         img_path = tmp_path / "test.png"
