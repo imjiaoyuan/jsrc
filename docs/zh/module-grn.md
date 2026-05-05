@@ -1,11 +1,14 @@
 # jsrc grn
 
+基因调控网络（GRN）的分析和交互可视化。从边表到可交互的力导向图，支持展开/搜索/导出。
+
 ## net2json
 
-这是 GRN 数据进入可视化的主入口：边表转 JSON、选择展示模式、可选打包 ZIP，一次走完最常见流程。
+GRN 可视化的入口。把边表转换成 viewer 所需的 JSON 格式，同时控制网络的展示模式。支持两种模式：`-a`（全视图，节点数低于阈值时自动全网展示）和 `-s`（缩略模式，保持手动点击展开）。还可以附带注释文件（`-n`），生成 annotation.json，网络节点上会显示基因的附加信息。
 
 ```bash
-jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -a -t 200 -n annotation.tsv -z viewer.zip --max-nodes 200
+jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -a -t 200 \
+  -n annotation.tsv --max-nodes 200
 jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -s
 ```
 
@@ -21,7 +24,7 @@ jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -s
 
 ## anno2json
 
-只需要转换注释信息时，用它最省事。它把注释表直接转成 viewer 可读的 annotation.json。
+如果只需要转换注释信息、网络 JSON 已经准备好了，用这个命令单独生成 annotation.json。输入注释 TSV，输出给 viewer 用。
 
 ```bash
 jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
@@ -32,11 +35,12 @@ jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
 
 ## serve
 
-数据准备好后，用这个命令本地启动浏览器服务。你可以沿用 all/some 两种展示模式做快速检查或演示。
+数据准备好后，本地启动一个 HTTP 服务来展示 GRN 网络。同样支持 all/some 两种展示模式，默认端口 8000。带注释的网络会额外显示节点分组信息。
 
 ```bash
 jsrc grn serve -d viewer -g viewer/json/grn.json -p 8000 -a -t 200
-jsrc grn serve -d viewer -g viewer/json/grn.json -n viewer/json/annotation.json -s
+jsrc grn serve -d viewer -g viewer/json/grn.json \
+  -n viewer/json/annotation.json -s
 ```
 
 - `-d, --dir`：要服务的 viewer 目录（默认当前目录）。
@@ -49,7 +53,7 @@ jsrc grn serve -d viewer -g viewer/json/grn.json -n viewer/json/annotation.json 
 
 ## centrality
 
-想快速知道哪些基因节点更“关键”，直接跑这个命令即可，输出入度/出度/总度的排序摘要。
+网络构建完后，经常要问"哪些基因是关键节点"。这个命令算每个节点的入度、出度和总度，按总度排序输出，快速定位网络中的 hub 基因。
 
 ```bash
 jsrc grn centrality -i grn.tsv --sep "\t" --top 30

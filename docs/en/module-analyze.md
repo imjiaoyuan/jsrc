@@ -1,79 +1,82 @@
 # jsrc analyze
 
+Common analysis tools for sequences: phylogenetic tree construction, motif discovery, QC summary, consensus calling, variant comparison, and bootstrapped phylogeny.
+
 ## phylo
 
-When you want a quick evolutionary snapshot from sequence data, start here. It reads a FASTA file, builds a tree with your chosen method, and writes a Newick result you can open in any tree viewer.
+Pass in a FASTA, pick an algorithm, and get a Newick tree. Supports neighbor-joining (NJ) and UPGMA. The output works with any tree viewer. Good for a quick look at clustering relationships or as a starting point for more detailed phylogenetic analysis.
 
 ```bash
 jsrc analyze phylo -fa sequences.fa -o tree.nwk -a nj
 ```
 
-- `-fa`: Input FASTA file.
-- `-o`: Output Newick tree file.
-- `-a`: Algorithm, `nj` or `upgma` (default: `nj`).
+- `-fa`: input FASTA.
+- `-o`: output Newick tree file.
+- `-a`: algorithm, `nj` or `upgma` (default: `nj`).
 
 ## motif
 
-Use this for motif hunting in promoter or sequence sets. You control how many motifs to find and the motif width range, so it is easy to tune for exploratory vs stricter runs.
+Find conserved short motifs in promoters or sequence sets. Control the number of motifs and the width range. Useful for exploratory scans and iterative refinement.
 
 ```bash
 jsrc analyze motif -fa promoters.fa -o motif_out -nmotifs 5 -minw 6 -maxw 12
 ```
 
-- `-fa`: Input FASTA file for motif discovery.
-- `-o`: Output directory.
-- `-nmotifs`: Number of motifs to detect (default: `5`).
-- `-minw`: Minimum motif width (default: `6`).
-- `-maxw`: Maximum motif width (default: `12`).
+- `-fa`: input FASTA.
+- `-o`: output directory.
+- `-nmotifs`: number of motifs to detect (default: `5`).
+- `-minw`: minimum motif width (default: `6`).
+- `-maxw`: maximum motif width (default: `12`).
 
 ## qc
 
-Think of this as a one-stop health check for your data. It can summarize assembly quality, mapping results, variant counts, and read-depth signals in a single run.
+Assembly quality (FASTA), mapping statistics (SAM), variant overview (VCF), read depth (FASTQ) — all in one command. A quick way to tell whether your data is usable before moving to more complex analyses.
 
 ```bash
-jsrc analyze qc -fa assembly.fa -sam aln.sam -vcf variants.vcf.gz -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
+jsrc analyze qc -fa assembly.fa -sam aln.sam -vcf variants.vcf.gz \
+  -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
 ```
 
-- `-fa`: Assembly FASTA for contig, N50/N90, and GC metrics.
-- `-sam`: SAM or SAM.GZ for mapping-rate and depth summary.
-- `-vcf`: VCF or VCF.GZ for SNP/INDEL summary.
-- `-fq`: FASTQ or FASTQ.GZ files for read/base/depth stats.
-- `-gs`: Genome size in bp, used with `-fq` to estimate depth.
-- `--json`: Print JSON output instead of text table.
+- `-fa`: assembly FASTA for contig/N50/GC metrics.
+- `-sam`: SAM/SAM.GZ for mapping rate and depth statistics.
+- `-vcf`: VCF/VCF.GZ for SNP/INDEL summary.
+- `-fq`: FASTQ/FASTQ.GZ for read/base/depth stats.
+- `-gs`: genome size in bp, used with `-fq` for depth estimation.
+- `--json`: print JSON output.
 
 ## msa_consensus
 
-After alignment, this helps you quickly see the consensus and how conserved each position is. It is great for fast alignment sanity checks before downstream modeling.
+After multiple sequence alignment, this generates a consensus sequence and per-column conservation scores. It checks whether input sequence lengths differ significantly and pads shorter sequences with gaps if needed.
 
 ```bash
 jsrc analyze msa_consensus -fa aligned.fa --json
 ```
 
-- `-fa`: Input FASTA file, usually aligned sequences.
-- `--json`: Print JSON output.
+- `-fa`: input FASTA (usually aligned sequences).
+- `--json`: JSON output.
 
 ## snpindel
 
-For pairwise sequence comparison, this command gives a compact SNP/INDEL summary without extra workflow overhead. Great for sample-vs-sample difference checks.
+Compare two sequences for differences without going through a full variant calling pipeline. Input a FASTA with two sequences, output SNP/INDEL statistics. Convenient for quick sample-to-sample comparisons.
 
 ```bash
 jsrc analyze snpindel -fa pair.fa -id1 sampleA -id2 sampleB --json
 ```
 
 - `-fa`: FASTA containing at least two sequences.
-- `-id1`: Sequence 1 ID (default: first sequence).
-- `-id2`: Sequence 2 ID (default: second sequence).
-- `--json`: Print JSON output.
+- `-id1`: sequence 1 ID (default: first sequence).
+- `-id2`: sequence 2 ID (default: second sequence).
+- `--json`: JSON output.
 
 ## bootstrap_phylo
 
-If you need branch-confidence support, this is the go-to command. It runs bootstrap replicates and produces a tree that includes support information.
+A plain tree shows topology; bootstrap tells you how confident you should be in each branch. This command runs a specified number of bootstrap replicates and outputs a Newick tree with branch support values. `-seed` controls the random seed for reproducibility.
 
 ```bash
 jsrc analyze bootstrap_phylo -fa seqs.fa -n 200 -seed 42 -o boot.nwk
 ```
 
-- `-fa`: Input FASTA file.
-- `-n`: Bootstrap replicate count (default: `100`).
-- `-seed`: Random seed for reproducibility (default: `42`).
-- `-o`: Optional output Newick file.
+- `-fa`: input FASTA.
+- `-n`: number of bootstrap replicates (default: `100`).
+- `-seed`: random seed (default: `42`).
+- `-o`: optional output Newick file.

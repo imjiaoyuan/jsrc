@@ -1,8 +1,10 @@
 # jsrc plot
 
+Gene structure diagrams, chromosome maps, protein domains, cis-element visualization, dotplots, and circular genome views. All based on matplotlib, output suitable for reports or publications.
+
 ## gene
 
-Use this when you want clean gene-structure figures from annotation and an ID list. It is ideal for paper-ready panels showing CDS/intron layouts across selected genes.
+Draws gene structure diagrams (UTR, CDS, introns) from GFF annotation and a target gene ID list. Useful for visualizing structural comparisons across a gene family or a set of selected genes.
 
 ```bash
 jsrc plot gene -gff genes.gff -ids ids.txt -o gene.png -dpi 300
@@ -15,7 +17,7 @@ jsrc plot gene -gff genes.gff -ids ids.txt -o gene.png -dpi 300
 
 ## exon
 
-For exon-focused structure comparison, this command gives a simpler exon-centric view while keeping the same input pattern as gene plotting.
+Similar to gene but focused on exon-level structural differences. Finer-grained than the gene view, useful for looking at alternative splicing or exon gain/loss.
 
 ```bash
 jsrc plot exon -gff genes.gff -ids ids.txt -o exon.png -dpi 300
@@ -28,7 +30,7 @@ jsrc plot exon -gff genes.gff -ids ids.txt -o exon.png -dpi 300
 
 ## chromosome
 
-When you need a genome-level map, this command plots gene positions on chromosomes. Add an ID list if you want to focus on a subset.
+Chromosome-scale distribution maps. Plots all genes across chromosomes, or highlights a specific subset. Good for genome-level overviews.
 
 ```bash
 jsrc plot chromosome -gff genes.gff -ids ids.txt -o chr.png -dpi 300
@@ -41,7 +43,7 @@ jsrc plot chromosome -gff genes.gff -ids ids.txt -o chr.png -dpi 300
 
 ## domain
 
-This command draws domain architecture from tabular domain annotations, making it easy to inspect domain order and span along proteins.
+Draws protein domain architecture. Input table needs sequence ID, domain name, start and end positions. Scales each protein proportionally. Good for batch-checking domain order, boundaries, and anomalies.
 
 ```bash
 jsrc plot domain -tsv domains.tsv -o domain.png -dpi 300
@@ -53,7 +55,7 @@ jsrc plot domain -tsv domains.tsv -o domain.png -dpi 300
 
 ## cis
 
-Great for promoter-level element mapping, this command visualizes cis-regulatory positions from BED-style input.
+Visualizes cis-regulatory element positions from BED-format input onto sequence coordinates. Useful for displaying motif distributions in promoter regions.
 
 ```bash
 jsrc plot cis -bed motifs.bed -o cis.png -dpi 300
@@ -63,43 +65,34 @@ jsrc plot cis -bed motifs.bed -o cis.png -dpi 300
 - `-o`: output PNG path.
 - `-dpi`: output DPI (default: `300`).
 
-## heart
+## heart / rose
 
-Use it for quick interactive curve rendering demos.
+Two interactive matplotlib demos (heart curve and 3D rose curve) for quickly checking whether the display environment works.
 
 ```bash
 jsrc plot heart
-```
-
-- no command-specific parameters.
-
-## rose
-
-Use it for interactive 3D rose visualization demos.
-
-```bash
 jsrc plot rose
 ```
 
-- no command-specific parameters.
+No additional parameters.
 
 ## dotplot
 
-When comparing two sequences visually, this command plots exact k-mer matches as a dotplot. It is excellent for spotting repeats and coarse structural similarity.
+Compares two sequences by plotting exact k-mer matches. Each sequence's k-mer positions form the axes; matching points form patterns — a diagonal indicates collinearity, while scattered or repeated patterns suggest rearrangements or repeats. Useful for spotting structural variation quickly.
 
 ```bash
 jsrc plot dotplot -fa1 a.fa -fa2 b.fa -k 10 -o d.png -dpi 300
 ```
 
-- `-fa1`: FASTA file 1.
-- `-fa2`: FASTA file 2.
-- `-k`: k-mer size (default: `10`).
+- `-fa1`: sequence FASTA 1.
+- `-fa2`: sequence FASTA 2.
+- `-k`: k-mer length (default: `10`).
 - `-o`: optional output PNG (omit for interactive display).
 - `-dpi`: output DPI (default: `300`).
 
 ## circoslite
 
-For a lightweight circular genome view with window-based tracks, this command offers a compact circos-style summary from FASTA.
+A lightweight circular genome view. Input a single FASTA, and it computes window-based statistics (e.g., GC content) and generates a circular plot. No complicated configuration needed — just give it a FASTA.
 
 ```bash
 jsrc plot circoslite -fa genome.fa -w 100000 -o c.png -dpi 300

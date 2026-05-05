@@ -1,11 +1,14 @@
 # jsrc gs
 
+基因组选择（Genomic Selection）的模拟与建模流程。使用PLINK 基因型数据和表型文件，经过数据构建、交叉验证划分、模型训练与评估。支持 GBDT、随机森林、弹性网络、SVM、朴素贝叶斯等多种模型。
+
 ## build
 
-这个命令是 GS 流程的起点：把表型和 PLINK 基因型整合成可直接建模的数据集，后续 split/train 可以无缝接上。
+把 PLINK 基因型（bed/bim/fam）和表型文件整合起来，生成可以直接建模的数据集。会根据遗传率（`--h2`）模拟表型，并从候选位点中筛选 tag marker，输出 `.npy` 格式的矩阵和样本列表。`--plink-bin` 指定 plink 可执行文件的路径，`--n-sim` 控制模拟样本数。
 
 ```bash
-jsrc gs build -pheno phenotype.txt -plink /path/to/hap1_plink -o data/hap1 --plink-bin plink --n-sim 500 --top-k 2000 --h2 0.5 --seed 42
+jsrc gs build -pheno phenotype.txt -plink /path/to/hap1_plink \
+  -o data/hap1 --plink-bin plink --n-sim 500 --top-k 2000 --h2 0.5 --seed 42
 ```
 
 - `-pheno`：表型文件，至少包含 `IID` 和 `PHENO` 列。
@@ -19,7 +22,7 @@ jsrc gs build -pheno phenotype.txt -plink /path/to/hap1_plink -o data/hap1 --pli
 
 ## split
 
-数据构建后，用它生成交叉验证划分，保证后续评估流程可复现、可比较。
+数据准备好后，用这个命令生成交叉验证的划分方案，保证每次训练/评估都在同样的 fold 上进行，结果可比。默认 5 折，可以调。
 
 ```bash
 jsrc gs split -i data/hap1 --folds 5 --seed 2024
@@ -31,10 +34,11 @@ jsrc gs split -i data/hap1 --folds 5 --seed 2024
 
 ## train
 
-这是模型训练与评估主命令，会在多折上运行并输出结果表，方便快速比较不同模型表现。
+训练与评估的主命令。会在各折上分别训练指定模型，计算预测性能，输出结果表。支持模型列表用逗号分隔，可选 gbdt、rf、et、ada、dt、lr、svm、nb。`--select-k` 用 ANOVA 筛选特征数控制输入维度。
 
 ```bash
-jsrc gs train -i data/hap1 -o data/hap1/results --folds 5 --select-k 1000 --models gbdt,rf,et,lr,svm,nb --seed 42
+jsrc gs train -i data/hap1 -o data/hap1/results \
+  --folds 5 --select-k 1000 --models gbdt,rf,et,lr,svm,nb --seed 42
 ```
 
 - `-i, --input`：数据目录（含 `X.npy`、`y.npy`、`cv_indices/`）。

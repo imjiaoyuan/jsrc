@@ -1,27 +1,30 @@
 # jsrc grn
 
+Gene regulatory network (GRN) analysis and interactive visualization. From edge tables to force-directed graphs with expand, search, and export.
+
 ## net2json
 
-This is the main entry for turning edge tables into viewer-ready assets. It can stay in expandable mode, switch to small-network full display automatically, and package everything into a ZIP for sharing.
+The entry point for GRN visualization. Converts an edge table into the JSON format the viewer expects, with control over display mode. Two modes: `-a` (full view — automatically shows the entire network when nodes are below a threshold) and `-s` (compact mode — manual click-to-expand). Optionally attach annotation data via `-n` to display extra info on each node.
 
 ```bash
-jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -a -t 200 -n annotation.tsv -z viewer.zip --max-nodes 200
+jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -a -t 200 \
+  -n annotation.tsv --max-nodes 200
 jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -s
 ```
 
-- `-i, --input`: GRN edge table input (tab-delimited).
+- `-i, --input`: GRN edge table (tab-delimited).
 - `-o, --output`: output grn.json path.
-- `-a, --all`: all mode. Small networks auto-render as full graph when gene count is under threshold.
-- `-s, --some`: some mode. Keep manual click-to-expand behavior.
-- `-t, --threshold`: gene-count threshold used by `-a` (default: `300`).
-- `-d, --viewer-dir`: viewer output directory. If omitted, inferred from `-o`.
+- `-a, --all`: all mode. Auto-displays full network when gene count is at or below threshold.
+- `-s, --some`: some mode. Manual click-to-expand.
+- `-t, --threshold`: threshold for `-a` mode (default: `300`).
+- `-d, --viewer-dir`: viewer output directory; inferred from `-o` if not given.
 - `-n, --annotation-input`: optional annotation TSV to generate annotation.json.
-- `-z, --zip-output`: optional ZIP output path to package index.html, CSS/JS, and JSON files.
-- `--max-nodes`: max nodes to display in full view mode (default: `0` = all).
+- `-z, --zip-output`: optional ZIP output packaging index.html, CSS/JS, and JSON.
+- `--max-nodes`: max nodes shown in full view (default: `0` = all).
 
 ## anno2json
 
-Use this when you only need to convert annotation metadata into viewer-compatible JSON without touching the network conversion pipeline.
+Generates annotation.json separately when the network JSON is already prepared, without re-running the full conversion pipeline.
 
 ```bash
 jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
@@ -32,29 +35,30 @@ jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
 
 ## serve
 
-Once your viewer files are ready, this starts a local HTTP service so you can inspect the graph in a browser with the same display-mode logic.
+Start a local HTTP server to view the GRN graph in a browser. Supports the same all/some display modes. Annotated networks show node grouping information.
 
 ```bash
 jsrc grn serve -d viewer -g viewer/json/grn.json -p 8000 -a -t 200
-jsrc grn serve -d viewer -g viewer/json/grn.json -n viewer/json/annotation.json -s
+jsrc grn serve -d viewer -g viewer/json/grn.json \
+  -n viewer/json/annotation.json -s
 ```
 
 - `-d, --dir`: viewer directory to serve (default: current directory).
 - `-g, --grn-json`: path to grn.json (required).
 - `-n, --annotation-json`: path to annotation.json (optional).
 - `-p, --port`: HTTP port (default: `8000`).
-- `-a, --all`: all mode (auto full-view for small networks).
-- `-s, --some`: some mode (manual click-to-expand).
-- `-t, --threshold`: gene-count threshold used by `-a` (default: `300`).
+- `-a, --all`: all mode.
+- `-s, --some`: some mode.
+- `-t, --threshold`: threshold for `-a` mode (default: `300`).
 
 ## centrality
 
-Need a quick ranking of influential nodes? This command computes degree-style centrality summaries directly from your edge table.
+Once the network is built, the natural next question is which genes are the key players. This command computes in-degree, out-degree, and total degree for each node, sorting by total degree to quickly identify hub genes.
 
 ```bash
 jsrc grn centrality -i grn.tsv --sep "\t" --top 30
 ```
 
-- `-i, --input`: edge table input.
-- `--sep`: custom separator (default: auto whitespace/tab).
-- `--top`: print top N nodes (default: `20`).
+- `-i, --input`: edge table.
+- `--sep`: column separator (default: auto whitespace/tab).
+- `--top`: output top N nodes (default: `20`).

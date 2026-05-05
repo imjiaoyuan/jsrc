@@ -1,13 +1,16 @@
 # jsrc job
 
+长时间任务的后台作业管理。提交、查看、日志追踪、终止、历史回溯、清理——针对无集群环境（比如自己的工作站）的 nohup 类任务做了专门设计。
+
 > 兼容性说明：当前仅在 **Arch Linux** 测试。
 
 ## submit
 
-这个命令是提交与登记的一站式入口。任务一旦启动，就会同步记录命令、日志、运行状态和内存统计，后续追踪非常方便。
+提交命令并在后台运行（通过 nohup），同时记录命令、日志路径、运行状态和内存占用。支持设置工作目录、执行 shell、环境变量。日志可追加也可覆盖写。
 
 ```bash
-jsrc job submit "Rscript 02.harmony2.R" "logs/02.harmony2.log" -N harmony -C . -S bash -A -E KEY=VAL
+jsrc job submit "Rscript 02.harmony2.R" "logs/02.harmony2.log" \
+  -N harmony -C . -S bash -A -E KEY=VAL
 ```
 
 - `command`（位置参数）：在 nohup 下执行的命令字符串。
@@ -20,10 +23,12 @@ jsrc job submit "Rscript 02.harmony2.R" "logs/02.harmony2.log" -N harmony -C . -
 
 ## ls
 
-它就是你的实时任务看板：可持续刷新、按运行时长或内存排序、按关键词过滤，适合盯长期后台任务。
+实时任务看板。支持持续刷新（`-w`），可按运行时长或内存排序，按关键词过滤。输出格式支持 table/tsv/json，默认只显示部分列，可用 `-c` 自定义。
 
 ```bash
-jsrc job ls -w -n 2 -c job_id,status,pid,runtime,rss_mb,rss_min_mb,rss_avg_mb,rss_peak_mb -f table -s runtime -r -a -l 50 -q harmony
+jsrc job ls -w -n 2 \
+  -c job_id,status,pid,runtime,rss_mb,rss_min_mb,rss_avg_mb,rss_peak_mb \
+  -f table -s runtime -r -a -l 50 -q harmony
 ```
 
 - `-w, --watch`：持续刷新。
@@ -38,7 +43,7 @@ jsrc job ls -w -n 2 -c job_id,status,pid,runtime,rss_mb,rss_min_mb,rss_avg_mb,rs
 
 ## show
 
-当你只关心某一个任务时，用这个命令最干脆，按任务 ID 或 PID 拉出完整详情。
+看单个任务的完整信息：状态、PID、内存峰值、运行时长等。支持按任务 ID 或 PID 查找。
 
 ```bash
 jsrc job show 12 -f json -c job_id,status,pid,runtime,rss_mb,rss_avg_mb,command
@@ -50,7 +55,7 @@ jsrc job show 12 -f json -c job_id,status,pid,runtime,rss_mb,rss_avg_mb,command
 
 ## logs
 
-看日志不用再找文件路径，直接按任务 ID/PID 就能查看，配合 follow 模式可实时追踪输出。
+不用手动找日志文件路径，按任务 ID 或 PID 直接查。支持 `-F` 实时跟随日志输出，类似 tail -f。
 
 ```bash
 jsrc job logs 12 -n 200 -F
@@ -62,7 +67,7 @@ jsrc job logs 12 -n 200 -F
 
 ## kill
 
-任务卡住或不再需要时，用它快速终止，既可杀单进程，也可按进程组结束整批子进程。
+任务卡住或不需要了，直接终止。默认发 TERM 信号，也支持 KILL 和 INT。`-g` 按进程组杀掉整批子进程。
 
 ```bash
 jsrc job kill 12 -s TERM -g
@@ -74,7 +79,7 @@ jsrc job kill 12 -s TERM -g
 
 ## history
 
-需要回溯执行历史、排查重复跑任务或整理记录时，这个命令能快速给你清晰的历史视图。
+回溯历史执行记录。适合排查是否重复跑了某个任务，或者整理一段时间内的作业清单。可按关键词过滤，输出 table/tsv/json。
 
 ```bash
 jsrc job history -l 100 -f tsv -q harmony
@@ -86,7 +91,7 @@ jsrc job history -l 100 -f tsv -q harmony
 
 ## gc
 
-这个命令用于“做保洁”：控制历史条数上限、标记缺失日志、清理陈旧状态文件，让追踪系统长期保持干净。
+"保洁"命令。控制历史记录上限（`-k`），标记日志文件已丢失的记录，清理陈旧的状态文件，避免追踪系统长期运行后越来越臃肿。
 
 ```bash
 jsrc job gc -k 1000 --prune-missing-log --remove-dead-state

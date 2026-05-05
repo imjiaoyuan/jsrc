@@ -1,147 +1,115 @@
 # jsrc seq
 
+Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, promoter extraction, QC, codon usage, k-mer profiling, Entrez fetching, restriction digestion, and sliding-window analysis.
+
 ## extract
 
-Need to pull specific feature sequences from genome annotation quickly? This command links FASTA, GFF, and your ID list, then writes a clean output FASTA for downstream analysis.
+Common scenario: you have a genome FASTA and GFF annotation, but you only want the CDS of a few specific genes for downstream analysis. Digging through the GFF for coordinates and extracting sequences manually is fine for one or two genes, but it gets tedious fast.
+
+Given a genome, GFF, and target ID list (one per line), this command extracts sequences by feature type. CDS by default, but `-feature` lets you switch to mRNA or others. ID matching uses `Parent` in GFF by default — change it with `-match` if your GFF uses a different attribute.
 
 ```bash
-jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -o out.fa [-feature CDS] [-match Parent]
+jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -o out.fa
 ```
 
-- `-fa`: genome FASTA input.
-- `-gff`: GFF annotation input.
-- `-ids`: ID list file (one ID per line).
-- `-o`: output FASTA path.
-- `-feature`: feature type in GFF to extract (default: `CDS`).
-- `-match`: GFF attribute key used to match IDs (default: `Parent`).
+For mRNA:
+
+```bash
+jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -feature mRNA -match ID -o mrnas.fa
+```
 
 ## rename
 
-When FASTA headers are inconsistent across datasets, use this command to normalize them. You can rename through a CSV map or infer mapping relationships from GFF.
+FASTA headers from different sources are rarely consistent. One dataset uses GenBank accessions, another uses custom names. If you want to analyze them together, standardizing IDs is the first step.
+
+Two modes. `csv` is straightforward — a two-column CSV mapping old IDs to new ones, and the program replaces them. `gff` mode is smarter: given a GFF file, it renames sequences based on parent-child relationships (e.g., mapping sequence IDs to gene names). Use `-parent` to specify which attribute links them.
 
 ```bash
 jsrc seq rename -fa in.fa -mode csv -map mapping.csv -o out.fa
 jsrc seq rename -fa in.fa -mode gff -gff genes.gff -parent Parent -o out.fa
 ```
 
-- `-fa`: input FASTA.
-- `-mode`: rename mode, `csv` or `gff` (default: `csv`).
-- `-map`: CSV mapping file `old_id,new_id` (used in `csv` mode).
-- `-gff`: GFF file (used in `gff` mode).
-- `-parent`: parent attribute key in GFF (used in `gff` mode).
-- `-o`: output FASTA.
-
 ## translate
 
-This is the bridge from genome annotation to protein space. It extracts CDS regions and translates them, producing a protein FASTA ready for domain and homology analysis.
+When doing cross-species comparison or looking for protein domains, what you actually need is amino acid sequences. This command handles the genome-annotation-to-protein conversion: read genome FASTA and GFF, extract CDS, translate, output protein FASTA.
 
 ```bash
 jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
 ```
 
-- `-fa`: genome FASTA.
-- `-gff`: GFF annotation.
-- `-id`: GFF attribute key used as gene ID.
-- `-o`: output protein FASTA.
-
 ## promoter
 
-Use this when you want promoter windows around selected genes. It is especially handy for motif scanning pipelines where upstream sequence context matters.
+Studying gene regulation often means looking at promoter regions. Say you want to check whether a transcription factor binding site exists 2kb upstream of a set of genes — you need to extract those regions in bulk first.
+
+This command does exactly that. Given genome, GFF, and gene IDs, it automatically calculates coordinates and extracts flanking sequences. Default is 2000bp upstream, 0bp downstream. Adjust with `-up` and `-down`.
 
 ```bash
-jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -up 2000 -down 0
+jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -up 1500 -down 500
 ```
 
-- `-fa`: genome FASTA.
-- `-gff`: GFF annotation.
-- `-ids`: target gene IDs.
-- `-o`: output promoter FASTA.
-- `-id`: ID key in GFF attributes (default: `ID`).
-- `-feature`: GFF feature type (default: `gene`).
-- `-up`: upstream length in bp (default: `2000`).
-- `-down`: downstream length in bp (default: `0`).
+If your GFF uses a different feature label (some datasets use `mRNA` instead of `gene`), set `-feature` accordingly.
 
 ## qc
 
-For a quick sequence-level status report, this command gives assembly and read summaries in one place, with optional JSON for scripting workflows.
+I always check data quality before diving into large-scale analysis. This command is for a quick health check — it won't replace FastQC's deep reports, but it's fast and gives you the essentials in one go.
+
+Supports FASTA and FASTQ (including gzip). For FASTA: sequence count, total length, N50/N90, GC content, N ratio. For FASTQ: read count, total bases, mean read length. If genome size is provided via `-gs`, it also estimates sequencing depth.
 
 ```bash
 jsrc seq qc -fa assembly.fa
 jsrc seq qc -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
 ```
 
-- `-fa`: FASTA input for assembly metrics.
-- `-fq`: one or more FASTQ/FASTQ.GZ files.
-- `-gs`: genome size (bp), used with FASTQ for depth estimate.
-- `--json`: print JSON output.
-
 ## codon
 
-When codon bias is the focus, this command gives codon usage and RSCU summaries straight from CDS FASTA.
+Codon bias is an interesting angle. Different species, and even different genes within the same genome, display distinct codon usage patterns — shaped by selection pressure, mutation bias, and tRNA abundance.
+
+This command calculates codon usage frequencies from CDS FASTA. It counts each codon and computes RSCU (Relative Synonymous Codon Usage). Shows the top 20 by default; increase with `--top`.
 
 ```bash
 jsrc seq codon -fa cds.fa --top 20 --json
 ```
 
-- `-fa`: CDS FASTA input.
-- `--top`: number of top codons to show (default: `20`).
-- `--json`: print JSON output.
-
 ## kmer
 
-Great for composition fingerprints and quick similarity checks. With one input it reports top k-mers; with multiple inputs it supports cross-sample comparison.
+k-mer is one of the most fundamental yet powerful features in sequence analysis. It's useful for assessing sequence complexity, generating genomic fingerprints, and quickly comparing similarity between samples.
+
+With a single FASTA, it reports high-frequency k-mers and their frequencies. With multiple FASTA files, it computes a pairwise cosine distance matrix — useful for spotting which samples are similar at a glance. Set k-mer length with `-k` (default 5).
 
 ```bash
-jsrc seq kmer -fa a.fa b.fa -k 7 --top 30 --json
+jsrc seq kmer -fa genome.fa --top 30
+jsrc seq kmer -fa a.fa b.fa c.fa -k 7
 ```
-
-- `-fa`: one or more FASTA files.
-- `-k`: k-mer size (default: `5`).
-- `--top`: top N k-mers for single-file mode (default: `20`).
-- `--json`: print JSON output.
 
 ## fetch
 
-Fetch sequences from NCBI databases using accession IDs (requires internet and an email address for NCBI Entrez).
+Fetching sequences from NCBI through a browser gets old fast — open the page, search, tick boxes, download. This command pulls sequences by accession ID directly from the terminal, supporting FASTA and GenBank formats.
+
+Just pass the IDs. Multiple IDs can be space-separated or placed in a file (one per line). NCBI requires `--email`. Without `-o`, output goes to stdout, convenient for piping into further processing.
 
 ```bash
-jsrc seq fetch -ids NM_001301717 NR_146152 --email user@example.com -o sequences.fa
-jsrc seq fetch -ids ids.txt --format genbank --email user@example.com --json
+jsrc seq fetch -ids NM_001301717 NR_146152 --email me@example.com -o sequences.fa
+jsrc seq fetch -ids ids.txt --format genbank --email me@example.com --json
 ```
-
-- `-ids`: accession IDs or files containing IDs (one per line).
-- `-o`: output file (default: stdout).
-- `--format`: output format, `fasta` or `genbank` (default: `fasta`).
-- `-db`: NCBI database (default: `nucleotide`).
-- `--email`: email address (required by NCBI policy).
-- `--json`: print JSON summary instead of sequences.
 
 ## digest
 
-Simulate restriction enzyme digestion on a sequence. Supports linear and circular DNA with any combination of enzymes from Biopython's Restriction database.
+Simulate restriction enzyme digestion on a sequence. Common in cloning and vector construction: you want to cut a plasmid with EcoRI and HindIII and see what fragments you get. Instead of opening a web tool, this uses Biopython's Restriction module with 1088 enzymes built in.
+
+Supports both linear and circular modes — circular DNA (plasmids) calculates fragments differently from linear, handled automatically. Use `--min-size` to filter out small fragments.
 
 ```bash
 jsrc seq digest -fa plasmid.fa -e EcoRI,HindIII --circular --json
 jsrc seq digest -fa seq.fa -e EcoRI --min-size 50
 ```
 
-- `-fa`: input FASTA file.
-- `-e` / `--enzymes`: comma-separated enzyme names (e.g., `EcoRI,HindIII`).
-- `--circular`: treat sequence as circular (default: linear).
-- `--min-size`: minimum fragment size to report (default: `0`).
-- `--json`: print JSON output.
-
 ## window
 
-This command computes sliding-window sequence metrics like GC and skew values. It is useful for regional pattern scanning without opening a full plotting pipeline.
+Sliding-window analysis solves a common problem: global GC content is an average, but genomic GC distribution is uneven — high near CpG islands, low near centromeres. This command looks at these variations window by window.
+
+Specify window size and step, and the program slides along the sequence, computing GC content and GC skew ((G-C)/(G+C)) in each window. By default it uses the longest sequence in the FASTA; target a specific sequence with `-id`. `--head` limits output to the first N windows.
 
 ```bash
-jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200 --head 20 --json
+jsrc seq window -fa genome.fa -w 100000 -s 20000 --head 20
+jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200 --json
 ```
-
-- `-fa`: FASTA input.
-- `-id`: target sequence ID (default behavior: longest sequence).
-- `-w`: window size (default: `1000`).
-- `-s`: step size (default: `200`).
-- `--head`: print first N windows (default: `10`).
-- `--json`: print JSON output.

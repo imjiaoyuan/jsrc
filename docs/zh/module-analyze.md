@@ -1,8 +1,10 @@
 # jsrc analyze
 
+序列分析层面的常用工具集合：进化树构建、motif 鉴定、QC 汇总、保守性分析、变异比较，以及带 bootstrap 支持的系统发育。
+
 ## phylo
 
-想快速看一组序列的进化关系，这个命令最直接。输入 FASTA，选择算法，输出 Newick 树文件，后续用任意树可视化工具都能打开。
+给一组序列，选个算法，就能得到一棵 Newick 树。支持邻接法（NJ）和 UPGMA 两种建树方式，结果可以导出直接用任何树可视化工具打开。适合快速看序列间的聚类关系，或者给更复杂的进化分析打个底。
 
 ```bash
 jsrc analyze phylo -fa sequences.fa -o tree.nwk -a nj
@@ -14,7 +16,7 @@ jsrc analyze phylo -fa sequences.fa -o tree.nwk -a nj
 
 ## motif
 
-需要在启动子或序列集合里找 motif 时，用这个命令很顺手。你可以同时控制 motif 数量和长度范围，适合先粗筛再细化。
+在启动子或者一组序列里找保守的短 motif。可以控制数量（`-nmotifs`）和长度范围（`-minw`/`-maxw`），先粗筛再调参。
 
 ```bash
 jsrc analyze motif -fa promoters.fa -o motif_out -nmotifs 5 -minw 6 -maxw 12
@@ -28,22 +30,23 @@ jsrc analyze motif -fa promoters.fa -o motif_out -nmotifs 5 -minw 6 -maxw 12
 
 ## qc
 
-把它当成数据体检入口就行：组装、比对、变异、测序深度都能一次性给出概览。适合在进入复杂分析前先看整体质量。
+组装质量（FASTA）、比对统计（SAM）、变异概览（VCF）、测序深度（FASTQ）一次全出，适合快速判断数据能不能往下走。
 
 ```bash
-jsrc analyze qc -fa assembly.fa -sam aln.sam -vcf variants.vcf.gz -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
+jsrc analyze qc -fa assembly.fa -sam aln.sam -vcf variants.vcf.gz \
+  -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
 ```
 
 - `-fa`：组装 FASTA（contig/N50/GC 等统计）。
 - `-sam`：SAM/SAM.GZ（比对率与深度统计）。
 - `-vcf`：VCF/VCF.GZ（SNP/INDEL 统计）。
 - `-fq`：FASTQ/FASTQ.GZ（reads/bases/depth 统计）。
-- `-gs`：基因组大小 bp（与 `-fq` 配合使用）。
+- `-gs`：基因组大小 bp（与 `-fq` 配合使用估算深度）。
 - `--json`：以 JSON 输出。
 
 ## msa_consensus
 
-做完多序列比对后，想看共识序列和保守性分布，用它可以很快得到一个清晰摘要，方便判断比对质量是否稳定。
+多序列比对完成后，想看共识序列长什么样、每列保守性如何。它会逐列统计碱基频率，输出 consensus 序列和各位置的平均保守度。同时会检查输入序列长度是否差异过大，必要时用 gap 补齐。
 
 ```bash
 jsrc analyze msa_consensus -fa aligned.fa --json
@@ -54,7 +57,7 @@ jsrc analyze msa_consensus -fa aligned.fa --json
 
 ## snpindel
 
-如果你只想比较两条序列差异，它会直接给出 SNP/INDEL 的核心统计，省去额外流程搭建，特别适合样本间快速对比。
+只想比较两条序列的差异，不需要走完整的变异 calling 流程。输入一个含两条序列的 FASTA，直接出 SNP/INDEL 统计结果，适合样本间快速对比。
 
 ```bash
 jsrc analyze snpindel -fa pair.fa -id1 sampleA -id2 sampleB --json
@@ -67,7 +70,7 @@ jsrc analyze snpindel -fa pair.fa -id1 sampleA -id2 sampleB --json
 
 ## bootstrap_phylo
 
-当你希望系统树不只是“长得像”，而是带有分支置信度时，就用这个命令。它会做 bootstrap 重采样并输出带支持值的树。
+普通建树只能看拓扑结构，bootstrap 能告诉你每个分支的可信度。这个命令做指定次数的重采样建树，输出带支持值的 Newick 树。`-seed` 控制随机种子，保证结果可复现。
 
 ```bash
 jsrc analyze bootstrap_phylo -fa seqs.fa -n 200 -seed 42 -o boot.nwk
