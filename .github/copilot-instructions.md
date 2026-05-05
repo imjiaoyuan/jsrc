@@ -26,7 +26,7 @@ The project requires Python 3.10+ with the following core dependencies:
 - **numpy** - Numerical operations
 - **pandas** - Data handling
 
-Install via: `uv sync` (uses uv.lock and pyproject.toml)
+Install via: `uv sync` (reads dependencies from pyproject.toml and optional extras)
 
 ## Key Conventions
 

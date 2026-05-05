@@ -4,27 +4,36 @@ Python library for bioinformatics and scientific computing.
 
 ## Installation
 
-PyPI:
+Recommended (global CLI via `uv tool`):
 ```bash
-pip install jsrc
+uv tool install jsrc
 ```
 
-uv:
+Using `uv` virtual environment:
 ```bash
+uv venv
+source .venv/bin/activate
 uv pip install jsrc
 ```
 
-From source:
+Using Conda virtual environment + pip:
+```bash
+conda create -n jsrc python=3.11 -y
+conda activate jsrc
+pip install jsrc
+```
+
+From source (development):
 ```bash
 git clone https://github.com/imjiaoyuan/jsrc.git
 cd jsrc
 uv venv
-uv sync --extra dev
+uv sync --extra dev --extra all
 ```
 
 Run `jsrc --help` to get started.
 
-For detailed usage, see the [Documentation](docs/en/index.md).中文文档请参阅 [文档](docs/zh/index.md)。
+For detailed usage, see the [Documentation](docs/en/index.md). 中文文档请参阅 [文档](docs/zh/index.md)。
 
 ## Quick Start
 
@@ -102,13 +111,13 @@ jsrc vision traits -i test/leaf1.jpg --channel a --invert
 
 **grn module**
 
-Generate 1000-gene random network viewer package:
+Generate and launch a 1000-gene random network viewer:
 
 ```bash
 jsrc grn net2json -i test/grn/network.tsv -o test/grn/grn.json
 jsrc grn anno2json -i test/grn/annotation.tsv -o test/grn/annotation.json
-jsrc grn build -d test/grn/viewer -g test/grn/grn.json \
-  -n test/grn/annotation.json -z test/grn/grn-viewer.zip -s
+jsrc grn build -d test/grn/public -g test/grn/grn.json -n test/grn/annotation.json -z test/grn/grn-viewer.zip -a -t 200
+jsrc grn serve -d test/grn/public -g test/grn/public/json/grn.json -n test/grn/public/json/annotation.json -p 8000 -a -t 200
 ```
 
 ![](assets/grn.jpg)

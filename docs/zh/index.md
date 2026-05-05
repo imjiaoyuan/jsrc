@@ -2,6 +2,27 @@
 
 用于生物信息学分析和科学计算的 Python 库。
 
+## 安装
+
+推荐（使用 `uv tool` 全局安装命令行）：
+```bash
+uv tool install jsrc
+```
+
+使用 `uv` 虚拟环境安装：
+```bash
+uv venv
+source .venv/bin/activate
+uv pip install jsrc
+```
+
+使用 Conda 创建虚拟环境并通过 pip 安装：
+```bash
+conda create -n jsrc python=3.11 -y
+conda activate jsrc
+pip install jsrc
+```
+
 ## 快速开始
 
 ```bash

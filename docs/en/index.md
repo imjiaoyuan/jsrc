@@ -2,6 +2,27 @@
 
 Python library for bioinformatics and scientific computing.
 
+## Installation
+
+Recommended (global CLI via `uv tool`):
+```bash
+uv tool install jsrc
+```
+
+Using `uv` virtual environment:
+```bash
+uv venv
+source .venv/bin/activate
+uv pip install jsrc
+```
+
+Using Conda virtual environment + pip:
+```bash
+conda create -n jsrc python=3.11 -y
+conda activate jsrc
+pip install jsrc
+```
+
 ## Quick Start
 
 ```bash

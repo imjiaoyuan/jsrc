@@ -14,14 +14,6 @@ def setup_logging(verbose: bool = False) -> None:
     )
 
 
-def _dispatch(module_name: str, func_name: str = "cmd") -> argparse.Action:
-    def _runner(args: argparse.Namespace) -> None:
-        module = importlib.import_module(module_name)
-        getattr(module, func_name)(args)
-
-    return _runner
-
-
 MODULES = {
     "seq": "jsrc.seq",
     "plot": "jsrc.plot",

@@ -29,8 +29,8 @@ jsrc grn anno2json -i annotation.tsv -o json/annotation.json
 根据 grn 网络关系 JSON 文件和注释 JSON 文件（可选）构建的静态页面，可打包为 ZIP 用于部署。`-a` 为全视图模式（节点数低于阈值时自动全网展示），`-e` 为点击展开模式。
 
 ```bash
-jsrc grn build -d viewer -g json/grn.json -n json/annotation.json -a -t 200
-jsrc grn build -d viewer -g json/grn.json -z viewer.zip -e
+jsrc grn build -d public -g json/grn.json -n json/annotation.json -a -t 200
+jsrc grn build -d public -g json/grn.json -z public.zip -e
 ```
 
 - `-d, --dir`：输出目录（默认当前目录）。
@@ -47,12 +47,12 @@ jsrc grn build -d viewer -g json/grn.json -z viewer.zip -e
 本地启动 HTTP 服务展示 GRN 网络。支持 all/expand 展示模式。默认端口 8000。
 
 ```bash
-jsrc grn serve -d viewer -g viewer/json/grn.json -p 8000 -a -t 200
-jsrc grn serve -d viewer -g viewer/json/grn.json \
-  -n viewer/json/annotation.json -e
+jsrc grn serve -d public -g json/grn.json -p 8000 -a -t 200
+jsrc grn serve -d public -g json/grn.json \
+  -n json/annotation.json -e
 ```
 
-- `-d, --dir`：viewer 目录（默认当前目录）。
+- `-d, --dir`：public 目录（默认当前目录）。
 - `-g, --grn-json`：grn.json 路径（必填）。
 - `-n, --annotation-json`：annotation.json 路径（可选）。
 - `-p, --port`：HTTP 端口（默认 `8000`）。

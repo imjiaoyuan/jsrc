@@ -41,7 +41,7 @@ def _models(seed: int) -> dict[str, Any]:
             max_depth=5, class_weight="balanced", random_state=seed
         ),
         "lr": lambda: LogisticRegression(
-            max_iter=2000, class_weight="balanced", solver="lbfgs", n_jobs=-1
+            max_iter=2000, class_weight="balanced", solver="lbfgs"
         ),
         "svm": lambda: SVC(
             probability=True, kernel="rbf", class_weight="balanced", random_state=seed

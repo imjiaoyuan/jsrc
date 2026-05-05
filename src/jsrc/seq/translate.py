@@ -45,6 +45,17 @@ def cmd(args: Namespace) -> None:
             cds_seq += chrom_seq[start:end]
         if data["strand"] == "-":
             cds_seq = cds_seq.reverse_complement()
+        remainder = len(cds_seq) % 3
+        if remainder:
+            logger.warning(
+                "CDS length for %s is not divisible by 3; trimming %d nt",
+                gene_id,
+                remainder,
+            )
+            cds_seq = cds_seq[:-remainder]
+        if len(cds_seq) == 0:
+            logger.error("Failed to translate %s: empty CDS after trimming", gene_id)
+            continue
         try:
             protein_seq = cds_seq.translate(to_stop=True)
             if len(protein_seq) > 0:
