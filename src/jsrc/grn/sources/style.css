@@ -1,52 +1,4 @@
-import os
-import pathlib
-
-from jsrc.grn.core import ensure_dir, write_json, write_text
-
-_SCRIPT_TEMPLATE = (
-    pathlib.Path(__file__).parent / "sources" / "script.js"
-).read_text(encoding="utf-8")
-
-INDEX_HTML = """<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GRN</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="//unpkg.com/d3"></script>
-    <script src="//unpkg.com/force-graph"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body>
-    <div id="controls">
-        <div class="row">
-            <button onclick="goBack()" id="btnBack" disabled>&lt;</button>
-            <button onclick="goForward()" id="btnFwd" disabled>&gt;</button>
-            <button onclick="exportImage('pdf')" class="btn-export">PDF</button>
-            <button onclick="resetView()" class="btn-reset">Reset</button>
-        </div>
-
-        <div class="row search-row">
-            <input type="text" id="geneInput" placeholder="Enter Gene ID">
-            <button onclick="startNewSearch()" class="btn-search">Search</button>
-        </div>
-
-        <div id="legend">Line thickness indicates weight</div>
-        <div id="nodeCount">Nodes: 0</div>
-        <div id="neighborList"></div>
-    </div>
-
-    <div id="watermark">GRN</div>
-    <div id="emptyState">No Nodes</div>
-    <div id="graph"></div>
-
-    <script src="js/script.js"></script>
-</body>
-</html>
-"""
-
-STYLE_CSS = """body {
+body {
     margin: 0;
     background: #ffffff;
     color: #000;
@@ -323,35 +275,3 @@ button:disabled {
     background: #ccc;
     border-radius: 3px;
 }
-"""
-
-
-def sync_viewer_assets(
-    base: str,
-    init_empty_json: bool,
-    view_mode: str = "auto",
-    full_view_threshold: int = 300,
-    max_display_nodes: int = 0,
-) -> None:
-    mode = view_mode if view_mode in {"expand", "full", "auto"} else "auto"
-    threshold = max(0, int(full_view_threshold))
-    max_nodes = max(0, int(max_display_nodes))
-    ensure_dir(base)
-    ensure_dir(os.path.join(base, "css"))
-    ensure_dir(os.path.join(base, "js"))
-    ensure_dir(os.path.join(base, "json"))
-    write_text(os.path.join(base, "index.html"), INDEX_HTML)
-    write_text(os.path.join(base, "css/style.css"), STYLE_CSS)
-    script = (
-        _SCRIPT_TEMPLATE.replace("__JSRC_VIEW_MODE__", mode)
-        .replace("__JSRC_FULL_THRESHOLD__", str(threshold))
-        .replace("__JSRC_MAX_DISPLAY_NODES__", str(max_nodes))
-    )
-    write_text(os.path.join(base, "js/script.js"), script)
-    if init_empty_json:
-        write_json(os.path.join(base, "json/grn.json"), [])
-        write_json(os.path.join(base, "json/annotation.json"), {})
-        return
-    anno_path = os.path.join(base, "json/annotation.json")
-    if not os.path.exists(anno_path):
-        write_json(anno_path, {})

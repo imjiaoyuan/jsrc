@@ -18,7 +18,7 @@ jsrc <module> <subcommand> --help
 | `plot` | Gene/exon/chromosome/domain and utility visualizations |
 | `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC |
 | `gs` | Genomic selection dataset build/split/train workflows |
-| `grn` | GRN conversion, centrality calculation, viewer packaging/service |
+| `grn` | GRN conversion, centrality calculation, build packaging/service |
 | `vision` | Image contour extraction, EFD descriptors, morphology traits |
 | `job` | Background job management (`submit/ls/show/logs/kill/history/gc`) |
 

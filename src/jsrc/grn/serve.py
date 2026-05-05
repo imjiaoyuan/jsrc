@@ -6,17 +6,12 @@ from argparse import Namespace
 from typing import Any
 
 from jsrc.grn.core import ensure_dir, write_json
-from jsrc.grn.viewer import sync_viewer_assets
+from jsrc.grn.build import _sync_assets
 
 
 def cmd(args: Namespace) -> None:
-    view_mode = "expand" if args.some else "auto"
-    sync_viewer_assets(
-        args.dir,
-        init_empty_json=False,
-        view_mode=view_mode,
-        full_view_threshold=args.threshold,
-    )
+    view_mode = "expand" if args.expand else "auto"
+    _sync_assets(args.dir, view_mode, args.threshold, 0)
     ensure_dir(f"{args.dir}/json")
     src_grn = os.path.abspath(args.grn_json)
     dst_grn = os.path.abspath(f"{args.dir}/json/grn.json")
@@ -58,12 +53,12 @@ def register(subparsers: Any) -> None:
         help="Mode all: auto full-view when gene count <= threshold",
     )
     mode.add_argument(
-        "-s",
-        "--some",
+        "-e",
+        "--expand",
         action="store_true",
-        help="Mode some: manual click-to-expand only",
+        help="Click-to-expand mode",
     )
-    p.set_defaults(all=True, some=False)
+    p.set_defaults(all=True, expand=False)
     p.add_argument(
         "-t",
         "--threshold",

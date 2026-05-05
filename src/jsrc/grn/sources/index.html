@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GRN</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="//unpkg.com/d3"></script>
+    <script src="//unpkg.com/force-graph"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div id="controls">
+        <div class="row">
+            <button onclick="goBack()" id="btnBack" disabled>&lt;</button>
+            <button onclick="goForward()" id="btnFwd" disabled>&gt;</button>
+            <button onclick="exportImage('pdf')" class="btn-export">PDF</button>
+            <button onclick="resetView()" class="btn-reset">Reset</button>
+        </div>
+
+        <div class="row search-row">
+            <input type="text" id="geneInput" placeholder="Enter Gene ID">
+            <button onclick="startNewSearch()" class="btn-search">Search</button>
+        </div>
+
+        <div id="legend">Line thickness indicates weight</div>
+        <div id="nodeCount">Nodes: 0</div>
+        <div id="neighborList"></div>
+    </div>
+
+    <div id="watermark">GRN</div>
+    <div id="emptyState">No Nodes</div>
+    <div id="graph"></div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

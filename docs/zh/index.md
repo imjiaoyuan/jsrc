@@ -18,7 +18,7 @@ jsrc <module> <subcommand> --help
 | `plot` | 基因/外显子/染色体/结构域等可视化 |
 | `analyze` | 系统发育、motif、一致序列、SNP/INDEL、QC |
 | `gs` | 基因组选择数据构建、划分与训练流程 |
-| `grn` | GRN 转换、中心性分析、viewer 打包与服务 |
+| `grn` | GRN 转换、中心性分析、build 打包与服务 |
 | `vision` | 图像轮廓提取、EFD 描述子、形态指标 |
 | `job` | 后台任务提交、查看、日志、终止、历史清理 |
 

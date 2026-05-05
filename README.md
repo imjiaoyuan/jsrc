@@ -50,7 +50,7 @@ jsrc vision extract --help
 | `plot` | Gene/exon/chromosome/domain and other plots | `jsrc plot gene ...` |
 | `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC | `jsrc analyze phylo ...` |
 | `gs` | Genomic selection dataset build/split/train | `jsrc gs train ...` |
-| `grn` | GRN conversion, centrality, local viewer | `jsrc grn net2json ...` |
+| `grn` | GRN conversion, centrality, build packaging, local serve | `jsrc grn build ...` |
 | `vision` | Object extraction, morphology traits, EFD | `jsrc vision extract ...` |
 | `job` | Background job submit/list/log/kill/history | `jsrc job submit "cmd"` |
 
@@ -102,10 +102,13 @@ jsrc vision traits -i test/leaf1.jpg --channel a --invert
 
 **grn module**
 
-Generate 1000-gene random network viewer with full-view mode (top 200 nodes):
+Generate 1000-gene random network viewer package:
 
 ```bash
-jsrc grn net2json -i test/grn/network.tsv -o test/grn/json/grn.json -n test/grn/annotation.tsv -z test/grn/grn-viewer.zip -s
+jsrc grn net2json -i test/grn/network.tsv -o test/grn/grn.json
+jsrc grn anno2json -i test/grn/annotation.tsv -o test/grn/annotation.json
+jsrc grn build -d test/grn/viewer -g test/grn/grn.json \
+  -n test/grn/annotation.json -z test/grn/grn-viewer.zip -s
 ```
 
 ![](assets/grn.jpg)

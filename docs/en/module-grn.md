@@ -4,56 +4,65 @@ Gene regulatory network (GRN) analysis and interactive visualization. From edge 
 
 ## net2json
 
-The entry point for GRN visualization. Converts an edge table into the JSON format the viewer expects, with control over display mode. Two modes: `-a` (full view — automatically shows the entire network when nodes are below a threshold) and `-s` (compact mode — manual click-to-expand). Optionally attach annotation data via `-n` to display extra info on each node.
+Converts a GRN edge table (TSV) to JSON for downstream use.
 
 ```bash
-jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -a -t 200 \
-  -n annotation.tsv --max-nodes 200
-jsrc grn net2json -i grn.tsv -o viewer/json/grn.json -s
+jsrc grn net2json -i grn.tsv -o json/grn.json
 ```
 
 - `-i, --input`: GRN edge table (tab-delimited).
-- `-o, --output`: output grn.json path.
-- `-a, --all`: all mode. Auto-displays full network when gene count is at or below threshold.
-- `-s, --some`: some mode. Manual click-to-expand.
-- `-t, --threshold`: threshold for `-a` mode (default: `300`).
-- `-d, --viewer-dir`: viewer output directory; inferred from `-o` if not given.
-- `-n, --annotation-input`: optional annotation TSV to generate annotation.json.
-- `-z, --zip-output`: optional ZIP output packaging index.html, CSS/JS, and JSON.
-- `--max-nodes`: max nodes shown in full view (default: `0` = all).
+- `-o, --output`: output JSON path.
 
 ## anno2json
 
-Generates annotation.json separately when the network JSON is already prepared, without re-running the full conversion pipeline.
+Converts an annotation TSV to JSON.
 
 ```bash
-jsrc grn anno2json -i annotation.tsv -o viewer/json/annotation.json
+jsrc grn anno2json -i annotation.tsv -o json/annotation.json
 ```
 
-- `-i, --input`: annotation TSV input.
+- `-i, --input`: annotation TSV.
 - `-o, --output`: output annotation.json.
+
+## build
+
+Builds a static viewer page from a grn JSON file and an optional annotation JSON, optionally packaged as a ZIP for deployment. `-a` for full-view mode (auto-display when node count is under threshold), `-e` for click-to-expand mode.
+
+```bash
+jsrc grn build -d viewer -g json/grn.json -n json/annotation.json -a -t 200
+jsrc grn build -d viewer -g json/grn.json -z viewer.zip -e
+```
+
+- `-d, --dir`: output directory (default: current directory).
+- `-g, --grn-json`: path to grn.json, copied to `json/` in output.
+- `-n, --annotation-json`: path to annotation.json (optional).
+- `-z, --zip-output`: ZIP output path.
+- `-a, --all`: full-view mode.
+- `-e, --expand`: click-to-expand mode.
+- `-t, --threshold`: auto full-view threshold (default: `300`).
+- `--max-nodes`: max nodes in full view (`0` = all).
 
 ## serve
 
-Start a local HTTP server to view the GRN graph in a browser. Supports the same all/some display modes. Annotated networks show node grouping information.
+Starts a local HTTP server to serve the GRN viewer. Supports all/expand modes. Default port 8000.
 
 ```bash
 jsrc grn serve -d viewer -g viewer/json/grn.json -p 8000 -a -t 200
 jsrc grn serve -d viewer -g viewer/json/grn.json \
-  -n viewer/json/annotation.json -s
+  -n viewer/json/annotation.json -e
 ```
 
-- `-d, --dir`: viewer directory to serve (default: current directory).
+- `-d, --dir`: viewer directory (default: current directory).
 - `-g, --grn-json`: path to grn.json (required).
 - `-n, --annotation-json`: path to annotation.json (optional).
 - `-p, --port`: HTTP port (default: `8000`).
-- `-a, --all`: all mode.
-- `-s, --some`: some mode.
-- `-t, --threshold`: threshold for `-a` mode (default: `300`).
+- `-a, --all`: full-view mode.
+- `-e, --expand`: click-to-expand mode.
+- `-t, --threshold`: auto full-view threshold (default: `300`).
 
 ## centrality
 
-Once the network is built, the natural next question is which genes are the key players. This command computes in-degree, out-degree, and total degree for each node, sorting by total degree to quickly identify hub genes.
+Computes in-degree, out-degree, and total degree for each node, sorted by total degree to identify hub genes.
 
 ```bash
 jsrc grn centrality -i grn.tsv --sep "\t" --top 30
