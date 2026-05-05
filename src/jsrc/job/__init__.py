@@ -28,7 +28,7 @@ def register_subparser(subparsers):
         default=[],
         help="Extra env KEY=VAL (repeatable)",
     )
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_submit"))
+    p.set_defaults(func=_dispatch("jsrc.job.submit"))
 
     p = job_sub.add_parser("ls", help="List tracked jobs")
     p.add_argument("-w", "--watch", action="store_true", help="Refresh continuously")
@@ -73,7 +73,7 @@ def register_subparser(subparsers):
         "-l", "--limit", type=int, default=20, help="Max rows when --all is not set"
     )
     p.add_argument("-q", "--query", default="", help="Filter by command/name/log path")
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_ls"))
+    p.set_defaults(func=_dispatch("jsrc.job.ls"))
 
     p = job_sub.add_parser("show", help="Show details of a job by job_id or pid")
     p.add_argument("target", help="Job ID or PID")
@@ -85,13 +85,13 @@ def register_subparser(subparsers):
         help="Output format",
     )
     p.add_argument("-c", "--cols", default="", help="Columns to print, comma-separated")
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_show"))
+    p.set_defaults(func=_dispatch("jsrc.job.show"))
 
     p = job_sub.add_parser("logs", help="Show job log by job_id or pid")
     p.add_argument("target", help="Job ID or PID")
     p.add_argument("-F", "--follow", action="store_true", help="Follow log output")
     p.add_argument("-n", "--lines", type=int, default=100, help="Tail line count")
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_logs"))
+    p.set_defaults(func=_dispatch("jsrc.job.logs"))
 
     p = job_sub.add_parser("kill", help="Stop a running job by job_id or pid")
     p.add_argument("target", help="Job ID or PID")
@@ -108,7 +108,7 @@ def register_subparser(subparsers):
         action="store_true",
         help="Kill process group instead of single PID",
     )
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_kill"))
+    p.set_defaults(func=_dispatch("jsrc.job.kill"))
 
     p = job_sub.add_parser("history", help="Print job history")
     p.add_argument("-l", "--limit", type=int, default=50, help="Limit rows")
@@ -120,7 +120,7 @@ def register_subparser(subparsers):
         help="Output format",
     )
     p.add_argument("-q", "--query", default="", help="Filter by command/name/log path")
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_history"))
+    p.set_defaults(func=_dispatch("jsrc.job.history"))
 
     p = job_sub.add_parser("gc", help="Trim history/log metadata")
     p.add_argument(
@@ -138,4 +138,4 @@ def register_subparser(subparsers):
     p.add_argument(
         "--remove-dead-state", action="store_true", help="Remove stale job state files"
     )
-    p.set_defaults(func=_dispatch("jsrc.job.commands", "cmd_gc"))
+    p.set_defaults(func=_dispatch("jsrc.job.gc"))
