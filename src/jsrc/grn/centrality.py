@@ -35,3 +35,15 @@ def cmd(args):
     print("node\tin_degree\tout_degree\ttotal_degree")
     for node, inn, outn, total in ranked[: args.top]:
         print(f"{node}\t{inn:.4f}\t{outn:.4f}\t{total:.4f}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("centrality", help="Compute GRN node centrality summary")
+    p.add_argument(
+        "-i", "--input", required=True, help="Edge table (source target [weight])"
+    )
+    p.add_argument(
+        "--sep", default=None, help="Column separator (default: auto whitespace/tab)"
+    )
+    p.add_argument("--top", type=int, default=20, help="Top N nodes to print")
+    p.set_defaults(func=cmd)

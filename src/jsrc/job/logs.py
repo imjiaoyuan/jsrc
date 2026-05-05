@@ -17,3 +17,11 @@ def cmd(args) -> None:
         return
     for line in tail_lines(path, args.lines):
         print(line)
+
+
+def register(subparsers):
+    p = subparsers.add_parser("logs", help="Show job log by job_id or pid")
+    p.add_argument("target", help="Job ID or PID")
+    p.add_argument("-F", "--follow", action="store_true", help="Follow log output")
+    p.add_argument("-n", "--lines", type=int, default=100, help="Tail line count")
+    p.set_defaults(func=cmd)

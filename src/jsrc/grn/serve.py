@@ -33,3 +33,40 @@ def cmd(args):
     with http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler) as httpd:
         print(f"Serving {args.dir} at http://127.0.0.1:{args.port}")
         httpd.serve_forever()
+
+
+def register(subparsers):
+    p = subparsers.add_parser("serve", help="Start GRN viewer service")
+    p.add_argument(
+        "-d", "--dir", default=".", help="Viewer directory (default: current directory)"
+    )
+    p.add_argument("-p", "--port", type=int, default=8000, help="Port")
+    p.add_argument("-g", "--grn-json", required=True, help="Path to grn.json")
+    p.add_argument(
+        "-n",
+        "--annotation-json",
+        default=None,
+        help="Path to annotation.json (optional)",
+    )
+    mode = p.add_mutually_exclusive_group()
+    mode.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        help="Mode all: auto full-view when gene count <= threshold",
+    )
+    mode.add_argument(
+        "-s",
+        "--some",
+        action="store_true",
+        help="Mode some: manual click-to-expand only",
+    )
+    p.set_defaults(all=True, some=False)
+    p.add_argument(
+        "-t",
+        "--threshold",
+        type=int,
+        default=300,
+        help="In all mode, auto full-view when gene count <= this value",
+    )
+    p.set_defaults(func=cmd)

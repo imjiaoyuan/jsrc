@@ -33,3 +33,17 @@ def cmd(args) -> None:
         "command",
     ]
     print_rows(rendered, cols, args.format)
+
+
+def register(subparsers):
+    p = subparsers.add_parser("history", help="Print job history")
+    p.add_argument("-l", "--limit", type=int, default=50, help="Limit rows")
+    p.add_argument(
+        "-f",
+        "--format",
+        choices=["table", "tsv", "json"],
+        default="table",
+        help="Output format",
+    )
+    p.add_argument("-q", "--query", default="", help="Filter by command/name/log path")
+    p.set_defaults(func=cmd)

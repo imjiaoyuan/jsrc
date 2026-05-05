@@ -78,3 +78,31 @@ def cmd(args) -> None:
     print(f"pid\t{proc.pid}")
     print(f"log\t{log_path}")
     print("status\trunning")
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "submit", help='Submit a job: jsrc job submit "cmd" "log"'
+    )
+    p.add_argument(
+        "command",
+        help='Command to run, wrapped by nohup (e.g. "Rscript 02.harmony2.R")',
+    )
+    p.add_argument("log", nargs="?", help="Log file path (optional)")
+    p.add_argument("-N", "--name", default="", help="Optional job name")
+    p.add_argument("-C", "--cwd", default=".", help="Working directory")
+    p.add_argument("-S", "--shell", default="bash", help="Shell binary used with -lc")
+    p.add_argument(
+        "-A",
+        "--append",
+        action="store_true",
+        help="Append to log file instead of overwrite",
+    )
+    p.add_argument(
+        "-E",
+        "--env",
+        action="append",
+        default=[],
+        help="Extra env KEY=VAL (repeatable)",
+    )
+    p.set_defaults(func=cmd)

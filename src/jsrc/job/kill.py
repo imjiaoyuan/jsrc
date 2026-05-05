@@ -36,3 +36,22 @@ def cmd(args) -> None:
     write_jobs(rows, keep=1000)
     print(f"killed\t{pid}")
     print(f"signal\t{args.signal}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("kill", help="Stop a running job by job_id or pid")
+    p.add_argument("target", help="Job ID or PID")
+    p.add_argument(
+        "-s",
+        "--signal",
+        default="TERM",
+        choices=["TERM", "KILL", "INT"],
+        help="Signal to send",
+    )
+    p.add_argument(
+        "-g",
+        "--group",
+        action="store_true",
+        help="Kill process group instead of single PID",
+    )
+    p.set_defaults(func=cmd)

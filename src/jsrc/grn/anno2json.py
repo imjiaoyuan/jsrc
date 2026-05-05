@@ -21,3 +21,12 @@ def annotation_to_json(input_path: str, output_path: str):
 
 def cmd(args):
     annotation_to_json(args.input, args.output)
+
+
+def register(subparsers):
+    p = subparsers.add_parser(
+        "anno2json", help="Convert annotation table to annotation.json"
+    )
+    p.add_argument("-i", "--input", required=True, help="Input file")
+    p.add_argument("-o", dest="output", required=True, help="Output JSON")
+    p.set_defaults(func=cmd)

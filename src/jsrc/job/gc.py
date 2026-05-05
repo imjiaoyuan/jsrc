@@ -27,3 +27,23 @@ def cmd(args) -> None:
                 removed += 1
     print(f"kept_history\t{max(1, args.keep_history)}")
     print(f"state_files_removed\t{removed}")
+
+
+def register(subparsers):
+    p = subparsers.add_parser("gc", help="Trim history/log metadata")
+    p.add_argument(
+        "-k",
+        "--keep-history",
+        type=int,
+        default=1000,
+        help="Keep last N history records",
+    )
+    p.add_argument(
+        "--prune-missing-log",
+        action="store_true",
+        help="Mark records whose log file no longer exists",
+    )
+    p.add_argument(
+        "--remove-dead-state", action="store_true", help="Remove stale job state files"
+    )
+    p.set_defaults(func=cmd)

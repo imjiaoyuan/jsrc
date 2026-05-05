@@ -32,3 +32,17 @@ def cmd(args) -> None:
         else list(view.keys())
     )
     print_rows([view], columns, args.format)
+
+
+def register(subparsers):
+    p = subparsers.add_parser("show", help="Show details of a job by job_id or pid")
+    p.add_argument("target", help="Job ID or PID")
+    p.add_argument(
+        "-f",
+        "--format",
+        choices=["table", "json"],
+        default="table",
+        help="Output format",
+    )
+    p.add_argument("-c", "--cols", default="", help="Columns to print, comma-separated")
+    p.set_defaults(func=cmd)

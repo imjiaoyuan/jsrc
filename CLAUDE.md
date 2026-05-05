@@ -74,14 +74,13 @@ Every module follows this convention:
 
 ```
 src/jsrc/<module>/
-├── __init__.py    # register_subparser() — argparse setup + dispatch
+├── __init__.py    # register_subparser() — creates module parser and aggregates subcommands
 ├── core.py        # (optional) shared utilities for the module
-└── <subcmd>.py    # each subcommand in its own file, exports a cmd(args) function
+└── <subcmd>.py    # each subcommand file defines register(subparsers) + cmd(args)
 ```
 
-- `register_subparser()` defines subcommands via `add_subparsers` and wires them to dispatch functions
-- Dispatch uses either `_dispatch("jsrc.module.file")` (calls `module.cmd(args)`) or `_dispatch("jsrc.module.file", "func_name")` (calls `module.func_name(args)`)
-- Each subcommand file exposes a `cmd(args)` function (or a named function for modules like `job` which uses `cmd_submit`, `cmd_ls`, etc.)
+- `register_subparser()` should only create the module-level parser and call each subcommand file's `register()`
+- Each subcommand file should own its argparse options in `register(subparsers)` and execution logic in `cmd(args)`
 - Argparse `set_defaults(_group_parser=...)` is used so that typing a parent command (e.g. `jsrc seq`) prints its subcommand help instead of falling through to the root parser
 
 ### Shared utilities
