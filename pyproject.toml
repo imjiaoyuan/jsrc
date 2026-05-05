@@ -1,6 +1,6 @@
 [project]
 name = "jsrc"
-version = "0.2.1"
+version = "0.2.2"
 description = "Python library for bioinformatics and scientific computing"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -38,6 +38,9 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["jsrc*"]
+
+[tool.setuptools.package-data]
+"jsrc.grn" = ["sources/*"]
 
 [tool.black]
 target-version = ["py310"]
