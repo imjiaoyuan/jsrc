@@ -1,4 +1,6 @@
 import math
+from argparse import Namespace
+from typing import Any
 
 from Bio import SeqIO
 
@@ -7,7 +9,7 @@ from jsrc.plot.core import setup_matplotlib
 plt = setup_matplotlib()
 
 
-def _iter_windows(seq: str, w: int):
+def _iter_windows(seq: str, w: int) -> Any:
     seq = seq.upper()
     for start in range(0, len(seq), w):
         end = min(start + w, len(seq))
@@ -16,7 +18,7 @@ def _iter_windows(seq: str, w: int):
         yield (start, end, gc / len(sub) if sub else 0.0)
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.w < 1:
         raise SystemExit("-w must be >= 1")
     records = list(SeqIO.parse(args.fa, "fasta"))
@@ -78,7 +80,7 @@ def cmd(args):
     plt.show()
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "circoslite", help="Simple circular tracks for genome stats"
     )

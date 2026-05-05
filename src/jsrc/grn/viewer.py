@@ -851,7 +851,7 @@ def sync_viewer_assets(
     view_mode: str = "auto",
     full_view_threshold: int = 300,
     max_display_nodes: int = 0,
-):
+) -> None:
     mode = view_mode if view_mode in {"expand", "full", "auto"} else "auto"
     threshold = max(0, int(full_view_threshold))
     max_nodes = max(0, int(max_display_nodes))

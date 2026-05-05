@@ -1,5 +1,7 @@
 import time
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -18,7 +20,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 
-def _models(seed: int):
+def _models(seed: int) -> dict[str, Any]:
     return {
         "gbdt": lambda: GradientBoostingClassifier(
             n_estimators=200, learning_rate=0.05, max_depth=4, random_state=seed
@@ -43,7 +45,7 @@ def _models(seed: int):
     }
 
 
-def _predict(model, x_test):
+def _predict(model: Any, x_test: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     y_pred = model.predict(x_test)
     if hasattr(model, "predict_proba"):
         y_score = model.predict_proba(x_test)[:, 1]
@@ -67,7 +69,7 @@ def _metrics(
     return out
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.folds <= 0:
         raise SystemExit("--folds must be a positive integer")
     if args.select_k <= 0:
@@ -155,7 +157,7 @@ def cmd(args):
     print(f"Summary: {summary_path}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "train", help="Train and evaluate GS models with CV indices"
     )

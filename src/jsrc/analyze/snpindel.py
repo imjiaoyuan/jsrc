@@ -1,4 +1,6 @@
 import json
+from argparse import Namespace
+from typing import Any
 
 from Bio import SeqIO
 from Bio.Align import PairwiseAligner
@@ -24,7 +26,7 @@ def _count_indel_events(a: str, b: str) -> int:
     return events
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
         raise SystemExit("Need at least two sequences in FASTA")
@@ -68,7 +70,7 @@ def cmd(args):
         print(f"{k}\t{v}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("snpindel", help="Pairwise SNP/INDEL summary")
     p.add_argument("-fa", required=True, help="FASTA containing at least two sequences")
     p.add_argument("-id1", help="Sequence 1 ID (default: first record)")

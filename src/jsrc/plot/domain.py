@@ -1,10 +1,13 @@
 import csv
+from argparse import Namespace
+from typing import Any
+
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 plt = setup_matplotlib()
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     with open(args.tsv, "r", encoding="utf-8") as f:
         rows = list(csv.DictReader(f, delimiter="\t"))
     required = {"protein", "domain", "start", "end"}
@@ -48,7 +51,7 @@ def cmd(args):
     print(f"Protein domain plot saved to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("domain", help="Plot protein domain architecture")
     p.add_argument("-tsv", required=True, help="Domain TSV file")
     p.add_argument("-o", required=True, help="Output PNG file")

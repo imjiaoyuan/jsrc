@@ -1,5 +1,7 @@
 import os
 import signal
+from argparse import Namespace
+from typing import Any
 
 from jsrc.job.core import (
     find_row,
@@ -11,7 +13,7 @@ from jsrc.job.core import (
 )
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     rows = load_jobs()
     row = find_row(rows, str(args.target))
     if row is None:
@@ -38,7 +40,7 @@ def cmd(args) -> None:
     print(f"signal\t{args.signal}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("kill", help="Stop a running job by job_id or pid")
     p.add_argument("target", help="Job ID or PID")
     p.add_argument(

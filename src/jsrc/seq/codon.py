@@ -1,5 +1,7 @@
 import json
+from argparse import Namespace
 from collections import Counter, defaultdict
+from typing import Any, Iterator
 
 from Bio import SeqIO
 
@@ -71,7 +73,7 @@ AA_TABLE = {
 }
 
 
-def _iter_codons(seq: str):
+def _iter_codons(seq: str) -> Iterator[str]:
     seq = seq.upper().replace("U", "T")
     for i in range(0, len(seq) - 2, 3):
         c = seq[i : i + 3]
@@ -79,7 +81,7 @@ def _iter_codons(seq: str):
             yield c
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     counts = Counter()
     aa_to_codons = defaultdict(list)
     for codon, aa in AA_TABLE.items():
@@ -121,7 +123,7 @@ def cmd(args):
         print(f"{codon}\t{count}\t{freq:.6f}\t{rscu[codon]:.4f}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("codon", help="Codon usage and RSCU from CDS FASTA")
     p.add_argument("-fa", required=True, help="CDS FASTA file")
     p.add_argument("--top", type=int, default=20, help="Show top N codons")

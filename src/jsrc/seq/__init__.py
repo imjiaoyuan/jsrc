@@ -1,7 +1,9 @@
+from typing import Any
+
 from jsrc.seq import codon, extract, kmer, promoter, qc, rename, translate, window
 
 
-def register_subparser(subparsers):
+def register_subparser(subparsers: Any) -> None:
     seq_parser = subparsers.add_parser("seq", help="Sequence operations")
     seq_sub = seq_parser.add_subparsers(dest="seq_cmd")
     seq_parser.set_defaults(_group_parser=seq_parser)

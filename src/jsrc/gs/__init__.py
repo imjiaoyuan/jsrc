@@ -1,7 +1,9 @@
+from typing import Any
+
 from jsrc.gs import build, split, train
 
 
-def register_subparser(subparsers):
+def register_subparser(subparsers: Any) -> None:
     gs_parser = subparsers.add_parser(
         "gs", help="Genomic selection dataset and model workflows"
     )

@@ -1,9 +1,12 @@
 import json
+from argparse import Namespace
+from typing import Any, Iterator
 
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
 
 
-def _pick_record(path: str, seq_id: str | None):
+def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
     if seq_id:
         for rec in SeqIO.parse(path, "fasta"):
             if rec.id == seq_id or rec.id.split()[0] == seq_id:
@@ -18,7 +21,7 @@ def _pick_record(path: str, seq_id: str | None):
     return longest
 
 
-def _iter_windows(seq: str, w: int, s: int):
+def _iter_windows(seq: str, w: int, s: int) -> Iterator[dict[str, float | int]]:
     seq = seq.upper().replace("U", "T")
     for start in range(0, max(1, len(seq) - w + 1), s):
         end = min(start + w, len(seq))
@@ -44,7 +47,7 @@ def _iter_windows(seq: str, w: int, s: int):
             break
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.w < 1 or args.s < 1:
         raise SystemExit("-w and -s must be >= 1")
     rec = _pick_record(args.fa, args.id)
@@ -79,7 +82,7 @@ def cmd(args):
         )
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("window", help="Sliding-window GC and AT skew")
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("-id", help="Target sequence ID (default: longest sequence)")

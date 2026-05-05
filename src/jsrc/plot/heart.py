@@ -1,8 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from argparse import Namespace
+from typing import Any
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     x = np.arange(-1.8, 1.8, 0.005)
 
     plt.figure(figsize=(12, 10))
@@ -30,6 +32,6 @@ def cmd(args):
     plt.show()
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("heart", help="Plot heart curve")
     p.set_defaults(func=cmd)

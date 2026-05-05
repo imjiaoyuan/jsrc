@@ -1,4 +1,7 @@
 import csv
+from argparse import Namespace
+from typing import Any
+
 from jsrc.seq.core import parse_gff_attributes
 
 
@@ -47,7 +50,7 @@ def _apply_mapping(fasta_path: str, output_path: str, mapping: dict[str, str]) -
     return renamed
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     mode = args.mode
     if mode == "csv":
         if not args.map:
@@ -62,7 +65,7 @@ def cmd(args):
     print(f"Renamed {renamed} IDs to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("rename", help="Rename FASTA IDs (CSV or GFF mapping)")
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("-mode", choices=["csv", "gff"], default="csv", help="Mapping mode")

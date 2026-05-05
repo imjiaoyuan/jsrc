@@ -1,9 +1,12 @@
+from argparse import Namespace
+from typing import Any
+
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 plt = setup_matplotlib()
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     elements = []
     with open(args.bed, "r", encoding="utf-8") as f:
         for line in f:
@@ -43,7 +46,7 @@ def cmd(args):
     print(f"Cis-element plot saved to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("cis", help="Plot cis-regulatory elements")
     p.add_argument("-bed", required=True, help="BED file")
     p.add_argument("-o", required=True, help="Output PNG file")

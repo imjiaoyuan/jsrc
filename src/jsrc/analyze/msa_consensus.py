@@ -1,12 +1,14 @@
 import json
+from argparse import Namespace
 from collections import Counter
+from typing import Any
 
 from Bio import SeqIO
 
 from jsrc.analyze.core import pad_alignment
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
         raise SystemExit("Need at least two sequences")
@@ -47,7 +49,7 @@ def cmd(args):
     print(f"consensus\t{payload['consensus']}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "msa_consensus", help="Consensus and conservation from FASTA"
     )

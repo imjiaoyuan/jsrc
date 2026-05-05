@@ -6,23 +6,7 @@ import sys
 from jsrc import __version__
 
 
-def _dispatch(module_name: str, func_name: str = "cmd"):
-    """Create a CLI dispatch callable that imports a module and calls a function.
-
-    Parameters
-    ----------
-    module_name : str
-        Fully qualified module name to import (e.g. ``"jsrc.seq.extract"``).
-    func_name : str
-        Name of the function to call on the imported module (default ``"cmd"``).
-
-    Returns
-    -------
-    callable
-        A function ``(args: argparse.Namespace) -> None`` that imports the
-        target module and calls ``module.func_name(args)``.
-    """
-
+def _dispatch(module_name: str, func_name: str = "cmd") -> argparse.Action:
     def _runner(args: argparse.Namespace) -> None:
         module = importlib.import_module(module_name)
         getattr(module, func_name)(args)
@@ -41,7 +25,7 @@ MODULES = {
 }
 
 
-def _iter_enabled_modules():
+def _iter_enabled_modules() -> list[str]:
     only = [x.strip() for x in os.getenv("JSRC_MODULES", "").split(",") if x.strip()]
     disabled = {
         x.strip() for x in os.getenv("JSRC_DISABLE_MODULES", "").split(",") if x.strip()
@@ -50,9 +34,9 @@ def _iter_enabled_modules():
     return [n for n in names if n in MODULES and n not in disabled]
 
 
-def _register_modules(subparsers, *, debug: bool = False):
-    loaded = []
-    errors = []
+def _register_modules(subparsers: argparse.Action, *, debug: bool = False) -> tuple[list[str], list[str]]:
+    loaded: list[str] = []
+    errors: list[str] = []
     for name in _iter_enabled_modules():
         try:
             mod = importlib.import_module(MODULES[name])
@@ -69,7 +53,7 @@ def _register_modules(subparsers, *, debug: bool = False):
     return loaded, errors
 
 
-def main():
+def main() -> None:
     debug_mode = "--debug" in sys.argv[1:]
     parser = argparse.ArgumentParser(
         prog="jsrc", description="General-purpose bioinformatics and data toolkit"

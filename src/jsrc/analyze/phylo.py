@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from Bio import Phylo, SeqIO
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 
@@ -14,7 +17,7 @@ def _build_tree(records, algo: str):
     return constructor.nj(dm)
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
         raise SystemExit("At least 2 sequences are required.")
@@ -23,7 +26,7 @@ def cmd(args):
     print(f"Phylogenetic tree ({args.a}) saved to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("phylo", help="Build phylogenetic tree")
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("-o", required=True, help="Output Newick tree")

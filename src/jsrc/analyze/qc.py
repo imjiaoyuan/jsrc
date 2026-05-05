@@ -1,6 +1,8 @@
 import gzip
 import json
 import re
+from argparse import Namespace
+from typing import Any
 
 from Bio import SeqIO
 
@@ -173,7 +175,7 @@ def _print_human(stats: dict[str, dict[str, float | int]]) -> None:
         print("")
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if not any([args.fa, args.sam, args.vcf, args.fq]):
         raise SystemExit(
             "At least one input is required: -fa and/or -sam and/or -vcf and/or -fq"
@@ -195,7 +197,7 @@ def cmd(args):
     _print_human(stats)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("qc", help="Assembly/mapping/variant quick stats")
     p.add_argument("-fa", help="Assembly FASTA for contig/N50/GC stats")
     p.add_argument("-sam", help="SAM/SAM.GZ for mapping rate and depth")

@@ -1,13 +1,15 @@
 import csv
 import zipfile
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 from jsrc.grn.anno2json import annotation_to_json
 from jsrc.grn.core import write_json
 from jsrc.grn.viewer import sync_viewer_assets
 
 
-def network_to_json(input_path: str, output_path: str):
+def network_to_json(input_path: str, output_path: str) -> tuple[list[dict[str, Any]], int]:
     links = []
     with open(input_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")
@@ -38,7 +40,7 @@ def _infer_viewer_dir(output_json: str) -> Path:
     return out.parent
 
 
-def _zip_viewer(viewer_dir: Path, zip_output: str):
+def _zip_viewer(viewer_dir: Path, zip_output: str) -> None:
     zip_path = Path(zip_output).expanduser().resolve()
     zip_path.parent.mkdir(parents=True, exist_ok=True)
     wanted = [
@@ -55,7 +57,7 @@ def _zip_viewer(viewer_dir: Path, zip_output: str):
     print(f"Viewer ZIP written: {zip_path}")
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     links, _ = network_to_json(args.input, args.output)
     need_viewer = bool(args.zip_output or args.viewer_dir or args.annotation_input)
     if not need_viewer:
@@ -86,7 +88,7 @@ def cmd(args):
         _zip_viewer(viewer_dir, args.zip_output)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("net2json", help="Convert GRN edge table to grn.json")
     p.add_argument("-i", "--input", required=True, help="Input file")
     p.add_argument("-o", dest="output", required=True, help="Output JSON")

@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -24,7 +27,7 @@ def _merge_regions(regions: list[tuple[int, int]]) -> list[tuple[int, int]]:
     return merged
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if not args.feature.strip():
         raise SystemExit("-feature must be a non-empty string")
     if not args.match.strip():
@@ -89,7 +92,7 @@ def cmd(args):
     print(f"Extracted {extracted}/{len(targets)} sequences to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "extract", help="Extract feature sequences by IDs from genome+GFF"
     )

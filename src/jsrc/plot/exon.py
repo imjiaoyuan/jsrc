@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from jsrc.plot.core import (
     get_gene_structure,
     natural_sort_key,
@@ -8,7 +11,7 @@ from jsrc.plot.core import (
 plt = setup_matplotlib()
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     with open(args.ids, "r", encoding="utf-8") as f:
         gene_ids = [line.strip() for line in f if line.strip()]
     coords = get_gene_structure(args.gff, gene_ids, feature_types=["exon"])
@@ -28,7 +31,7 @@ def cmd(args):
     print(f"Exon structure plot saved to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("exon", help="Plot exon structure diagram")
     p.add_argument("-gff", required=True, help="GFF annotation file")
     p.add_argument("-ids", required=True, help="Gene ID list file")

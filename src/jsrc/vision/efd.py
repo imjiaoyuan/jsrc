@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 import matplotlib
 
@@ -136,7 +138,7 @@ def _center_contour(contour: np.ndarray) -> np.ndarray:
 
 def _plot_comparison(
     contour: np.ndarray, reconstruction: np.ndarray, output_png: Path, harmonics: int
-):
+) -> None:
     plt.figure(figsize=(6, 6))
     plt.plot(
         contour[:, 0], contour[:, 1], "k-", alpha=0.35, linewidth=2.5, label="Original"
@@ -157,7 +159,7 @@ def _plot_comparison(
     plt.close()
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
     contour_files = _iter_contours(args.input)
@@ -197,7 +199,7 @@ def cmd(args):
         print(f"Processed: {file_name}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "efd", help="Convert extracted contours (.npy) to EFD descriptors"
     )

@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from jsrc.job.core import (
     filter_rows,
     load_jobs,
@@ -7,7 +10,7 @@ from jsrc.job.core import (
 )
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     warn_portability_limits()
     rows = load_jobs()
     rows = filter_rows(rows, args.query)
@@ -35,7 +38,7 @@ def cmd(args) -> None:
     print_rows(rendered, cols, args.format)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("history", help="Print job history")
     p.add_argument("-l", "--limit", type=int, default=50, help="Limit rows")
     p.add_argument(

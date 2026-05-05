@@ -1,5 +1,7 @@
 import sys
 import time
+from argparse import Namespace
+from typing import Any
 
 from jsrc.job.core import (
     collect_render_rows,
@@ -9,7 +11,7 @@ from jsrc.job.core import (
 )
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     warn_portability_limits()
     columns = [c.strip() for c in args.cols.split(",") if c.strip()]
     if not columns:
@@ -42,7 +44,7 @@ def cmd(args) -> None:
     print_rows(rows, columns, args.format)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("ls", help="List tracked jobs")
     p.add_argument("-w", "--watch", action="store_true", help="Refresh continuously")
     p.add_argument(

@@ -1,7 +1,9 @@
+from argparse import Namespace
 from collections import defaultdict
+from typing import Any
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     out_degree = defaultdict(float)
     in_degree = defaultdict(float)
     nodes = set()
@@ -37,7 +39,7 @@ def cmd(args):
         print(f"{node}\t{inn:.4f}\t{outn:.4f}\t{total:.4f}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("centrality", help="Compute GRN node centrality summary")
     p.add_argument(
         "-i", "--input", required=True, help="Edge table (source target [weight])"

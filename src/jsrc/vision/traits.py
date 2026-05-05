@@ -1,10 +1,12 @@
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 import cv2
 from jsrc.vision.core import ensure_odd, get_channel_image
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     path = Path(args.input)
     img = cv2.imread(str(path))
     if img is None:
@@ -50,7 +52,7 @@ def cmd(args):
     print(f"solidity\t{solidity:.6f}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "traits", help="Compute morphology traits from image object"
     )

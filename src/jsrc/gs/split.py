@@ -1,9 +1,11 @@
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.folds < 2:
         raise SystemExit("--folds must be >= 2")
     data_dir = Path(args.input)
@@ -52,7 +54,7 @@ def cmd(args):
     print(f"sim_samples\t{len(sim_indices)}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "split", help="Generate CV split indices (real samples for test, sim in train)"
     )

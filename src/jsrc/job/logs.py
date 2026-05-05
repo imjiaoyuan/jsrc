@@ -1,10 +1,12 @@
 import subprocess
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 from jsrc.job.core import find_row, load_jobs, tail_lines
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     rows = load_jobs()
     row = find_row(rows, str(args.target))
     if row is None:
@@ -19,7 +21,7 @@ def cmd(args) -> None:
         print(line)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("logs", help="Show job log by job_id or pid")
     p.add_argument("target", help="Job ID or PID")
     p.add_argument("-F", "--follow", action="store_true", help="Follow log output")

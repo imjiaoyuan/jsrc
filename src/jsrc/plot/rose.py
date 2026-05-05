@@ -1,7 +1,9 @@
 import numpy as np
+from argparse import Namespace
+from typing import Any
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     try:
         import plotly.graph_objects as go
     except ImportError as exc:
@@ -57,6 +59,6 @@ def cmd(args):
     fig.show()
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("rose", help="Plot 3D rose model")
     p.set_defaults(func=cmd)

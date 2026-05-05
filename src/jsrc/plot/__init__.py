@@ -1,3 +1,5 @@
+from typing import Any
+
 from jsrc.plot import (
     chromosome,
     circoslite,
@@ -11,7 +13,7 @@ from jsrc.plot import (
 )
 
 
-def register_subparser(subparsers):
+def register_subparser(subparsers: Any) -> None:
     plot_parser = subparsers.add_parser("plot", help="Visualization")
     plot_sub = plot_parser.add_subparsers(dest="plot_cmd")
     plot_parser.set_defaults(_group_parser=plot_parser)

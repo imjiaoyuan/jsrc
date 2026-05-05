@@ -7,6 +7,7 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 IS_LINUX = sys.platform.startswith("linux")
 _PLATFORM_NOTE_EMITTED = False
@@ -457,7 +458,7 @@ def parse_env(items: list[str]) -> dict[str, str]:
     return extra
 
 
-def collect_render_rows(args, refresh: bool) -> list[dict[str, str]]:
+def collect_render_rows(args: Any, refresh: bool) -> list[dict[str, str]]:
     rows = load_jobs()
     changed = False
     if refresh:

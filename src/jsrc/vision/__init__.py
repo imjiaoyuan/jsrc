@@ -1,7 +1,9 @@
+from typing import Any
+
 from jsrc.vision import efd, extract, traits
 
 
-def register_subparser(subparsers):
+def register_subparser(subparsers: Any) -> None:
     vision_parser = subparsers.add_parser(
         "vision", help="Image recognition and shape descriptors"
     )

@@ -2,12 +2,14 @@ import functools
 import http.server
 import os
 import shutil
+from argparse import Namespace
+from typing import Any
 
 from jsrc.grn.core import ensure_dir, write_json
 from jsrc.grn.viewer import sync_viewer_assets
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     view_mode = "expand" if args.some else "auto"
     sync_viewer_assets(
         args.dir,
@@ -35,7 +37,7 @@ def cmd(args):
         httpd.serve_forever()
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("serve", help="Start GRN viewer service")
     p.add_argument(
         "-d", "--dir", default=".", help="Viewer directory (default: current directory)"

@@ -1,11 +1,12 @@
 import re
+from typing import Any
 
 
 from matplotlib.patches import Rectangle
 from jsrc.seq.core import parse_gff_attributes
 
 
-def setup_matplotlib():
+def setup_matplotlib() -> Any:
     import matplotlib
 
     matplotlib.use("Agg")
@@ -19,7 +20,7 @@ def natural_sort_key(value: str):
 
 
 def plot_gene_track(
-    ax,
+    ax: Any,
     coords: dict[str, list[tuple[int, int]]],
     gene_ids_sorted: list[str],
     *,

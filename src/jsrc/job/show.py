@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from jsrc.job.core import (
     build_live,
     find_row,
@@ -11,7 +14,7 @@ from jsrc.job.core import (
 )
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     warn_portability_limits()
     rows = load_jobs()
     rows, changed = refresh_jobs(rows)
@@ -34,7 +37,7 @@ def cmd(args) -> None:
     print_rows([view], columns, args.format)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("show", help="Show details of a job by job_id or pid")
     p.add_argument("target", help="Job ID or PID")
     p.add_argument(

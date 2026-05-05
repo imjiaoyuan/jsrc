@@ -1,4 +1,6 @@
 import random
+from argparse import Namespace
+from typing import Any
 
 from Bio import Phylo, SeqIO
 from Bio.Align import MultipleSeqAlignment
@@ -30,7 +32,7 @@ def _clade_key(clade):
     return tuple(leaves)
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 3:
         raise SystemExit("Need at least three sequences for bootstrap phylogeny")
@@ -67,7 +69,7 @@ def cmd(args):
     print(f"bootstrap_replicates\t{args.n}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "bootstrap_phylo", help="Bootstrap support for NJ phylogeny"
     )

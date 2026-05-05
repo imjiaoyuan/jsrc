@@ -1,5 +1,7 @@
 import collections
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 from Bio import SeqIO
 from jsrc.analyze.core import normalize_sequence
@@ -16,7 +18,7 @@ def _kmer_counts(seqs: list[str], k: int) -> collections.Counter:
     return c
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     output_dir = Path(args.o)
     output_dir.mkdir(parents=True, exist_ok=True)
     seqs = [str(rec.seq) for rec in SeqIO.parse(args.fa, "fasta")]
@@ -32,7 +34,7 @@ def cmd(args):
     print(f"Motif analysis complete. Results in {out_tsv}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("motif", help="Motif analysis")
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("-o", required=True, help="Output directory")

@@ -1,4 +1,6 @@
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 import cv2
 import numpy as np
@@ -20,7 +22,7 @@ def _validate_image_file(input_path: str) -> Path:
     return path
 
 
-def _extract_contours(args, image_path: Path, output_dir: Path):
+def _extract_contours(args: Namespace, image_path: Path, output_dir: Path) -> None:
     img = cv2.imread(str(image_path))
     if img is None:
         print(f"Skip unreadable image: {image_path}")
@@ -86,7 +88,7 @@ def _extract_contours(args, image_path: Path, output_dir: Path):
     print(f"{image_path.name}: extracted {len(valid_contours)} contour(s)")
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if (
         args.min_area_ratio < 0
         or args.max_area_ratio < 0
@@ -111,7 +113,7 @@ def cmd(args):
     _extract_contours(args, image_path, output_dir)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "extract", help="Extract object contours from a single image"
     )

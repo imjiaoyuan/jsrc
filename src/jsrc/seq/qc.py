@@ -1,10 +1,12 @@
 import gzip
 import json
+from argparse import Namespace
+from typing import Any, IO
 
 from Bio import SeqIO
 
 
-def _open_text(path: str):
+def _open_text(path: str) -> IO[str]:
     if path.endswith(".gz"):
         return gzip.open(path, "rt", encoding="utf-8")
     return open(path, "r", encoding="utf-8")
@@ -67,7 +69,7 @@ def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float |
     return out
 
 
-def _print_kv(section: str, data: dict[str, float | int]):
+def _print_kv(section: str, data: dict[str, float | int]) -> None:
     print(f"[{section}]")
     for key, val in data.items():
         if isinstance(val, int):
@@ -77,7 +79,7 @@ def _print_kv(section: str, data: dict[str, float | int]):
     print("")
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if not args.fa and not args.fq:
         raise SystemExit("Need at least one input: -fa and/or -fq")
     out: dict[str, dict[str, float | int]] = {}
@@ -92,7 +94,7 @@ def cmd(args):
         _print_kv(section, stats)
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("qc", help="Quick FASTA/FASTQ sequence QC stats")
     p.add_argument("-fa", help="Input FASTA file")
     p.add_argument("-fq", nargs="+", help="Input FASTQ/FASTQ.GZ file(s)")

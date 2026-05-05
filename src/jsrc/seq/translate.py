@@ -1,4 +1,6 @@
 import sys
+from argparse import Namespace
+from typing import Any
 
 from Bio import SeqIO
 from Bio.Data.CodonTable import TranslationError
@@ -8,7 +10,7 @@ from Bio.SeqRecord import SeqRecord
 from jsrc.seq.core import parse_gff_attributes
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     cds_dict = {}
 
@@ -51,7 +53,7 @@ def cmd(args):
     print(f"Translated {len(proteins)} genes to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("translate", help="Extract CDS and translate to protein")
     p.add_argument("-fa", required=True, help="Genome FASTA file")
     p.add_argument("-gff", required=True, help="GFF annotation file")

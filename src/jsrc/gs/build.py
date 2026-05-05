@@ -1,5 +1,7 @@
 import subprocess
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -86,7 +88,7 @@ def _simulate_with_genetic_basis(
     return x_sim, y_sim
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     try:
         from pandas_plink import read_plink
     except ImportError as exc:
@@ -160,7 +162,7 @@ def cmd(args):
     print(f"sim_samples\t{len(y_sim)}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "build", help="Build GS dataset from GWAS PLINK + phenotype"
     )

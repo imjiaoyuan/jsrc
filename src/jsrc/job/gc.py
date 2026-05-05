@@ -1,9 +1,11 @@
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 from jsrc.job.core import load_jobs, now_iso, runtime_seconds, state_dir, write_jobs
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     rows = load_jobs()
     if args.prune_missing_log:
         for row in rows:
@@ -29,7 +31,7 @@ def cmd(args) -> None:
     print(f"state_files_removed\t{removed}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("gc", help="Trim history/log metadata")
     p.add_argument(
         "-k",

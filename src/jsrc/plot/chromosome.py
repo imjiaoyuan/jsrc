@@ -1,17 +1,20 @@
+from argparse import Namespace
+from typing import Any
+
 from jsrc.seq.core import parse_gff_attributes
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 plt = setup_matplotlib()
 
 
-def _load_ids(path: str | None):
+def _load_ids(path: str | None) -> set[str] | None:
     if not path:
         return None
     with open(path, "r", encoding="utf-8") as f:
         return {line.strip() for line in f if line.strip()}
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     target_ids = _load_ids(args.ids)
     chr_lengths = {}
     gene_positions = []
@@ -63,7 +66,7 @@ def cmd(args):
     print(f"Chromosome map saved to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("chromosome", help="Plot chromosome map")
     p.add_argument("-gff", required=True, help="GFF annotation file")
     p.add_argument("-ids", help="Optional gene ID list file")

@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from Bio import SeqIO
 
 from jsrc.plot.core import setup_matplotlib
@@ -12,7 +15,7 @@ def _first_seq(path: str) -> str:
     return str(rec.seq).upper().replace("U", "T")
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.k < 1:
         raise SystemExit("-k must be >= 1")
     s1 = _first_seq(args.fa1)
@@ -47,7 +50,7 @@ def cmd(args):
     plt.show()
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser("dotplot", help="Sequence dotplot by exact k-mer matches")
     p.add_argument("-fa1", required=True, help="FASTA file 1")
     p.add_argument("-fa2", required=True, help="FASTA file 2")

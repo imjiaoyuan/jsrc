@@ -1,7 +1,9 @@
 import os
 import shlex
 import subprocess
+from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 from jsrc.job.core import (
     default_log_dir,
@@ -16,7 +18,7 @@ from jsrc.job.core import (
 )
 
 
-def cmd(args) -> None:
+def cmd(args: Namespace) -> None:
     ensure_dirs()
     rows = load_jobs()
     job_id = str(next_job_id(rows))
@@ -80,7 +82,7 @@ def cmd(args) -> None:
     print("status\trunning")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "submit", help='Submit a job: jsrc job submit "cmd" "log"'
     )

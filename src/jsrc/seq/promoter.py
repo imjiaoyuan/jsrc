@@ -1,3 +1,6 @@
+from argparse import Namespace
+from typing import Any
+
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -10,7 +13,7 @@ def _read_target_ids(path: str) -> set[str]:
         return {line.strip() for line in f if line.strip()}
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.up < 0 or args.down < 0:
         raise SystemExit("-up and -down must be non-negative.")
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
@@ -55,7 +58,7 @@ def cmd(args):
     print(f"Extracted {len(promoters)} promoter sequences to {args.o}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "promoter", help="Extract promoter sequences from genome and GFF"
     )

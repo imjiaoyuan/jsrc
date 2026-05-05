@@ -1,6 +1,8 @@
 import json
 import math
+from argparse import Namespace
 from collections import Counter
+from typing import Any
 
 from Bio import SeqIO
 
@@ -26,7 +28,7 @@ def _cosine_distance(a: Counter, b: Counter) -> float:
     return 1.0 - (dot / (na * nb))
 
 
-def cmd(args):
+def cmd(args: Namespace) -> None:
     if args.k < 1:
         raise SystemExit("-k must be >= 1")
     profiles = {fa: _kmer_counter(fa, args.k) for fa in args.fa}
@@ -77,7 +79,7 @@ def cmd(args):
         print(f"{name}\t{vals}")
 
 
-def register(subparsers):
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "kmer", help="k-mer profile and optional sample distances"
     )
