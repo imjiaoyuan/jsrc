@@ -61,7 +61,9 @@ class TestNetworkToJson:
 class TestAnnotationToJson:
     def test_basic_annotation(self, tmp_path):
         tsv = tmp_path / "anno.tsv"
-        tsv.write_text("AT5G01010\tAT5G01010\tAnthranilate synthase\n", encoding="utf-8")
+        tsv.write_text(
+            "AT5G01010\tAT5G01010\tAnthranilate synthase\n", encoding="utf-8"
+        )
         out = tmp_path / "annotation.json"
 
         anno = annotation_to_json(str(tsv), str(out))

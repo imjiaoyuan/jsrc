@@ -81,7 +81,9 @@ class TestGetGeneStructure:
             "chr1\tsrc\tCDS\t1\t10\t.\t+\t.\tParent=gene1;\n",
             encoding="utf-8",
         )
-        coords = get_gene_structure(str(gff), ["gene_nonexistent"], feature_types=["CDS"])
+        coords = get_gene_structure(
+            str(gff), ["gene_nonexistent"], feature_types=["CDS"]
+        )
         assert coords["gene_nonexistent"] == []
 
     def test_non_target_feature_skipped(self, tmp_path):

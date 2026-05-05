@@ -58,7 +58,9 @@ class TestGSSimulate:
         assert y_sim.shape == (5,)
 
     def test_simulation_deterministic_with_seed(self):
-        x_real = np.random.default_rng(0).integers(0, 3, size=(30, 20)).astype(np.float32)
+        x_real = (
+            np.random.default_rng(0).integers(0, 3, size=(30, 20)).astype(np.float32)
+        )
         y_real = np.random.default_rng(0).integers(0, 2, size=30).astype(np.float32)
 
         x1, y1 = _simulate_with_genetic_basis(
@@ -95,7 +97,9 @@ class TestGSTrain:
         cv_dir = tmp_path / "cv_indices"
         cv_dir.mkdir()
         train_idx = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14])
-        test_idx = np.array([15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
+        test_idx = np.array(
+            [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+        )
         np.savetxt(cv_dir / "fold_0_train.txt", train_idx, fmt="%d")
         np.savetxt(cv_dir / "fold_0_test.txt", test_idx, fmt="%d")
         np.savetxt(cv_dir / "fold_1_train.txt", train_idx, fmt="%d")
@@ -129,7 +133,9 @@ class TestGSTrain:
         from jsrc.gs.train import cmd
         from argparse import Namespace
 
-        args = Namespace(input=str(tmp_path), output=None, folds=0, select_k=10, models="rf", seed=42)
+        args = Namespace(
+            input=str(tmp_path), output=None, folds=0, select_k=10, models="rf", seed=42
+        )
         with pytest.raises(SystemExit, match="positive integer"):
             cmd(args)
 
@@ -166,7 +172,12 @@ class TestGSTrain:
         np.savetxt(cv_dir / "fold_0_test.txt", np.array([5, 6, 7, 8, 9]), fmt="%d")
 
         args = Namespace(
-            input=str(tmp_path), output=None, folds=1, select_k=3, models="nonexistent", seed=42
+            input=str(tmp_path),
+            output=None,
+            folds=1,
+            select_k=3,
+            models="nonexistent",
+            seed=42,
         )
         with pytest.raises(SystemExit, match="Unsupported models"):
             cmd(args)
@@ -212,5 +223,6 @@ class TestGSTrain:
         cmd(args)
 
         import pandas as pd
+
         df = pd.read_csv(tmp_path / "results" / "results.csv")
         assert len(df) == 8

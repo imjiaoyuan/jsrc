@@ -76,9 +76,7 @@ class TestJobCoreIO:
 
     def test_write_with_keep_truncates(self, monkeypatch, tmp_path):
         monkeypatch.setenv("JSRC_JOBS_FILE", str(tmp_path / "jobs"))
-        rows = [
-            {k: str(i) for k in core.FIELDS} for i in range(10)
-        ]
+        rows = [{k: str(i) for k in core.FIELDS} for i in range(10)]
         core.write_jobs(rows, keep=3)
         loaded = core.load_jobs()
         assert len(loaded) == 3
@@ -292,6 +290,7 @@ class TestPrintRows:
         core.print_rows(rows, ["job_id", "name"], fmt="json")
         out = capsys.readouterr().out
         import json
+
         data = json.loads(out)
         assert data[0]["job_id"] == "1"
 

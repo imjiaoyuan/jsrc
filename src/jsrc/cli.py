@@ -9,7 +9,9 @@ from jsrc import __version__
 
 def setup_logging(verbose: bool = False) -> None:
     level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(level=level, format="%(message)s", stream=sys.stderr, force=True)
+    logging.basicConfig(
+        level=level, format="%(message)s", stream=sys.stderr, force=True
+    )
 
 
 def _dispatch(module_name: str, func_name: str = "cmd") -> argparse.Action:
@@ -40,7 +42,9 @@ def _iter_enabled_modules() -> list[str]:
     return [n for n in names if n in MODULES and n not in disabled]
 
 
-def _register_modules(subparsers: argparse.Action, *, debug: bool = False) -> tuple[list[str], list[str]]:
+def _register_modules(
+    subparsers: argparse.Action, *, debug: bool = False
+) -> tuple[list[str], list[str]]:
     loaded: list[str] = []
     errors: list[str] = []
     for name in _iter_enabled_modules():

@@ -7,12 +7,12 @@ from typing import Any
 
 import matplotlib
 
-
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
 logger = logging.getLogger(__name__)
+
 
 class EllipticFourier:
     @staticmethod

@@ -13,7 +13,10 @@ from jsrc.grn.viewer import sync_viewer_assets
 
 logger = logging.getLogger(__name__)
 
-def network_to_json(input_path: str, output_path: str) -> tuple[list[dict[str, Any]], int]:
+
+def network_to_json(
+    input_path: str, output_path: str
+) -> tuple[list[dict[str, Any]], int]:
     links = []
     with open(input_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f, delimiter="\t")

@@ -11,9 +11,7 @@ from jsrc.vision.efd import (
 class TestEllipticFourier:
     def test_calculate_square_contour(self):
         """A square contour should produce non-zero coefficients."""
-        contour = np.array(
-            [[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32
-        )
+        contour = np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)
         coeffs = EllipticFourier.calculate(contour, order=5, normalize=False)
         assert coeffs.shape == (5, 4)
         assert not np.allclose(coeffs, 0)
@@ -24,9 +22,7 @@ class TestEllipticFourier:
         assert np.allclose(coeffs, 0)
 
     def test_calculate_normalized(self):
-        contour = np.array(
-            [[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32
-        )
+        contour = np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)
         coeffs_raw = EllipticFourier.calculate(contour, order=5, normalize=False)
         coeffs_norm = EllipticFourier.calculate(contour, order=5, normalize=True)
         assert coeffs_norm.shape == (5, 4)
@@ -67,9 +63,7 @@ class TestEllipticFourier:
         assert not np.any(np.isnan(pts))
 
     def test_reconstruct_multiple_harmonics(self):
-        coeffs = np.array(
-            [[5.0, 0.0, 0.0, 5.0], [1.0, 0.0, 0.0, 1.0]], dtype=float
-        )
+        coeffs = np.array([[5.0, 0.0, 0.0, 5.0], [1.0, 0.0, 0.0, 1.0]], dtype=float)
         pts = EllipticFourier.reconstruct(coeffs, num_points=50)
         assert pts.shape == (50, 2)
         assert not np.any(np.isnan(pts))
@@ -166,6 +160,7 @@ class TestEFDCmd:
         csv_file = out_dir / "leaf_01_efd.csv"
         assert csv_file.exists()
         import csv as csv_mod
+
         with open(csv_file) as f:
             reader = csv_mod.DictReader(f)
             rows = list(reader)

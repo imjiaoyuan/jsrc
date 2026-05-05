@@ -309,7 +309,9 @@ class TestPlotDotplot:
 
         from jsrc.plot.dotplot import cmd
 
-        args = Namespace(fa1=str(fa1), fa2=str(fa2), k=0, o=str(tmp_path / "x.png"), dpi=72)
+        args = Namespace(
+            fa1=str(fa1), fa2=str(fa2), k=0, o=str(tmp_path / "x.png"), dpi=72
+        )
         with pytest.raises(SystemExit, match="-k must be >= 1"):
             cmd(args)
 

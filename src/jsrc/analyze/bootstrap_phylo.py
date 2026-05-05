@@ -14,6 +14,7 @@ from jsrc.analyze.core import pad_alignment
 
 logger = logging.getLogger(__name__)
 
+
 def _tree_from_alignment(aln: MultipleSeqAlignment):
     calculator = DistanceCalculator("identity")
     dm = calculator.get_distance(aln)

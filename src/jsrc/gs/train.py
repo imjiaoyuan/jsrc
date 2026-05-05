@@ -24,6 +24,7 @@ from sklearn.tree import DecisionTreeClassifier
 
 logger = logging.getLogger(__name__)
 
+
 def _models(seed: int) -> dict[str, Any]:
     return {
         "gbdt": lambda: GradientBoostingClassifier(

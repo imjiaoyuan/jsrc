@@ -11,6 +11,7 @@ from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 
+
 def _load_target_ids(path: str) -> list[str]:
     with open(path, "r", encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]

@@ -13,6 +13,7 @@ from sklearn.linear_model import RidgeCV
 
 logger = logging.getLogger(__name__)
 
+
 def _run_ld_pruning(plink_bin: str, input_prefix: str, out_dir: Path) -> str:
     prune_out = out_dir / "pruning"
     cmd_prune = [
