@@ -1,10 +1,55 @@
+import os
+import sys
+
 import numpy as np
-import matplotlib.pyplot as plt
 from argparse import Namespace
 from typing import Any
 
 
+def _load_interactive_pyplot() -> Any:
+    try:
+        import matplotlib
+    except ImportError as exc:
+        raise SystemExit(
+            "matplotlib is required for this command. Install it with: pip install matplotlib"
+        ) from exc
+
+    env_backend = os.getenv("MPLBACKEND", "").strip()
+    if env_backend:
+        import matplotlib.pyplot as plt
+
+        if "agg" in matplotlib.get_backend().lower():
+            raise SystemExit(
+                "jsrc plot heart requires an interactive matplotlib backend. "
+                "Current MPLBACKEND is non-interactive."
+            )
+        return plt
+
+    if sys.platform.startswith("linux") and not (
+        os.getenv("DISPLAY") or os.getenv("WAYLAND_DISPLAY")
+    ):
+        raise SystemExit(
+            "No graphical display detected. Set DISPLAY/WAYLAND_DISPLAY or run in a desktop session."
+        )
+
+    for backend in ("TkAgg", "QtAgg", "Qt5Agg", "GTK3Agg", "WXAgg", "MacOSX"):
+        try:
+            matplotlib.use(backend, force=True)
+            import matplotlib.pyplot as plt
+
+            if "agg" not in matplotlib.get_backend().lower():
+                return plt
+        except (ImportError, ValueError):
+            continue
+
+    raise SystemExit(
+        "No interactive matplotlib backend is available. "
+        "Install a GUI backend (for example python3-tk or PyQt6)."
+    )
+
+
 def cmd(args: Namespace) -> None:
+    plt = _load_interactive_pyplot()
     x = np.arange(-1.8, 1.8, 0.005)
 
     plt.figure(figsize=(12, 10))
