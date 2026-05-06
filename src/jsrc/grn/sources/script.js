@@ -229,7 +229,7 @@ function highlightNode(id) {
 function downloadListInfo() {
     if (!currentCenterId) return;
 
-    let content = "GeneID\tPotriID\tAnnotation\tRelation\tWeight\n";
+    let content = "GeneID\tMapID\tAnnotation\tRelation\tWeight\n";
 
     const centerInfo = annotations[currentCenterId] || { p: "", d: "" };
     content += `${currentCenterId}\t${centerInfo.p}\t${centerInfo.d.replace(/[\n\r]/g, " ")}\tCenter\t-\n`;
@@ -278,7 +278,7 @@ function updateInfoPanel() {
     header.innerHTML = `
         <div class="panel-title">${currentCenterId}</div>
         <div class="panel-desc">
-            <b>Ptr:</b> ${info.p || '-'}<br>
+            <b>MapID:</b> ${info.p || '-'}<br>
             ${info.d || '-'}
         </div>
         <div class="panel-stats">
@@ -308,7 +308,7 @@ function updateInfoPanel() {
                 <span class="item-val">w:${n.val}</span>
             </div>
             <div class="item-details" onclick="event.stopPropagation()">
-                <div class="detail-line"><span class="detail-label">Potri:</span> ${nInfo.p || '-'}</div>
+                <div class="detail-line"><span class="detail-label">MapID:</span> ${nInfo.p || '-'}</div>
                 <div class="detail-line"><span class="detail-label">Desc:</span> ${nInfo.d || '-'}</div>
             </div>
         `;

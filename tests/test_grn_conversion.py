@@ -62,7 +62,7 @@ class TestAnnotationToJson:
     def test_basic_annotation(self, tmp_path):
         tsv = tmp_path / "anno.tsv"
         tsv.write_text(
-            "AT5G01010\tAT5G01010\tAnthranilate synthase\n", encoding="utf-8"
+            "AT5G01010\tAnthranilate synthase\tAT5G01010\n", encoding="utf-8"
         )
         out = tmp_path / "annotation.json"
 
@@ -101,3 +101,12 @@ class TestAnnotationToJson:
         assert len(anno) == 2
         assert "A" in anno
         assert "D" in anno
+
+    def test_third_column_used_as_mapping_id(self, tmp_path):
+        tsv = tmp_path / "anno.tsv"
+        tsv.write_text("G1\tDesc\tAT1G01010\n", encoding="utf-8")
+        out = tmp_path / "annotation.json"
+
+        anno = annotation_to_json(str(tsv), str(out))
+        assert anno["G1"]["p"] == "AT1G01010"
+        assert anno["G1"]["d"] == "Desc"

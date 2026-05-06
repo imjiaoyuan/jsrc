@@ -16,9 +16,9 @@ def annotation_to_json(input_path: str, output_path: str) -> dict[str, dict[str,
             if not row:
                 continue
             gid = str(row[0]).replace("_", "-")
-            ptr = str(row[1]) if len(row) > 1 else ""
-            desc = str(row[2]) if len(row) > 2 else ""
-            anno[gid] = {"p": ptr, "d": desc}
+            desc = str(row[1]) if len(row) > 1 else ""
+            map_id = str(row[2]) if len(row) > 2 else ""
+            anno[gid] = {"p": map_id, "d": desc}
     write_json(output_path, anno)
     logger.info("Annotation JSON written: %s", output_path)
     return anno

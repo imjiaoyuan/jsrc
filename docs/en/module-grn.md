@@ -23,6 +23,10 @@ jsrc grn anno2json -i annotation.tsv -o json/annotation.json
 
 - `-i, --input`: annotation TSV.
 - `-o, --output`: output annotation.json.
+- TSV columns are interpreted as:
+  1. GeneID
+  2. Description
+  3. Mapping ID (optional)
 
 ## build
 

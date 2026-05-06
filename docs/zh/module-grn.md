@@ -23,6 +23,10 @@ jsrc grn anno2json -i annotation.tsv -o json/annotation.json
 
 - `-i, --input`：注释 TSV。
 - `-o, --output`：输出 annotation.json。
+- TSV 列解释：
+  1. GeneID
+  2. 描述（Description）
+  3. 映射 ID（可选）
 
 ## build
 
