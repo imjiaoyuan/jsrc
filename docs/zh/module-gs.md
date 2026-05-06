@@ -6,6 +6,15 @@
 
 把 PLINK 基因型（bed/bim/fam）和表型文件整合起来，生成可以直接建模的数据集。会根据遗传率（`--h2`）模拟表型，并从候选位点中筛选 tag marker，输出 `.npy` 格式的矩阵和样本列表。`--plink-bin` 指定 plink 可执行文件的路径，`--n-sim` 控制模拟样本数。
 
+示例输入（`phenotype.txt`）：
+
+```txt
+IID	PHENO
+sample1	1
+sample2	0
+sample3	1
+```
+
 ```bash
 jsrc gs build -pheno phenotype.txt -plink /path/to/hap1_plink \
   -o data/hap1 --plink-bin plink --n-sim 500 --top-k 2000 --h2 0.5 --seed 42

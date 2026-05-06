@@ -6,6 +6,13 @@
 
 把 GRN 边表（TSV）转换成 JSON 格式，供后续展示使用。
 
+示例输入（`grn.tsv`）：
+
+```tsv
+GENE_A	GENE_B	0.82
+GENE_B	GENE_C	1.15
+```
+
 ```bash
 jsrc grn net2json -i grn.tsv -o json/grn.json
 ```
@@ -17,16 +24,19 @@ jsrc grn net2json -i grn.tsv -o json/grn.json
 
 把对应的注释 TSV 转换为 JSON。
 
+示例输入（`annotation.tsv`）：
+
+```tsv
+GENE_A	Anthranilate synthase	AT1G01010
+GENE_B	Transcription factor	Potri.001G000100
+```
+
 ```bash
 jsrc grn anno2json -i annotation.tsv -o json/annotation.json
 ```
 
 - `-i, --input`：注释 TSV。
 - `-o, --output`：输出 annotation.json。
-- TSV 列解释：
-  1. GeneID
-  2. 描述（Description）
-  3. 映射 ID（可选）
 
 ## build
 

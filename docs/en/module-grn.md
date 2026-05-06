@@ -6,6 +6,13 @@ Gene regulatory network (GRN) analysis and interactive visualization. From edge 
 
 Converts a GRN edge table (TSV) to JSON for downstream use.
 
+Example input (`grn.tsv`):
+
+```tsv
+GENE_A	GENE_B	0.82
+GENE_B	GENE_C	1.15
+```
+
 ```bash
 jsrc grn net2json -i grn.tsv -o json/grn.json
 ```
@@ -17,16 +24,19 @@ jsrc grn net2json -i grn.tsv -o json/grn.json
 
 Converts an annotation TSV to JSON.
 
+Example input (`annotation.tsv`):
+
+```tsv
+GENE_A	Anthranilate synthase	AT1G01010
+GENE_B	Transcription factor	Potri.001G000100
+```
+
 ```bash
 jsrc grn anno2json -i annotation.tsv -o json/annotation.json
 ```
 
 - `-i, --input`: annotation TSV.
 - `-o, --output`: output annotation.json.
-- TSV columns are interpreted as:
-  1. GeneID
-  2. Description
-  3. Mapping ID (optional)
 
 ## build
 

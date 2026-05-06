@@ -8,6 +8,14 @@ Common scenario: you have a genome FASTA and GFF annotation, but you only want t
 
 Given a genome, GFF, and target ID list (one per line), this command extracts sequences by feature type. CDS by default, but `-feature` lets you switch to mRNA or others. ID matching uses `Parent` in GFF by default — change it with `-match` if your GFF uses a different attribute.
 
+Example input (`ids.txt`):
+
+```txt
+GENE001
+GENE002
+GENE003
+```
+
 ```bash
 jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -o out.fa
 ```
@@ -23,6 +31,15 @@ jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -feature mRNA -match 
 FASTA headers from different sources are rarely consistent. One dataset uses GenBank accessions, another uses custom names. If you want to analyze them together, standardizing IDs is the first step.
 
 Two modes. `csv` is straightforward — a two-column CSV mapping old IDs to new ones, and the program replaces them. `gff` mode is smarter: given a GFF file, it renames sequences based on parent-child relationships (e.g., mapping sequence IDs to gene names). Use `-parent` to specify which attribute links them.
+
+Example input (`mapping.csv`):
+
+```csv
+old_id,new_id
+GENE001,AT1G01010
+GENE002,AT1G01020
+GENE003,AT1G01030
+```
 
 ```bash
 jsrc seq rename -fa in.fa -mode csv -map mapping.csv -o out.fa
@@ -41,7 +58,17 @@ jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
 
 Studying gene regulation often means looking at promoter regions. Say you want to check whether a transcription factor binding site exists 2kb upstream of a set of genes — you need to extract those regions in bulk first.
 
-This command does exactly that. Given genome, GFF, and gene IDs, it automatically calculates coordinates and extracts flanking sequences. Default is 2000bp upstream, 0bp downstream. Adjust with `-up` and `-down`.
+This command does exactly that. Given genome, GFF, and gene IDs, it automatically calculates coordinates and extracts flanking sequences.
+
+Example input (`genes.txt`):
+
+```txt
+GENE001
+GENE002
+GENE003
+```
+
+Default is 2000bp upstream, 0bp downstream. Adjust with `-up` and `-down`.
 
 ```bash
 jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -up 1500 -down 500

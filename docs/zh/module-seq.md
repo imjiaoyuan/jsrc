@@ -8,6 +8,14 @@
 
 这个命令就是干这个的。给基因组、GFF、和一份目标 ID 列表（一行一个），它就按特征类型去提取对应的序列。默认是提 CDS，你也可以用 `-feature` 改成 mRNA 或者其他类型。匹配 ID 的逻辑默认查 GFF 的 `Parent` 属性，如果你的 GFF 用的是别的字段，改 `-match` 就行。
 
+示例输入（`ids.txt`）：
+
+```txt
+GENE001
+GENE002
+GENE003
+```
+
 ```bash
 jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -o out.fa
 ```
@@ -23,6 +31,15 @@ jsrc seq extract -fa genome.fa -gff genes.gff -ids ids.txt -feature mRNA -match 
 这个功能的起源挺实在的：不同来源的数据 ID 格式五花八门，有时候你从 NCBI 下的一个物种和自己测序的数据命名习惯完全不一样，但你想把它们放一起分析，这时候 ID 统一就是前提。
 
 两种模式。`csv` 模式最直接——给个两列的 CSV，左边旧 ID，右边新 ID，程序照着替换。`gff` 模式更聪明一点：你给一个 GFF 文件，它根据父子关系来重命名（比如把序列 ID 改成基因名）。具体用什么属性来关联，用 `-parent` 指定。
+
+示例输入（`mapping.csv`）：
+
+```csv
+old_id,new_id
+GENE001,AT1G01010
+GENE002,AT1G01020
+GENE003,AT1G01030
+```
 
 ```bash
 jsrc seq rename -fa in.fa -mode csv -map mapping.csv -o out.fa
@@ -43,7 +60,17 @@ jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
 
 研究基因调控的时候经常要看启动子区域。比如你想知道某几个基因上游 2kb 有没有某个转录因子结合位点——这时候就得先把这些区域批量提取出来。
 
-这个命令就是干这个的：给基因组、GFF、基因 ID 列表，它自动计算坐标并把上下游序列取出来。默认向上游取 2000bp，下游不取（设为 0）。你也可以用 `-up` 和 `-down` 自由调整。
+这个命令就是干这个的：给基因组、GFF、基因 ID 列表，它自动计算坐标并把上下游序列取出来。
+
+示例输入（`genes.txt`）：
+
+```txt
+GENE001
+GENE002
+GENE003
+```
+
+默认向上游取 2000bp，下游不取（设为 0）。你也可以用 `-up` 和 `-down` 自由调整。
 
 ```bash
 jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -up 1500 -down 500

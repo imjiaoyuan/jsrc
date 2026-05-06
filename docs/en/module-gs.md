@@ -6,6 +6,15 @@ Genomic selection simulation and modeling pipeline. Uses PLINK genotype data and
 
 Integrates PLINK genotypes (bed/bim/fam) with phenotype data into a modeling-ready dataset. Simulates phenotypes based on heritability (`--h2`), selects tag markers from candidate loci, and outputs `.npy` matrices and sample IDs. `--plink-bin` specifies the plink executable, `--n-sim` controls simulated sample size.
 
+Example input (`phenotype.txt`):
+
+```txt
+IID	PHENO
+sample1	1
+sample2	0
+sample3	1
+```
+
 ```bash
 jsrc gs build -pheno phenotype.txt -plink /path/to/hap1_plink \
   -o data/hap1 --plink-bin plink --n-sim 500 --top-k 2000 --h2 0.5 --seed 42

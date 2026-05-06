@@ -6,6 +6,14 @@
 
 根据 GFF 注释和目标基因 ID 列表，画出基因的结构示意图（含 UTR、CDS、内含子）。适合展示某个基因家族或一组基因的结构比较。
 
+示例输入（`ids.txt`）：
+
+```txt
+GENE001
+GENE002
+GENE003
+```
+
 ```bash
 jsrc plot gene -gff genes.gff -ids ids.txt -o gene.png -dpi 300
 ```
@@ -45,6 +53,15 @@ jsrc plot chromosome -gff genes.gff -ids ids.txt -o chr.png -dpi 300
 
 展示蛋白结构域的排布。输入表格需包含序列 ID、结构域名称、起始和终止位置，程序按比例画出每个蛋白的结构域排列。适合批量检查结构域顺序、边界和异常分段。
 
+示例输入（`domains.tsv`）：
+
+```tsv
+protein	domain	start	end
+ProteinA	Pkinase	10	260
+ProteinA	WD40	300	400
+ProteinB	LRR	5	80
+```
+
 ```bash
 jsrc plot domain -tsv domains.tsv -o domain.png -dpi 300
 ```
@@ -56,6 +73,14 @@ jsrc plot domain -tsv domains.tsv -o domain.png -dpi 300
 ## cis
 
 把 BED 格式的顺式元件位点可视化到序列坐标上，适合展示启动子区域的 motif 分布。
+
+示例输入（`motifs.bed`）：
+
+```bed
+chr1	100	150	MOTIF1
+chr1	300	320	MOTIF2
+chr2	50	80	MOTIF1
+```
 
 ```bash
 jsrc plot cis -bed motifs.bed -o cis.png -dpi 300
