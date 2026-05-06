@@ -31,6 +31,8 @@ def register_subparser(subparsers: Any, selected_subcommand: str | None = None) 
     grn_parser = subparsers.add_parser("grn", help="GRN conversion and local viewer")
     grn_sub = grn_parser.add_subparsers(dest="grn_cmd")
     grn_parser.set_defaults(_group_parser=grn_parser)
-    if selected_subcommand and _register_selected_subcommand(grn_sub, selected_subcommand):
+    if selected_subcommand and _register_selected_subcommand(
+        grn_sub, selected_subcommand
+    ):
         return
     _register_stub_subcommands(grn_sub)

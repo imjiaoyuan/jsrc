@@ -28,9 +28,7 @@ def _register_selected_subcommand(subparsers: Any, selected: str) -> bool:
     return True
 
 
-def register_subparser(
-    subparsers: Any, selected_subcommand: str | None = None
-) -> None:
+def register_subparser(subparsers: Any, selected_subcommand: str | None = None) -> None:
     analyze_parser = subparsers.add_parser("analyze", help="Analysis tools")
     analyze_sub = analyze_parser.add_subparsers(dest="analyze_cmd")
     analyze_parser.set_defaults(_group_parser=analyze_parser)

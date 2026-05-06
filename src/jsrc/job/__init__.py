@@ -33,6 +33,8 @@ def register_subparser(subparsers: Any, selected_subcommand: str | None = None) 
     job_parser = subparsers.add_parser("job", help="Track and manage background jobs")
     job_sub = job_parser.add_subparsers(dest="job_cmd")
     job_parser.set_defaults(_group_parser=job_parser)
-    if selected_subcommand and _register_selected_subcommand(job_sub, selected_subcommand):
+    if selected_subcommand and _register_selected_subcommand(
+        job_sub, selected_subcommand
+    ):
         return
     _register_stub_subcommands(job_sub)

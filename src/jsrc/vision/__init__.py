@@ -25,9 +25,7 @@ def _register_selected_subcommand(subparsers: Any, selected: str) -> bool:
     return True
 
 
-def register_subparser(
-    subparsers: Any, selected_subcommand: str | None = None
-) -> None:
+def register_subparser(subparsers: Any, selected_subcommand: str | None = None) -> None:
     vision_parser = subparsers.add_parser(
         "vision", help="Image recognition and shape descriptors"
     )

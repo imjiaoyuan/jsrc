@@ -31,6 +31,8 @@ def register_subparser(subparsers: Any, selected_subcommand: str | None = None) 
     )
     gs_sub = gs_parser.add_subparsers(dest="gs_cmd")
     gs_parser.set_defaults(_group_parser=gs_parser)
-    if selected_subcommand and _register_selected_subcommand(gs_sub, selected_subcommand):
+    if selected_subcommand and _register_selected_subcommand(
+        gs_sub, selected_subcommand
+    ):
         return
     _register_stub_subcommands(gs_sub)

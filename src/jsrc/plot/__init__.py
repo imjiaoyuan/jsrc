@@ -31,12 +31,12 @@ def _register_selected_subcommand(subparsers: Any, selected: str) -> bool:
     return True
 
 
-def register_subparser(
-    subparsers: Any, selected_subcommand: str | None = None
-) -> None:
+def register_subparser(subparsers: Any, selected_subcommand: str | None = None) -> None:
     plot_parser = subparsers.add_parser("plot", help="Visualization")
     plot_sub = plot_parser.add_subparsers(dest="plot_cmd")
     plot_parser.set_defaults(_group_parser=plot_parser)
-    if selected_subcommand and _register_selected_subcommand(plot_sub, selected_subcommand):
+    if selected_subcommand and _register_selected_subcommand(
+        plot_sub, selected_subcommand
+    ):
         return
     _register_stub_subcommands(plot_sub)

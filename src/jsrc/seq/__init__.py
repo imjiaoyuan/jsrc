@@ -36,6 +36,8 @@ def register_subparser(subparsers: Any, selected_subcommand: str | None = None) 
     seq_parser = subparsers.add_parser("seq", help="Sequence operations")
     seq_sub = seq_parser.add_subparsers(dest="seq_cmd")
     seq_parser.set_defaults(_group_parser=seq_parser)
-    if selected_subcommand and _register_selected_subcommand(seq_sub, selected_subcommand):
+    if selected_subcommand and _register_selected_subcommand(
+        seq_sub, selected_subcommand
+    ):
         return
     _register_stub_subcommands(seq_sub)
