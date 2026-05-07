@@ -30,7 +30,7 @@ def cmd(args: Namespace) -> None:
             os.killpg(pgid, sig)
         else:
             os.kill(pid, sig)
-    except ProcessLookupError:
+    except (ProcessLookupError, FileNotFoundError):
         pass
     row["status"] = "killed"
     row["end_time"] = now_iso()

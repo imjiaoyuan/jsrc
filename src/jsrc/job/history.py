@@ -5,6 +5,7 @@ from jsrc.job.core import (
     filter_rows,
     load_jobs,
     print_rows,
+    refresh_jobs,
     to_row_view,
     warn_portability_limits,
 )
@@ -13,6 +14,7 @@ from jsrc.job.core import (
 def cmd(args: Namespace) -> None:
     warn_portability_limits()
     rows = load_jobs()
+    rows, _ = refresh_jobs(rows)
     rows = filter_rows(rows, args.query)
     if args.limit > 0:
         rows = rows[-args.limit :]

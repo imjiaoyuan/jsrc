@@ -105,7 +105,7 @@ def _probe_route(argv: list[str]) -> tuple[str | None, str | None]:
 def main() -> None:
     argv = sys.argv[1:]
     debug_mode = "--debug" in argv
-    verbose = "--verbose" in sys.argv[1:] or debug_mode
+    verbose = "--verbose" in argv or debug_mode
     setup_logging(verbose=verbose)
     enabled_modules = _iter_enabled_modules()
     if not enabled_modules:

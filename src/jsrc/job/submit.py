@@ -72,6 +72,7 @@ def cmd(args: Namespace) -> None:
         "rss_samples": "1",
         "runtime_sec": "0",
         "command": args.command,
+        "name": args.name,
     }
     rows.append(row)
     write_jobs(rows)

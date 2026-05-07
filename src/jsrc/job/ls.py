@@ -35,6 +35,7 @@ def cmd(args: Namespace) -> None:
                 sys.stdout.flush()
                 time.sleep(max(args.interval, 0.2))
         except KeyboardInterrupt:
+            sys.stdout.write("\033[?25h")
             return
     rows = collect_render_rows(args, refresh=True)
     print_rows(rows, columns, args.format)
