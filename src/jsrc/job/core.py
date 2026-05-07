@@ -34,6 +34,8 @@ FIELDS = [
     "command",
 ]
 
+DEFAULT_KEEP = 100
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
@@ -114,7 +116,9 @@ def load_jobs() -> list[dict[str, str]]:
 
 
 def write_jobs(rows: list[dict[str, str]], keep: int | None = None) -> None:
-    if keep is not None and keep > 0 and len(rows) > keep:
+    if keep is None:
+        keep = DEFAULT_KEEP
+    if keep > 0 and len(rows) > keep:
         rows = rows[-keep:]
     path = history_path()
     with path.open("w", encoding="utf-8", newline="") as fh:
@@ -510,7 +514,7 @@ def collect_render_rows(args: Any, refresh: bool) -> list[dict[str, str]]:
     if refresh:
         rows, changed = refresh_jobs(rows)
     if changed:
-        write_jobs(rows, keep=1000)
+        write_jobs(rows)
     rows = filter_rows(rows, args.query)
     rendered = []
     for row in rows:

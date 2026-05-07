@@ -35,7 +35,7 @@ def cmd(args: Namespace) -> None:
     row["status"] = "killed"
     row["end_time"] = now_iso()
     row["runtime_sec"] = str(runtime_seconds(row, {}))
-    write_jobs(rows, keep=1000)
+    write_jobs(rows)
     print(f"killed\t{pid}")
     print(f"signal\t{args.signal}")
 

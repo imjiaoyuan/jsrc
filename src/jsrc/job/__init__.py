@@ -4,7 +4,6 @@ from typing import Any
 _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "submit": ("jsrc.job.submit", "Submit a background job"),
     "ls": ("jsrc.job.ls", "List jobs"),
-    "show": ("jsrc.job.show", "Show one job"),
     "logs": ("jsrc.job.logs", "Show job logs"),
     "kill": ("jsrc.job.kill", "Terminate a running job"),
     "history": ("jsrc.job.history", "Show job history"),

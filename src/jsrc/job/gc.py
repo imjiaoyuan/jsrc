@@ -3,7 +3,7 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
-from jsrc.job.core import load_jobs, now_iso, runtime_seconds, state_dir, write_jobs
+from jsrc.job.core import DEFAULT_KEEP, load_jobs, now_iso, runtime_seconds, state_dir, write_jobs
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,7 @@ def register(subparsers: Any) -> None:
         "-k",
         "--keep-history",
         type=int,
-        default=1000,
+        default=DEFAULT_KEEP,
         help="Keep last N history records",
     )
     p.add_argument(

@@ -74,7 +74,7 @@ def cmd(args: Namespace) -> None:
         "command": args.command,
     }
     rows.append(row)
-    write_jobs(rows, keep=1000)
+    write_jobs(rows)
     print(f"job_id\t{job_id}")
     print(f"pid\t{proc.pid}")
     print(f"log\t{log_path}")
