@@ -17,8 +17,8 @@ def network_to_json(
         for row in reader:
             if len(row) < 3:
                 continue
-            source_id = str(row[0]).replace("_", "-")
-            target_id = str(row[1]).replace("_", "-")
+            source_id = str(row[0])
+            target_id = str(row[1])
             try:
                 weight = float(row[2])
             except ValueError:

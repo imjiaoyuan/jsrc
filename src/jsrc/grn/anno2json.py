@@ -15,7 +15,7 @@ def annotation_to_json(input_path: str, output_path: str) -> dict[str, dict[str,
         for row in reader:
             if not row:
                 continue
-            gid = str(row[0]).replace("_", "-")
+            gid = str(row[0])
             desc = str(row[1]) if len(row) > 1 else ""
             map_id = str(row[2]) if len(row) > 2 else ""
             anno[gid] = {"p": map_id, "d": desc}

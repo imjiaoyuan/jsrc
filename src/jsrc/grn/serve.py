@@ -10,7 +10,7 @@ from jsrc.grn.build import _sync_assets
 
 
 def cmd(args: Namespace) -> None:
-    view_mode = "expand" if args.expand else "auto"
+    view_mode = "full" if args.all else "expand" if args.expand else "auto"
     _sync_assets(args.dir, view_mode, args.threshold, 0)
     ensure_dir(f"{args.dir}/json")
     src_grn = os.path.abspath(args.grn_json)

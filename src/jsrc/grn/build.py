@@ -57,7 +57,7 @@ def _zip_viewer(viewer_dir: Path, zip_output: str) -> None:
 
 def cmd(args: Namespace) -> None:
     root = Path(args.dir).expanduser().resolve()
-    view_mode = "expand" if args.expand else "auto"
+    view_mode = "full" if args.all else "expand" if args.expand else "auto"
     _sync_assets(str(root), view_mode, args.threshold, args.max_nodes)
     if args.grn_json:
         shutil.copy(args.grn_json, root / "json" / "grn.json")
