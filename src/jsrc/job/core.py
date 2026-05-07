@@ -17,7 +17,6 @@ _PLATFORM_NOTE_EMITTED = False
 
 FIELDS = [
     "job_id",
-    "name",
     "submit_time",
     "start_time",
     "end_time",
@@ -54,6 +53,13 @@ def to_float(value: str, default: float = 0.0) -> float:
         return default
 
 
+def config_home() -> Path:
+    xdg = os.getenv("XDG_CONFIG_HOME")
+    if xdg:
+        return Path(xdg).expanduser() / "jsrc"
+    return Path.home() / ".config" / "jsrc"
+
+
 def data_home() -> Path:
     xdg = os.getenv("XDG_DATA_HOME")
     if xdg:
@@ -65,7 +71,7 @@ def history_path() -> Path:
     override = os.getenv("JSRC_JOBS_FILE", "")
     if override:
         return Path(override).expanduser()
-    return data_home() / "jobs"
+    return config_home() / "job" / "history"
 
 
 def default_log_dir() -> Path:
@@ -82,16 +88,29 @@ def ensure_dirs() -> None:
     state_dir().mkdir(parents=True, exist_ok=True)
 
 
+def _migrate_old_history() -> None:
+    old = data_home() / "jobs"
+    new = history_path()
+    if old.exists() and not new.exists():
+        new.parent.mkdir(parents=True, exist_ok=True)
+        old.rename(new)
+
+
 def load_jobs() -> list[dict[str, str]]:
+    _migrate_old_history()
     path = history_path()
     if not path.exists():
         return []
+    rows = []
     with path.open("r", encoding="utf-8", newline="") as fh:
         reader = csv.DictReader(fh, delimiter="\t")
-        rows = []
-        for row in reader:
-            rows.append({k: row.get(k, "") for k in FIELDS})
-        return rows
+        for i, row in enumerate(reader):
+            try:
+                rows.append({k: row.get(k, "") for k in FIELDS})
+            except Exception:
+                logger.warning("job history line %d: skipping malformed entry", i + 2)
+                continue
+    return rows
 
 
 def write_jobs(rows: list[dict[str, str]], keep: int | None = None) -> None:
@@ -275,7 +294,11 @@ def to_row_view(row: dict[str, str], live: dict[str, str]) -> dict[str, str]:
     avg_kb = int(sum_kb / samples) if samples > 0 else rss_kb
     runtime_sec = runtime_seconds(row, live)
     out = dict(row)
-    out["rss_mb"] = f"{rss_kb / 1024:.1f}"
+    rss_mb_val = rss_kb / 1024
+    rss_display = f"{rss_mb_val:.1f}" if rss_mb_val < 1024 else f"{rss_mb_val / 1024:.1f}g"
+    out["rss_mb"] = rss_display
+    out["rss"] = rss_display
+    out["mem"] = rss_display
     out["rss_min_mb"] = f"{min_kb / 1024:.1f}"
     out["rss_avg_mb"] = f"{avg_kb / 1024:.1f}"
     out["rss_peak_mb"] = f"{peak_kb / 1024:.1f}"
@@ -285,6 +308,19 @@ def to_row_view(row: dict[str, str], live: dict[str, str]) -> dict[str, str]:
     out["runtime"] = format_duration(runtime_sec)
     out["cpu_pct"] = f"{to_float(live.get('pcpu', '0'), 0.0):.1f}"
     out["state"] = live.get("stat", "")
+    st = row.get("status", "")
+    out["s"] = {"running": "R", "exited": "E", "failed": "F", "killed": "K", "lost": "L"}.get(
+        st, st
+    )
+    submit = row.get("submit_time", "")
+    if submit:
+        try:
+            dt = datetime.fromisoformat(submit)
+            out["time"] = f"{dt.strftime('%Y-%m-%d %H:%M')} / {out.get('runtime', '')}"
+        except (TypeError, ValueError):
+            out["time"] = f"{submit} / {out.get('runtime', '')}"
+    else:
+        out["time"] = f" / {out.get('runtime', '')}"
     return out
 
 
@@ -360,17 +396,25 @@ def filter_rows(rows: list[dict[str, str]], query: str) -> list[dict[str, str]]:
 def sort_rows(
     rows: list[dict[str, str]], key: str, reverse: bool
 ) -> list[dict[str, str]]:
-    if key == "submit_time":
+    if key in {"submit_time", "time"}:
         return sorted(rows, key=lambda r: r.get("submit_time", ""), reverse=reverse)
     if key == "pid":
         return sorted(rows, key=lambda r: to_int(r.get("pid", "0")), reverse=reverse)
     if key == "job_id":
         return sorted(rows, key=lambda r: to_int(r.get("job_id", "0")), reverse=reverse)
-    if key == "status":
+    if key in {"status", "s"}:
         return sorted(rows, key=lambda r: r.get("status", ""), reverse=reverse)
     if key == "rss_mb":
         return sorted(
             rows, key=lambda r: to_float(r.get("rss_mb", "0"), 0.0), reverse=reverse
+        )
+    if key == "rss":
+        return sorted(
+            rows, key=lambda r: to_int(r.get("rss_kb_last", "0"), 0), reverse=reverse
+        )
+    if key == "mem":
+        return sorted(
+            rows, key=lambda r: to_int(r.get("rss_kb_last", "0"), 0), reverse=reverse
         )
     if key == "rss_min_mb":
         return sorted(
@@ -397,15 +441,15 @@ def print_table(rows: list[dict[str, str]], columns: list[str]) -> None:
     if not rows:
         print("(no records)")
         return
-    widths = {c: len(c) for c in columns}
+    widths = {c: len(c.upper()) for c in columns}
     for row in rows:
         for c in columns:
             widths[c] = max(widths[c], len(str(row.get(c, ""))))
-    header = "  ".join(c.ljust(widths[c]) for c in columns)
+    header = " ".join(c.upper().ljust(widths[c]) for c in columns)
     print(header)
-    print("  ".join("-" * widths[c] for c in columns))
+    print(" ".join("-" * widths[c] for c in columns))
     for row in rows:
-        print("  ".join(str(row.get(c, "")).ljust(widths[c]) for c in columns))
+        print(" ".join(str(row.get(c, "")).ljust(widths[c]) for c in columns))
 
 
 def print_rows(rows: list[dict[str, str]], columns: list[str], fmt: str) -> None:

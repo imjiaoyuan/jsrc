@@ -16,14 +16,10 @@ def cmd(args: Namespace) -> None:
     columns = [c.strip() for c in args.cols.split(",") if c.strip()]
     if not columns:
         columns = [
-            "job_id",
-            "status",
             "pid",
-            "runtime",
-            "rss_mb",
-            "rss_min_mb",
-            "rss_avg_mb",
-            "rss_peak_mb",
+            "s",
+            "mem",
+            "time",
             "command",
         ]
 
@@ -53,7 +49,7 @@ def register(subparsers: Any) -> None:
     p.add_argument(
         "-c",
         "--cols",
-        default="job_id,status,pid,runtime,rss_mb,rss_min_mb,rss_avg_mb,rss_peak_mb,submit_time,command",
+        default="pid,s,mem,time,command",
         help="Columns to print, comma-separated",
     )
     p.add_argument(
@@ -68,16 +64,20 @@ def register(subparsers: Any) -> None:
         "--sort",
         choices=[
             "submit_time",
+            "time",
             "elapsed",
             "runtime",
             "runtime_sec",
             "rss_mb",
+            "rss",
             "rss_min_mb",
             "rss_avg_mb",
             "rss_peak_mb",
             "pid",
             "job_id",
             "status",
+            "s",
+            "mem",
         ],
         default="submit_time",
         help="Sort field",

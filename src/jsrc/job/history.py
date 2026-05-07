@@ -21,18 +21,10 @@ def cmd(args: Namespace) -> None:
         view = to_row_view(row, {})
         rendered.append(view)
     cols = [
-        "job_id",
-        "status",
         "pid",
-        "submit_time",
-        "end_time",
-        "runtime",
-        "runtime_sec",
-        "rss_mb",
-        "rss_min_mb",
-        "rss_avg_mb",
-        "rss_peak_mb",
-        "log_path",
+        "s",
+        "mem",
+        "time",
         "command",
     ]
     print_rows(rendered, cols, args.format)

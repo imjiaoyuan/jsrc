@@ -32,7 +32,7 @@ def cmd(args: Namespace) -> None:
     columns = (
         [c.strip() for c in args.cols.split(",") if c.strip()]
         if args.cols
-        else list(view.keys())
+        else ["pid", "s", "mem", "time", "command"]
     )
     print_rows([view], columns, args.format)
 

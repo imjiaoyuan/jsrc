@@ -57,7 +57,6 @@ def cmd(args: Namespace) -> None:
     now = now_iso()
     row = {
         "job_id": job_id,
-        "name": args.name,
         "submit_time": now,
         "start_time": now,
         "end_time": "",
