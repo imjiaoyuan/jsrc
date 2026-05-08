@@ -16,14 +16,10 @@ dependencies = [
 
 [project.optional-dependencies]
 plot = ["matplotlib>=3.5", "plotly>=5.0"]
-gs = ["pandas>=2.0", "scikit-learn>=1.2", "pandas-plink>=2.2"]
 vision = ["opencv-python>=4.7", "matplotlib>=3.5"]
 all = [
     "matplotlib>=3.5",
     "plotly>=5.0",
-    "pandas>=2.0",
-    "scikit-learn>=1.2",
-    "pandas-plink>=2.2",
     "opencv-python>=4.7",
 ]
 dev = ["pytest>=7.0", "black>=22.0", "ruff>=0.1"]

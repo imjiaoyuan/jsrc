@@ -19,7 +19,7 @@ uv sync
 
 # Install specific extras
 uv sync --extra plot
-uv sync --extra gs
+uv sync --extra all
 uv sync --extra vision
 
 # Run CLI
@@ -28,7 +28,7 @@ uv run jsrc <module> <subcommand> [options]
 
 # Install from local source
 pip install -e .
-pip install -e ".[plot,gs,vision]"  # with extras
+pip install -e ".[plot,vision]"  # with extras
 
 # Format / lint
 uv run ruff check src/
@@ -44,9 +44,8 @@ Extras in `pyproject.toml`:
 
 | Extra | Packages | Used by module |
 |-------|----------|----------------|
-| (core) | biopython, numpy | seq, analyze, plot, gs, vision |
+| (core) | biopython, numpy | seq, analyze, plot, vision |
 | plot | matplotlib, plotly | plot, vision |
-| gs | pandas, scikit-learn, pandas-plink | gs |
 | vision | opencv-python, matplotlib | vision |
 | all | all of the above | — |
 | dev | pytest, black, ruff | — |
