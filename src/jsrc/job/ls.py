@@ -1,11 +1,8 @@
-import sys
-import time
 from argparse import Namespace
 from typing import Any
 
 from jsrc.job.core import (
     collect_render_rows,
-    now_iso,
     print_rows,
     warn_portability_limits,
 )
@@ -23,30 +20,12 @@ def cmd(args: Namespace) -> None:
             "command",
         ]
 
-    if args.watch:
-        try:
-            while True:
-                rows = collect_render_rows(args, refresh=True)
-                sys.stdout.write("\033[2J\033[H")
-                print(
-                    f"# jsrc job ls --watch  interval={args.interval}s  time={now_iso()}"
-                )
-                print_rows(rows, columns, args.format)
-                sys.stdout.flush()
-                time.sleep(max(args.interval, 0.2))
-        except KeyboardInterrupt:
-            sys.stdout.write("\033[?25h")
-            return
     rows = collect_render_rows(args, refresh=True)
     print_rows(rows, columns, args.format)
 
 
 def register(subparsers: Any) -> None:
     p = subparsers.add_parser("ls", help="List tracked jobs")
-    p.add_argument("-w", "--watch", action="store_true", help="Refresh continuously")
-    p.add_argument(
-        "-n", "--interval", type=float, default=2.0, help="Refresh interval seconds"
-    )
     p.add_argument(
         "-c",
         "--cols",
