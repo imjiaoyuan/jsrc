@@ -299,7 +299,9 @@ def to_row_view(row: dict[str, str], live: dict[str, str]) -> dict[str, str]:
     runtime_sec = runtime_seconds(row, live)
     out = dict(row)
     rss_mb_val = rss_kb / 1024
-    rss_display = f"{rss_mb_val:.1f}" if rss_mb_val < 1024 else f"{rss_mb_val / 1024:.1f}g"
+    rss_display = (
+        f"{rss_mb_val:.1f}" if rss_mb_val < 1024 else f"{rss_mb_val / 1024:.1f}g"
+    )
     out["rss_mb"] = rss_display
     out["rss"] = rss_display
     out["mem"] = rss_display
@@ -313,9 +315,13 @@ def to_row_view(row: dict[str, str], live: dict[str, str]) -> dict[str, str]:
     out["cpu_pct"] = f"{to_float(live.get('pcpu', '0'), 0.0):.1f}"
     out["state"] = live.get("stat", "")
     st = row.get("status", "")
-    out["s"] = {"running": "R", "exited": "E", "failed": "F", "killed": "K", "lost": "L"}.get(
-        st, st
-    )
+    out["s"] = {
+        "running": "R",
+        "exited": "E",
+        "failed": "F",
+        "killed": "K",
+        "lost": "L",
+    }.get(st, st)
     submit = row.get("submit_time", "")
     if submit:
         try:
