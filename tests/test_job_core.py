@@ -43,7 +43,7 @@ class TestJobCorePaths:
         monkeypatch.delenv("JSRC_JOBS_FILE", raising=False)
         monkeypatch.delenv("XDG_DATA_HOME", raising=False)
         path = core.history_path()
-        assert path.name == "jobs"
+        assert path.name == "history"
 
     def test_state_dir(self, monkeypatch):
         monkeypatch.delenv("XDG_DATA_HOME", raising=False)

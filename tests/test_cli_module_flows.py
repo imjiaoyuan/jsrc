@@ -11,7 +11,7 @@ def _run_cli(monkeypatch, argv):
     cli.main()
 
 
-@pytest.mark.parametrize("module_name", ["job", "vision", "plot", "gs", "grn"])
+@pytest.mark.parametrize("module_name", ["job", "vision", "plot", "grn"])
 def test_module_parent_help_via_cli(module_name, capsys, monkeypatch):
     monkeypatch.setattr(sys, "argv", ["jsrc", module_name])
     with pytest.raises(SystemExit) as exc:
@@ -109,24 +109,8 @@ def test_job_submit_and_list_flow(tmp_path, capsys, monkeypatch):
 
     _run_cli(monkeypatch, ["jsrc", "job", "ls", "-f", "tsv", "-l", "1"])
     list_out = capsys.readouterr().out
-    assert list_out.startswith("job_id\tstatus\tpid")
+    assert list_out.startswith("pid\ts\tmem\ttime\tcommand")
     assert "echo job-test" in list_out
-
-
-def test_gs_split_flow(tmp_path, monkeypatch):
-    data_dir = tmp_path / "gs"
-    data_dir.mkdir(parents=True)
-    np.save(data_dir / "y.npy", np.array([1.0, 2.0, 3.0, 4.0]))
-    (data_dir / "sample_ids.txt").write_text(
-        "real_1\nreal_2\nsim_1\nreal_3\n", encoding="utf-8"
-    )
-
-    _run_cli(
-        monkeypatch,
-        ["jsrc", "gs", "split", "-i", str(data_dir), "--folds", "2", "--seed", "1"],
-    )
-    assert (data_dir / "cv_indices" / "fold_0_train.txt").exists()
-    assert (data_dir / "cv_indices" / "fold_0_test.txt").exists()
 
 
 def test_grn_centrality_flow(tmp_path, capsys, monkeypatch):

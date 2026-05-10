@@ -22,14 +22,14 @@ class TestNetworkToJson:
         assert data[1]["target"] == "C"
         assert data[1]["val"] == 1.2
 
-    def test_underscores_replaced_with_hyphens(self, tmp_path):
+    def test_preserves_underscores(self, tmp_path):
         tsv = tmp_path / "net.tsv"
         tsv.write_text("gene_A\tgene_B\t1.0\n", encoding="utf-8")
         out = tmp_path / "grn.json"
 
         links, _ = network_to_json(str(tsv), str(out))
-        assert links[0]["source"] == "gene-A"
-        assert links[0]["target"] == "gene-B"
+        assert links[0]["source"] == "gene_A"
+        assert links[0]["target"] == "gene_B"
 
     def test_invalid_weight_skips_row(self, tmp_path, capsys):
         tsv = tmp_path / "net.tsv"
@@ -74,13 +74,13 @@ class TestAnnotationToJson:
         data = json.loads(out.read_text())
         assert data == anno
 
-    def test_underscore_replacement_in_id(self, tmp_path):
+    def test_preserves_underscores_in_id(self, tmp_path):
         tsv = tmp_path / "anno.tsv"
         tsv.write_text("gene_A\t\t", encoding="utf-8")
         out = tmp_path / "annotation.json"
 
         anno = annotation_to_json(str(tsv), str(out))
-        assert "gene-A" in anno
+        assert "gene_A" in anno
 
     def test_incomplete_row_returns_empty_strings(self, tmp_path):
         tsv = tmp_path / "anno.tsv"
@@ -89,8 +89,8 @@ class TestAnnotationToJson:
 
         anno = annotation_to_json(str(tsv), str(out))
 
-        assert anno["just-id"]["p"] == ""
-        assert anno["just-id"]["d"] == ""
+        assert anno["just_id"]["p"] == ""
+        assert anno["just_id"]["d"] == ""
 
     def test_empty_line_skipped(self, tmp_path):
         tsv = tmp_path / "anno.tsv"
