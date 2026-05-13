@@ -23,35 +23,19 @@ jsrc job submit "Rscript 02.harmony2.R" "logs/02.harmony2.log" \
 
 ## ls
 
-Real-time job dashboard. Supports live refresh (`-w`), sorting by runtime or memory, and keyword filtering. Output in table/tsv/json. Customize displayed columns with `-c`.
+Real-time job dashboard. List all jobs with sorting by runtime or memory, and keyword filtering. Output in table/tsv/json. Customize displayed columns with `-c`.
 
 ```bash
-jsrc job ls -w -n 2 \
-  -c job_id,status,pid,runtime,rss_mb,rss_min_mb,rss_avg_mb,rss_peak_mb \
-  -f table -s runtime -r -a -l 50 -q harmony
+jsrc job ls -c PID,S,mem,time,command -f table -s runtime -r -a -l 50 -q harmony
 ```
 
-- `-w, --watch`: refresh continuously.
-- `-n, --interval`: refresh interval in seconds (default: `2.0`).
-- `-c, --cols`: comma-separated columns to display.
+- `-c, --cols`: comma-separated columns to display (default: `pid,s,mem,time,command`).
 - `-f, --format`: output format `table|tsv|json` (default: `table`).
-- `-s, --sort`: sort key (`submit_time|elapsed|runtime|runtime_sec|rss_mb|rss_min_mb|rss_avg_mb|rss_peak_mb|pid|job_id|status`).
+- `-s, --sort`: sort key (`submit_time|time|elapsed|runtime|runtime_sec|rss_mb|rss|rss_min_mb|rss_avg_mb|rss_peak_mb|pid|job_id|status|s|mem`).
 - `-r, --reverse`: reverse sort.
 - `-a, --all`: show all records.
 - `-l, --limit`: max rows without `--all` (default: `20`).
 - `-q, --query`: filter by command/name/log path.
-
-## show
-
-View complete details for a single job: status, PID, peak memory, runtime, etc. Look up by job ID or PID.
-
-```bash
-jsrc job show 12 -f json -c job_id,status,pid,runtime,rss_mb,rss_avg_mb,command
-```
-
-- `target` (positional): job ID or PID.
-- `-f, --format`: output format `table|json` (default: `table`).
-- `-c, --cols`: comma-separated columns to display.
 
 ## logs
 

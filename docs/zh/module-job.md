@@ -23,35 +23,19 @@ jsrc job submit "Rscript 02.harmony2.R" "logs/02.harmony2.log" \
 
 ## ls
 
-实时任务看板。支持持续刷新（`-w`），可按运行时长或内存排序，按关键词过滤。输出格式支持 table/tsv/json，默认只显示部分列，可用 `-c` 自定义。
+实时任务看板。列出所有任务，可按运行时长或内存排序，按关键词过滤。输出格式支持 table/tsv/json，默认显示部分列，可用 `-c` 自定义。
 
 ```bash
-jsrc job ls -w -n 2 \
-  -c job_id,status,pid,runtime,rss_mb,rss_min_mb,rss_avg_mb,rss_peak_mb \
-  -f table -s runtime -r -a -l 50 -q harmony
+jsrc job ls -c PID,S,mem,time,command -f table -s runtime -r -a -l 50 -q harmony
 ```
 
-- `-w, --watch`：持续刷新。
-- `-n, --interval`：刷新间隔秒数（默认 `2.0`）。
-- `-c, --cols`：显示列（逗号分隔）。
+- `-c, --cols`：显示列（逗号分隔，默认 `pid,s,mem,time,command`）。
 - `-f, --format`：输出格式 `table|tsv|json`（默认 `table`）。
-- `-s, --sort`：排序字段（`submit_time|elapsed|runtime|runtime_sec|rss_mb|rss_min_mb|rss_avg_mb|rss_peak_mb|pid|job_id|status`）。
+- `-s, --sort`：排序字段（`submit_time|time|elapsed|runtime|runtime_sec|rss_mb|rss|rss_min_mb|rss_avg_mb|rss_peak_mb|pid|job_id|status|s|mem`）。
 - `-r, --reverse`：倒序。
 - `-a, --all`：显示全部记录。
 - `-l, --limit`：不使用 `--all` 时的最大行数（默认 `20`）。
 - `-q, --query`：按命令/名称/日志路径过滤。
-
-## show
-
-看单个任务的完整信息：状态、PID、内存峰值、运行时长等。支持按任务 ID 或 PID 查找。
-
-```bash
-jsrc job show 12 -f json -c job_id,status,pid,runtime,rss_mb,rss_avg_mb,command
-```
-
-- `target`（位置参数）：任务 ID 或 PID。
-- `-f, --format`：输出格式 `table|json`（默认 `table`）。
-- `-c, --cols`：显示列（逗号分隔）。
 
 ## logs
 

@@ -58,10 +58,9 @@ jsrc vision extract --help
 | `seq` | Sequence extraction, translation, QC, k-mer, sliding window | `jsrc seq extract ...` |
 | `plot` | Gene/exon/chromosome/domain and other plots | `jsrc plot gene ...` |
 | `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC | `jsrc analyze phylo ...` |
-| `gs` | Genomic selection dataset build/split/train | `jsrc gs train ...` |
 | `grn` | GRN conversion, centrality, build packaging, local serve | `jsrc grn build ...` |
 | `vision` | Object extraction, morphology traits, EFD | `jsrc vision extract ...` |
-| `job` | Background job submit/list/log/kill/history | `jsrc job submit "cmd"` |
+| `job` | Background job submit/monitor/log/kill/gc | `jsrc job submit "cmd"` |
 
 ## Error Output Conventions
 
@@ -190,9 +189,9 @@ jsrc job ls --limit 5
 ```
 
 ```
-job_id  status  pid    runtime  rss_mb  ...  command
-------  ------  -----  -------  ------       ----------------------------------------------
-1       exited  90288  4s       0.0         echo 'job module test' && sleep 1 && echo done
+PID    S MEM TIME                   COMMAND
+------ - --- ---------------------- -----------------------------------------------
+90288  E 0.0 2026-04-26 11:47 / 4s  echo 'job module test' && sleep 1 && echo done
 ```
 
 ```bash
