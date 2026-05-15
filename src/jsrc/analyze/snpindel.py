@@ -18,7 +18,7 @@ def _pick(records, seq_id, index):
 def _count_indel_events(a: str, b: str) -> int:
     in_gap = False
     events = 0
-    for x, y in zip(a, b):
+    for x, y in zip(a, b, strict=False):
         gap = x == "-" or y == "-"
         if gap and not in_gap:
             events += 1
@@ -46,7 +46,7 @@ def cmd(args: Namespace) -> None:
     snp = 0
     indel_bases = 0
     match_bases = 0
-    for x, y in zip(a1, a2):
+    for x, y in zip(a1, a2, strict=False):
         if x == "-" or y == "-":
             indel_bases += 1
         elif x == y:

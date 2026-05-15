@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def _load_csv_mapping(path: str) -> dict[str, str]:
     mapping = {}
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for row in csv.reader(f):
             if len(row) >= 2:
                 mapping[row[0].strip()] = row[1].strip()
@@ -19,7 +19,7 @@ def _load_csv_mapping(path: str) -> dict[str, str]:
 
 def _load_gff_mapping(gff_path: str, parent_field: str) -> dict[str, str]:
     mapping = {}
-    with open(gff_path, "r", encoding="utf-8") as f:
+    with open(gff_path, encoding="utf-8") as f:
         for line in f:
             if line.startswith("#"):
                 continue
@@ -37,7 +37,7 @@ def _load_gff_mapping(gff_path: str, parent_field: str) -> dict[str, str]:
 def _apply_mapping(fasta_path: str, output_path: str, mapping: dict[str, str]) -> int:
     renamed = 0
     with (
-        open(fasta_path, "r", encoding="utf-8") as fin,
+        open(fasta_path, encoding="utf-8") as fin,
         open(output_path, "w", encoding="utf-8") as fout,
     ):
         for line in fin:

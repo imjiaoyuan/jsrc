@@ -59,7 +59,7 @@ def get_gene_structure(
     target_set = set(gene_ids)
     valid_mrna = {}
     coords = {gid: [] for gid in gene_ids}
-    with open(gff_file, "r", encoding="utf-8") as f:
+    with open(gff_file, encoding="utf-8") as f:
         for line in f:
             if line.startswith("#"):
                 continue

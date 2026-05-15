@@ -6,6 +6,17 @@ from argparse import Namespace
 from typing import Any
 
 
+def _load_backend(matplotlib: Any, backend: str) -> Any | None:
+    try:
+        matplotlib.use(backend, force=True)
+        import matplotlib.pyplot as plt
+    except (ImportError, ValueError):
+        return None
+    if "agg" in matplotlib.get_backend().lower():
+        return None
+    return plt
+
+
 def _load_interactive_pyplot() -> Any:
     try:
         import matplotlib
@@ -33,14 +44,9 @@ def _load_interactive_pyplot() -> Any:
         )
 
     for backend in ("TkAgg", "QtAgg", "Qt5Agg", "GTK3Agg", "WXAgg", "MacOSX"):
-        try:
-            matplotlib.use(backend, force=True)
-            import matplotlib.pyplot as plt
-
-            if "agg" not in matplotlib.get_backend().lower():
-                return plt
-        except (ImportError, ValueError):
-            continue
+        plt = _load_backend(matplotlib, backend)
+        if plt is not None:
+            return plt
 
     raise SystemExit(
         "No interactive matplotlib backend is available. "

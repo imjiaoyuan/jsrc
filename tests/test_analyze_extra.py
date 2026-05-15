@@ -2,6 +2,8 @@ import json
 import logging
 from argparse import Namespace
 
+import pytest
+
 from jsrc.analyze.motif import cmd as motif_cmd
 from jsrc.analyze.msa_consensus import cmd as msa_cmd
 from jsrc.analyze.snpindel import cmd as snpindel_cmd
@@ -35,11 +37,8 @@ class TestAnalyzeQC:
 
     def test_qc_no_input_raises(self):
         args = Namespace(fa=None, sam=None, fq=None, vcf=None, gs=None, json=False)
-        try:
+        with pytest.raises(SystemExit):
             qc_cmd(args)
-            assert False, "Should have raised"
-        except SystemExit:
-            pass
 
     def test_qc_vcf(self, tmp_path, capsys):
         vcf_file = tmp_path / "vars.vcf"
@@ -111,11 +110,8 @@ class TestAnalyzeMsaConsensus:
         fa.write_text(">s1\nATGC\n", encoding="utf-8")
 
         args = Namespace(fa=str(fa), json=False)
-        try:
+        with pytest.raises(SystemExit):
             msa_cmd(args)
-            assert False, "Should have raised"
-        except SystemExit:
-            pass
 
 
 class TestAnalyzeSnpIndel:

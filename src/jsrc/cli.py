@@ -73,20 +73,25 @@ def _register_one_module(
 ) -> bool:
     try:
         mod = importlib.import_module(MODULES[module_name])
-        reg = getattr(mod, "register_subparser", None)
-        if reg is None:
-            raise AttributeError("missing register_subparser")
-        params = inspect.signature(reg).parameters
-        if "selected_subcommand" in params:
-            reg(subparsers, selected_subcommand=selected_subcommand)
-        else:
-            reg(subparsers)
-        return True
-    except (ImportError, AttributeError) as exc:
+    except ImportError:
         if debug:
             raise
-        logging.error("Error: failed to load module '%s': %s", module_name, exc)
+        logging.exception("Error: failed to load module '%s'", module_name)
         return False
+    reg = getattr(mod, "register_subparser", None)
+    if reg is None:
+        if debug:
+            raise AttributeError("missing register_subparser")
+        logging.error(
+            "Error: failed to load module '%s': missing register_subparser", module_name
+        )
+        return False
+    params = inspect.signature(reg).parameters
+    if "selected_subcommand" in params:
+        reg(subparsers, selected_subcommand=selected_subcommand)
+    else:
+        reg(subparsers)
+    return True
 
 
 def _probe_route(argv: list[str]) -> tuple[str | None, str | None]:
@@ -142,17 +147,17 @@ def main() -> None:
             msg = str(code).strip()
             if not msg.startswith("Error:"):
                 msg = f"Error: {msg}"
-            logging.error(msg)
+            logging.exception(msg)
             sys.exit(2)
         except (FileNotFoundError, ValueError) as exc:
             if args.debug:
                 raise
-            logging.error("Error: %s", exc)
+            logging.error("Error: %s", exc)  # noqa: TRY400
             sys.exit(2)
         except Exception as exc:
             if args.debug:
                 raise
-            logging.error("Error: %s", exc)
+            logging.error("Error: %s", exc)  # noqa: TRY400
             sys.exit(2)
         return
     group_parser = getattr(args, "_group_parser", None)

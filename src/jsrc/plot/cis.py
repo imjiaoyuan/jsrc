@@ -11,7 +11,7 @@ plt = setup_matplotlib()
 
 def cmd(args: Namespace) -> None:
     elements = []
-    with open(args.bed, "r", encoding="utf-8") as f:
+    with open(args.bed, encoding="utf-8") as f:
         for line in f:
             if line.startswith("#") or not line.strip():
                 continue

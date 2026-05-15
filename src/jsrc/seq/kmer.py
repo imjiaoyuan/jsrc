@@ -62,12 +62,9 @@ def cmd(args: Namespace) -> None:
         return
 
     names = args.fa
-    matrix = []
-    for n1 in names:
-        row = []
-        for n2 in names:
-            row.append(_cosine_distance(profiles[n1], profiles[n2]))
-        matrix.append(row)
+    matrix = [
+        [_cosine_distance(profiles[n1], profiles[n2]) for n2 in names] for n1 in names
+    ]
 
     if args.json:
         print(

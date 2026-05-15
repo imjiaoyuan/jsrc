@@ -52,10 +52,8 @@ class TestProgressBar:
 
     def test_iter_known_length(self):
         items = [1, 2, 3, 4, 5]
-        result = []
         bar = progressbar(tty_only=False)
-        for item in bar.iter(items):
-            result.append(item)
+        result = list(bar.iter(items))
         assert result == [1, 2, 3, 4, 5]
         assert bar.total == 5
         assert bar.n == 5

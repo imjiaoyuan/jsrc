@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def _load_target_ids(path: str) -> list[str]:
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return [line.strip() for line in f if line.strip()]
 
 
@@ -42,7 +42,7 @@ def cmd(args: Namespace) -> None:
     target_set = set(targets)
     grouped: dict[str, list[tuple[str, int, int, str]]] = {tid: [] for tid in targets}
 
-    with open(args.gff, "r", encoding="utf-8") as f:
+    with open(args.gff, encoding="utf-8") as f:
         for line in f:
             if line.startswith("#"):
                 continue

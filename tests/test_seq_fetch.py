@@ -3,6 +3,8 @@ import logging
 from argparse import Namespace
 from unittest.mock import patch
 
+import pytest
+
 from jsrc.seq.fetch import _parse_ids, cmd
 
 
@@ -34,11 +36,8 @@ class TestFetchCmd:
             db="nucleotide",
             json=False,
         )
-        try:
+        with pytest.raises(SystemExit):
             cmd(args)
-            assert False, "Should have raised"
-        except SystemExit:
-            pass
 
     @patch("jsrc.seq.fetch.Entrez.efetch")
     @patch("jsrc.seq.fetch.SeqIO.parse")
@@ -137,11 +136,9 @@ class TestFetchCmd:
             db="nucleotide",
             json=False,
         )
-        try:
+        with pytest.raises(SystemExit) as e:
             cmd(args)
-            assert False, "Should have raised"
-        except SystemExit as e:
-            assert "Network error" in str(e)
+        assert "Network error" in str(e.value)
 
     @patch("jsrc.seq.fetch.Entrez.efetch")
     @patch("jsrc.seq.fetch.SeqIO.parse")
@@ -156,8 +153,6 @@ class TestFetchCmd:
             db="nucleotide",
             json=False,
         )
-        try:
+        with pytest.raises(SystemExit) as e:
             cmd(args)
-            assert False, "Should have raised"
-        except SystemExit as e:
-            assert "No records returned" in str(e)
+        assert "No records returned" in str(e.value)

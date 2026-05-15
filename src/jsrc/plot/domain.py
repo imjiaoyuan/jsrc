@@ -11,7 +11,7 @@ plt = setup_matplotlib()
 
 
 def cmd(args: Namespace) -> None:
-    with open(args.tsv, "r", encoding="utf-8") as f:
+    with open(args.tsv, encoding="utf-8") as f:
         rows = list(csv.DictReader(f, delimiter="\t"))
     required = {"protein", "domain", "start", "end"}
     if not rows or not required.issubset(rows[0].keys()):

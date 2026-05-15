@@ -13,7 +13,7 @@ def _parse_ids(raw: list[str]) -> list[str]:
     ids: list[str] = []
     for item in raw:
         try:
-            with open(item, "r", encoding="utf-8") as fh:
+            with open(item, encoding="utf-8") as fh:
                 content = [line.strip() for line in fh if line.strip()]
                 if content:
                     ids.extend(content)
@@ -41,11 +41,12 @@ def cmd(args: Namespace) -> None:
 
     logger.info("Fetching %d record(s) from NCBI %s", len(ids), args.db)
     try:
-        handle = Entrez.efetch(db=args.db, id=id_str, rettype=rettype, retmode="text")
-        records = list(SeqIO.parse(handle, parse_fmt))
-        handle.close()
+        with Entrez.efetch(
+            db=args.db, id=id_str, rettype=rettype, retmode="text"
+        ) as handle:
+            records = list(SeqIO.parse(handle, parse_fmt))
     except Exception as exc:
-        raise SystemExit(f"Entrez fetch failed: {exc}")
+        raise SystemExit(f"Entrez fetch failed: {exc}") from exc
 
     if not records:
         raise SystemExit("No records returned from NCBI")

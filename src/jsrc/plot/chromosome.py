@@ -13,7 +13,7 @@ plt = setup_matplotlib()
 def _load_ids(path: str | None) -> set[str] | None:
     if not path:
         return None
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return {line.strip() for line in f if line.strip()}
 
 
@@ -21,7 +21,7 @@ def cmd(args: Namespace) -> None:
     target_ids = _load_ids(args.ids)
     chr_lengths = {}
     gene_positions = []
-    with open(args.gff, "r", encoding="utf-8") as f:
+    with open(args.gff, encoding="utf-8") as f:
         for line in f:
             if line.startswith("##sequence-region"):
                 parts = line.strip().split()

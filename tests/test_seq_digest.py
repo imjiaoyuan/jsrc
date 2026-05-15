@@ -2,6 +2,8 @@ import json
 import logging
 from argparse import Namespace
 
+import pytest
+
 from jsrc.seq.digest import _calc_fragments, cmd
 
 
@@ -123,11 +125,8 @@ class TestDigestCmd:
         fa.write_text(">t\nATGC\n", encoding="utf-8")
 
         args = Namespace(fa=str(fa), enzymes="", circular=False, min_size=0, json=False)
-        try:
+        with pytest.raises(SystemExit):
             cmd(args)
-            assert False, "Should have raised"
-        except SystemExit:
-            pass
 
     def test_no_sequences_raises(self, tmp_path):
         fa = tmp_path / "empty.fa"
@@ -136,11 +135,8 @@ class TestDigestCmd:
         args = Namespace(
             fa=str(fa), enzymes="EcoRI", circular=False, min_size=0, json=False
         )
-        try:
+        with pytest.raises(SystemExit):
             cmd(args)
-            assert False, "Should have raised"
-        except SystemExit:
-            pass
 
     def test_unrecognized_enzyme_warns(self, tmp_path, caplog):
         caplog.set_level(logging.WARNING)

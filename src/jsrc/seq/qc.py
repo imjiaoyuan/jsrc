@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def _open_text(path: str) -> IO[str]:
     if path.endswith(".gz"):
         return gzip.open(path, "rt", encoding="utf-8")
-    return open(path, "r", encoding="utf-8")
+    return open(path, encoding="utf-8")
 
 
 def _nxx(lengths: list[int], pct: float) -> int:
@@ -59,9 +59,7 @@ def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float |
     bar = progressbar(total=0, desc="FASTQ reads")
     for path in paths:
         with _open_text(path) as f:
-            line_no = 0
-            for line in f:
-                line_no += 1
+            for line_no, line in enumerate(f, start=1):
                 if line_no % 4 == 2:
                     reads += 1
                     bases += len(line.strip())

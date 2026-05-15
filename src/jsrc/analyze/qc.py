@@ -10,7 +10,7 @@ from Bio import SeqIO
 def _open_text(path: str):
     if path.endswith(".gz"):
         return gzip.open(path, "rt", encoding="utf-8")
-    return open(path, "r", encoding="utf-8")
+    return open(path, encoding="utf-8")
 
 
 def _nxx(lengths: list[int], pct: float) -> int:
@@ -101,9 +101,7 @@ def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float |
     bases = 0
     for path in paths:
         with _open_text(path) as f:
-            i = 0
-            for line in f:
-                i += 1
+            for i, line in enumerate(f, start=1):
                 if i % 4 == 2:
                     reads += 1
                     bases += len(line.strip())
@@ -167,10 +165,7 @@ def _print_human(stats: dict[str, dict[str, float | int]]) -> None:
             if isinstance(v, int):
                 val = _format_int(v)
             else:
-                if abs(v) >= 100:
-                    val = _format_float(v, 2)
-                else:
-                    val = _format_float(v, 4)
+                val = _format_float(v, 2) if abs(v) >= 100 else _format_float(v, 4)
             print(f"{k}\t{val}")
         print("")
 

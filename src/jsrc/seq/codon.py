@@ -2,7 +2,8 @@ import json
 import logging
 from argparse import Namespace
 from collections import Counter, defaultdict
-from typing import Any, Iterator
+from typing import Any
+from collections.abc import Iterator
 
 from Bio import SeqIO
 
@@ -100,7 +101,7 @@ def cmd(args: Namespace) -> None:
             total_codons += 1
 
     rscu = {}
-    for aa, codons in aa_to_codons.items():
+    for codons in aa_to_codons.values():
         aa_total = sum(counts[c] for c in codons)
         if aa_total == 0:
             for c in codons:

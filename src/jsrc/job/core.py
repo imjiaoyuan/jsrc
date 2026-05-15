@@ -106,12 +106,7 @@ def load_jobs() -> list[dict[str, str]]:
     rows = []
     with path.open("r", encoding="utf-8", newline="") as fh:
         reader = csv.DictReader(fh, delimiter="\t")
-        for i, row in enumerate(reader):
-            try:
-                rows.append({k: row.get(k, "") for k in FIELDS})
-            except Exception:
-                logger.warning("job history line %d: skipping malformed entry", i + 2)
-                continue
+        rows.extend({k: row_data.get(k, "") for k in FIELDS} for row_data in reader)
     return rows
 
 
@@ -188,13 +183,14 @@ def process_alive(pid: int) -> bool:
         return Path(f"/proc/{pid}").exists()
     try:
         os.kill(pid, 0)
-        return True
     except ProcessLookupError:
         return False
     except PermissionError:
         return True
     except OSError:
         return False
+    else:
+        return True
 
 
 def ps_row(pid: int) -> tuple[bool, str, float, str]:

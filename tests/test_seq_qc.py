@@ -1,6 +1,8 @@
 import json
 from argparse import Namespace
 
+import pytest
+
 from jsrc.seq.qc import cmd
 
 
@@ -33,11 +35,8 @@ def test_seq_qc_fasta_json(tmp_path, capsys):
 
 def test_seq_qc_no_input_raises(tmp_path):
     args = Namespace(fa=None, fq=None, gs=None, json=False)
-    try:
+    with pytest.raises(SystemExit):
         cmd(args)
-        assert False, "Should have raised"
-    except SystemExit:
-        pass
 
 
 def test_seq_qc_fastq_basic(tmp_path, capsys):

@@ -9,7 +9,7 @@ def cmd(args: Namespace) -> None:
     nodes = set()
     edge_count = 0
 
-    with open(args.input, "r", encoding="utf-8") as f:
+    with open(args.input, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line or line.startswith("#"):

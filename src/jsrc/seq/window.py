@@ -1,6 +1,7 @@
 import json
 from argparse import Namespace
-from typing import Any, Iterator
+from typing import Any
+from collections.abc import Iterator
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord

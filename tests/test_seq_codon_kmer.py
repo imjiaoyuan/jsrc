@@ -88,8 +88,5 @@ class TestKmer:
         fa.write_text(">s1\nATGC\n", encoding="utf-8")
 
         args = Namespace(fa=[str(fa)], k=0, top=10, json=False)
-        try:
+        with pytest.raises(SystemExit):
             kmer_cmd(args)
-            assert False, "Should have raised"
-        except SystemExit:
-            pass

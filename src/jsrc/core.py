@@ -1,6 +1,7 @@
 import sys
 import time
-from typing import Any, Generator, Iterable
+from typing import Any
+from collections.abc import Generator, Iterable
 
 
 def _fmt_duration(seconds: float) -> str:

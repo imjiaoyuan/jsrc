@@ -16,7 +16,7 @@ def cmd(args: Namespace) -> None:
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     cds_dict = {}
 
-    with open(args.gff, "r", encoding="utf-8") as f:
+    with open(args.gff, encoding="utf-8") as f:
         for line in f:
             if line.startswith("#"):
                 continue
@@ -60,8 +60,8 @@ def cmd(args: Namespace) -> None:
             protein_seq = cds_seq.translate(to_stop=True)
             if len(protein_seq) > 0:
                 proteins.append(SeqRecord(protein_seq, id=gene_id, description=""))
-        except (TranslationError, ValueError) as exc:
-            logger.error("Failed to translate %s: %s", gene_id, exc)
+        except (TranslationError, ValueError):
+            logger.exception("Failed to translate %s", gene_id)
     SeqIO.write(proteins, args.o, "fasta")
     logger.info("Translated %d genes to %s", len(proteins), args.o)
 
