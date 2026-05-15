@@ -47,7 +47,9 @@ def cmd(args: Namespace) -> None:
             rendered = sort_rows(rendered, args.sort, args.reverse)
             sys.stdout.write("\033[2J\033[H")
             mode = "all" if args.all else "running"
-            print(f"# jsrc job top  mode={mode}  interval={args.interval}s  time={now_iso()}")
+            print(
+                f"# jsrc job top  mode={mode}  interval={args.interval}s  time={now_iso()}"
+            )
             print_rows(rendered, columns, "table")
             sys.stdout.flush()
             time.sleep(max(args.interval, 0.2))
