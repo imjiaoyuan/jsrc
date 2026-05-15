@@ -1,4 +1,3 @@
-import time
 from io import StringIO
 
 from jsrc.core import progressbar, _fmt_duration

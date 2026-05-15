@@ -1,6 +1,5 @@
 import json
 import logging
-import sys
 from argparse import Namespace
 from unittest.mock import patch
 

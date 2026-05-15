@@ -1,5 +1,3 @@
-import pytest
-
 from jsrc.plot.core import get_gene_structure, natural_sort_key
 
 

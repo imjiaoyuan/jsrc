@@ -22,7 +22,6 @@ class TestEllipticFourier:
 
     def test_calculate_normalized(self):
         contour = np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)
-        coeffs_raw = EllipticFourier.calculate(contour, order=5, normalize=False)
         coeffs_norm = EllipticFourier.calculate(contour, order=5, normalize=True)
         assert coeffs_norm.shape == (5, 4)
 

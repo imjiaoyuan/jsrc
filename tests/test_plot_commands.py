@@ -334,7 +334,6 @@ class TestPlotDotplot:
         fa1.write_text(">a\nATGC\n", encoding="utf-8")
         fa2.write_text("", encoding="utf-8")
 
-        from jsrc.plot.dotplot import cmd
         from jsrc.plot.dotplot import _first_seq
 
         with pytest.raises(SystemExit, match="No sequence found"):
