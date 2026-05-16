@@ -9,3 +9,9 @@ venv/
 .ruff_cache/
 .claude/settings.local.json
 uv.lock
+dist/
+build/
+*.so
+.coverage
+htmlcov/
+coverage.xml

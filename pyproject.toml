@@ -22,7 +22,7 @@ all = [
     "plotly>=5.0",
     "opencv-python>=4.7",
 ]
-dev = ["pytest>=7.0", "black>=22.0", "ruff>=0.1"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "black>=22.0", "ruff>=0.1", "mypy>=1.0"]
 
 [project.scripts]
 jsrc = "jsrc.cli:main"
@@ -40,3 +40,36 @@ include = ["jsrc*"]
 
 [tool.black]
 target-version = ["py310"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=jsrc --cov-report=html --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+source = ["src"]
+omit = ["tests/*", ".venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
