@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from jsrc.vision.core import ensure_odd, get_channel_image
-from jsrc.vision.extract import _validate_image_file, _extract_contours
+from jsrc.vision.extract import _extract_contours, _validate_image_file
 
 
 class TestVisionCore:
@@ -212,8 +212,9 @@ class TestVisionExtractContours:
 
 class TestVisionExtractCmd:
     def test_invalid_area_ratio_raises(self, tmp_path):
-        from jsrc.vision.extract import cmd
         from argparse import Namespace
+
+        from jsrc.vision.extract import cmd
 
         args = Namespace(
             input="/dev/null",
@@ -227,8 +228,9 @@ class TestVisionExtractCmd:
             cmd(args)
 
     def test_invalid_aspect_ratio_raises(self, tmp_path):
-        from jsrc.vision.extract import cmd
         from argparse import Namespace
+
+        from jsrc.vision.extract import cmd
 
         args = Namespace(
             input="/dev/null",
@@ -242,8 +244,9 @@ class TestVisionExtractCmd:
             cmd(args)
 
     def test_max_area_ratio_too_high_raises(self, tmp_path):
-        from jsrc.vision.extract import cmd
         from argparse import Namespace
+
+        from jsrc.vision.extract import cmd
 
         args = Namespace(
             input="/dev/null",

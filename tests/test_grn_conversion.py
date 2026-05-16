@@ -1,7 +1,7 @@
 import json
 
-from jsrc.grn.net2json import network_to_json
 from jsrc.grn.anno2json import annotation_to_json
+from jsrc.grn.net2json import network_to_json
 
 
 class TestNetworkToJson:

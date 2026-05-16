@@ -6,8 +6,8 @@ import pytest
 
 from jsrc.analyze.motif import cmd as motif_cmd
 from jsrc.analyze.msa_consensus import cmd as msa_cmd
-from jsrc.analyze.snpindel import cmd as snpindel_cmd
 from jsrc.analyze.qc import cmd as qc_cmd
+from jsrc.analyze.snpindel import cmd as snpindel_cmd
 
 
 class TestAnalyzeQC:

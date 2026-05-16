@@ -133,8 +133,9 @@ class TestIterContours:
 class TestEFDCmd:
     def test_efd_cmd_basic(self, tmp_path):
         pytest.importorskip("matplotlib")
-        from jsrc.vision.efd import cmd
         from argparse import Namespace
+
+        from jsrc.vision.efd import cmd
 
         contour = np.array(
             [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]], dtype=np.float32
@@ -162,8 +163,9 @@ class TestEFDCmd:
         assert len(rows) == 10
 
     def test_efd_cmd_no_plot(self, tmp_path):
-        from jsrc.vision.efd import cmd
         from argparse import Namespace
+
+        from jsrc.vision.efd import cmd
 
         contour = np.array(
             [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]], dtype=np.float32
@@ -187,8 +189,9 @@ class TestEFDCmd:
         assert not list(out_dir.glob("*analysis*"))
 
     def test_efd_empty_directory_raises(self, tmp_path):
-        from jsrc.vision.efd import cmd
         from argparse import Namespace
+
+        from jsrc.vision.efd import cmd
 
         empty_dir = tmp_path / "empty"
         empty_dir.mkdir()

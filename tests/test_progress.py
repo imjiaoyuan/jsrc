@@ -1,6 +1,6 @@
 from io import StringIO
 
-from jsrc.core import progressbar, _fmt_duration
+from jsrc.core import _fmt_duration, progressbar
 
 
 class TestFmtDuration:
