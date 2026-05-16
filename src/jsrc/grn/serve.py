@@ -5,8 +5,8 @@ import shutil
 from argparse import Namespace
 from typing import Any
 
-from jsrc.grn.core import ensure_dir, write_json
 from jsrc.grn.build import _sync_assets
+from jsrc.grn.core import ensure_dir, write_json
 
 
 def cmd(args: Namespace) -> None:

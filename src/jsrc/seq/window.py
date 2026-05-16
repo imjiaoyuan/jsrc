@@ -1,7 +1,7 @@
 import json
 from argparse import Namespace
-from typing import Any
 from collections.abc import Iterator
+from typing import Any
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -13,13 +13,13 @@ def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
             if rec.id == seq_id or rec.id.split()[0] == seq_id:
                 return rec
         raise SystemExit(f"Sequence ID not found: {seq_id}")
-    longest = None
+    longest: SeqRecord | None = None
     for rec in SeqIO.parse(path, "fasta"):
-        if longest is None or len(rec.seq) > len(longest.seq):
+        if longest is None or len(rec.seq) > len(longest.seq):  # type: ignore[arg-type]
             longest = rec
     if longest is None:
         raise SystemExit("No sequences found in FASTA")
-    return longest
+    return longest  # type: ignore[return-value]
 
 
 def _iter_windows(seq: str, w: int, s: int) -> Iterator[dict[str, float | int]]:
@@ -53,7 +53,7 @@ def cmd(args: Namespace) -> None:
         raise SystemExit("-w and -s must be >= 1")
     rec = _pick_record(args.fa, args.id)
     window_count = 0
-    windows_head = []
+    windows_head: list[dict[str, float | int]] = []
     head_limit = max(0, args.head)
     for row in _iter_windows(str(rec.seq), args.w, args.s):
         window_count += 1
@@ -61,7 +61,7 @@ def cmd(args: Namespace) -> None:
             windows_head.append(row)
     payload = {
         "sequence_id": rec.id,
-        "sequence_length": len(rec.seq),
+        "sequence_length": len(rec.seq),  # type: ignore[arg-type]
         "window_size": args.w,
         "step_size": args.s,
         "window_count": window_count,

@@ -4,8 +4,8 @@ from typing import Any
 
 
 def cmd(args: Namespace) -> None:
-    out_degree = defaultdict(float)
-    in_degree = defaultdict(float)
+    out_degree: dict[str, float] = defaultdict(float)
+    in_degree: dict[str, float] = defaultdict(float)
     nodes = set()
     edge_count = 0
 

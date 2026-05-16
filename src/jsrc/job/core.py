@@ -103,7 +103,7 @@ def load_jobs() -> list[dict[str, str]]:
     path = history_path()
     if not path.exists():
         return []
-    rows = []
+    rows: list[dict[str, str]] = []
     with path.open("r", encoding="utf-8", newline="") as fh:
         reader = csv.DictReader(fh, delimiter="\t")
         rows.extend({k: row_data.get(k, "") for k in FIELDS} for row_data in reader)

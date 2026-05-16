@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any
 
 import cv2
-
 import numpy as np
 
 from jsrc.vision.core import ensure_odd, get_channel_image

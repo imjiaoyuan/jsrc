@@ -2,7 +2,6 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord

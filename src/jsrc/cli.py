@@ -4,6 +4,7 @@ import inspect
 import logging
 import os
 import sys
+from typing import Any
 
 from jsrc import __version__
 
@@ -58,14 +59,14 @@ def _build_base_parser() -> argparse.ArgumentParser:
 
 
 def _register_stub_modules(
-    subparsers: argparse.Action, enabled_modules: list[str]
+    subparsers: Any, enabled_modules: list[str]
 ) -> None:
     for name in enabled_modules:
         subparsers.add_parser(name, help=MODULE_HELP.get(name, f"{name} module"))
 
 
 def _register_one_module(
-    subparsers: argparse.Action,
+    subparsers: Any,
     module_name: str,
     *,
     selected_subcommand: str | None = None,

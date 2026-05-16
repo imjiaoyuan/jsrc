@@ -1,8 +1,8 @@
 import re
 from typing import Any
 
-
 from matplotlib.patches import Rectangle
+
 from jsrc.seq.core import parse_gff_attributes
 
 
@@ -58,7 +58,7 @@ def get_gene_structure(
 ) -> dict[str, list[tuple[int, int]]]:
     target_set = set(gene_ids)
     valid_mrna = {}
-    coords = {gid: [] for gid in gene_ids}
+    coords: dict[str, list[tuple[int, int]]] = {gid: [] for gid in gene_ids}
     with open(gff_file, encoding="utf-8") as f:
         for line in f:
             if line.startswith("#"):

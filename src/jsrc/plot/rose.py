@@ -1,6 +1,7 @@
-import numpy as np
 from argparse import Namespace
 from typing import Any
+
+import numpy as np
 
 
 def cmd(args: Namespace) -> None:

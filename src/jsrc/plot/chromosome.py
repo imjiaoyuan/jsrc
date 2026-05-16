@@ -2,9 +2,8 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-
-from jsrc.seq.core import parse_gff_attributes
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
+from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 plt = setup_matplotlib()
@@ -57,7 +56,7 @@ def cmd(args: Namespace) -> None:
             )
         )
         for gene in (g for g in gene_positions if g["chr"] == chrom):
-            mid = (gene["start"] + gene["end"]) / 2
+            mid: float = (gene["start"] + gene["end"]) / 2.0
             ax.plot([mid, mid], [y - 0.15, y + 0.15], "r-", linewidth=0.5, alpha=0.5)
     ax.set_yticks(range(len(chr_sorted)))
     ax.set_yticklabels(chr_sorted[::-1])

@@ -1,9 +1,9 @@
 import os
 import sys
-
-import numpy as np
 from argparse import Namespace
 from typing import Any
+
+import numpy as np
 
 
 def _load_backend(matplotlib: Any, backend: str) -> Any | None:

@@ -5,13 +5,14 @@ from pathlib import Path
 from typing import Any
 
 from Bio import SeqIO
+
 from jsrc.analyze.core import normalize_sequence
 
 logger = logging.getLogger(__name__)
 
 
 def _kmer_counts(seqs: list[str], k: int) -> collections.Counter:
-    c = collections.Counter()
+    c: collections.Counter[str] = collections.Counter()
     for seq in seqs:
         seq = normalize_sequence(seq)
         if len(seq) < k:
@@ -25,7 +26,7 @@ def cmd(args: Namespace) -> None:
     output_dir = Path(args.o)
     output_dir.mkdir(parents=True, exist_ok=True)
     seqs = [str(rec.seq) for rec in SeqIO.parse(args.fa, "fasta")]
-    combined = collections.Counter()
+    combined: collections.Counter[str] = collections.Counter()
     for k in range(args.minw, args.maxw + 1):
         combined.update(_kmer_counts(seqs, k))
     top = combined.most_common(args.nmotifs)

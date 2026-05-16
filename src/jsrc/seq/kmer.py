@@ -10,7 +10,7 @@ from jsrc.core import progressbar
 
 
 def _kmer_counter(path: str, k: int) -> Counter:
-    c = Counter()
+    c: Counter[str] = Counter()
     records = list(SeqIO.parse(path, "fasta"))
     bar = progressbar(total=len(records), desc=f"  {path}")
     for rec in records:

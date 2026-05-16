@@ -3,7 +3,6 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)

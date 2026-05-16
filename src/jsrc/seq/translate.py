@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def cmd(args: Namespace) -> None:
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
-    cds_dict = {}
+    cds_dict: dict[str, dict[str, Any]] = {}
 
     with open(args.gff, encoding="utf-8") as f:
         for line in f:

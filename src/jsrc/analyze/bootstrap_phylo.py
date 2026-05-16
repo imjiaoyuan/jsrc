@@ -3,7 +3,6 @@ import random
 from argparse import Namespace
 from typing import Any
 
-
 from Bio import Phylo, SeqIO
 from Bio.Align import MultipleSeqAlignment
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
@@ -46,7 +45,7 @@ def cmd(args: Namespace) -> None:
     base_tree = _tree_from_alignment(aln)
     rng = random.Random(args.seed)
 
-    support_counts = {}
+    support_counts: dict[tuple[str, ...], int] = {}
     total_taxa = len(base_tree.get_terminals())
     for _ in range(args.n):
         rep_aln = _resample_columns(aln, rng)

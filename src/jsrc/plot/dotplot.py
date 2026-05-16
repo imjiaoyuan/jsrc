@@ -2,7 +2,6 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-
 from Bio import SeqIO
 
 from jsrc.plot.core import setup_matplotlib
@@ -26,7 +25,7 @@ def cmd(args: Namespace) -> None:
     if len(s1) < args.k or len(s2) < args.k:
         raise SystemExit("Sequence length must be >= k")
 
-    index = {}
+    index: dict[str, list[int]] = {}
     for j in range(0, len(s2) - args.k + 1):
         kmer = s2[j : j + args.k]
         index.setdefault(kmer, []).append(j)

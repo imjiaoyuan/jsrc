@@ -2,8 +2,8 @@ import json
 import logging
 from argparse import Namespace
 from collections import Counter, defaultdict
-from typing import Any
 from collections.abc import Iterator
+from typing import Any
 
 from Bio import SeqIO
 
@@ -86,8 +86,8 @@ def _iter_codons(seq: str) -> Iterator[str]:
 
 
 def cmd(args: Namespace) -> None:
-    counts = Counter()
-    aa_to_codons = defaultdict(list)
+    counts: Counter[str] = Counter()
+    aa_to_codons: dict[str, list[str]] = defaultdict(list)
     for codon, aa in AA_TABLE.items():
         if aa != "*":
             aa_to_codons[aa].append(codon)

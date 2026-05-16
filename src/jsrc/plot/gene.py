@@ -2,7 +2,6 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-
 from jsrc.plot.core import (
     get_gene_structure,
     natural_sort_key,

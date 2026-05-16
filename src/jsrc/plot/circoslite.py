@@ -3,7 +3,6 @@ import math
 from argparse import Namespace
 from typing import Any
 
-
 from Bio import SeqIO
 
 from jsrc.plot.core import setup_matplotlib

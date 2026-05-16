@@ -2,7 +2,6 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -26,17 +25,17 @@ def cmd(args: Namespace) -> None:
                     }
                 )
 
-    chromosomes = sorted(set(e["chr"] for e in elements), key=natural_sort_key)
+    chromosomes = sorted({e["chr"] for e in elements}, key=natural_sort_key)  # type: ignore[arg-type]
     fig, ax = plt.subplots(figsize=(12, max(6, len(chromosomes) * 0.5)))
     for i, chrom in enumerate(chromosomes):
         y = len(chromosomes) - i - 1
         chr_elements = [e for e in elements if e["chr"] == chrom]
         if not chr_elements:
             continue
-        max_pos = max(e["end"] for e in chr_elements)
+        max_pos: int = max(e["end"] for e in chr_elements)  # type: ignore[assignment]
         ax.plot([0, max_pos], [y, y], "k-", linewidth=1)
         for elem in chr_elements:
-            mid = (elem["start"] + elem["end"]) / 2
+            mid: float = (elem["start"] + elem["end"]) / 2.0  # type: ignore[operator]
             ax.plot([mid, mid], [y - 0.3, y + 0.3], "b-", linewidth=2)
             ax.text(mid, y + 0.35, elem["name"], ha="center", fontsize=7, rotation=45)
     ax.set_yticks(range(len(chromosomes)))

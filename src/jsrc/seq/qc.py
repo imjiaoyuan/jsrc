@@ -2,7 +2,7 @@ import gzip
 import json
 import logging
 from argparse import Namespace
-from typing import Any, IO
+from typing import IO, Any
 
 from Bio import SeqIO
 

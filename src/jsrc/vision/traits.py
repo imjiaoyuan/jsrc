@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 
 import cv2
+
 from jsrc.vision.core import ensure_odd, get_channel_image
 
 
