@@ -58,9 +58,7 @@ def _build_base_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _register_stub_modules(
-    subparsers: Any, enabled_modules: list[str]
-) -> None:
+def _register_stub_modules(subparsers: Any, enabled_modules: list[str]) -> None:
     for name in enabled_modules:
         subparsers.add_parser(name, help=MODULE_HELP.get(name, f"{name} module"))
 
