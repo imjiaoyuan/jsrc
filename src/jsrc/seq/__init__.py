@@ -12,6 +12,12 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "codon": ("jsrc.seq.codon", "Codon usage analysis"),
     "kmer": ("jsrc.seq.kmer", "Count k-mer frequencies"),
     "window": ("jsrc.seq.window", "Sliding-window sequence statistics"),
+    "orf": ("jsrc.seq.orf", "Find open reading frames"),
+    "cpg": ("jsrc.seq.cpg", "Predict CpG islands"),
+    "primer": ("jsrc.seq.primer", "Primer Tm, GC, and hairpin analysis"),
+    "repeat": ("jsrc.seq.repeat", "Find simple tandem repeats (SSR/STR)"),
+    "complexity": ("jsrc.seq.complexity", "Sequence complexity metrics"),
+    "entropy": ("jsrc.seq.entropy", "Per-column Shannon entropy of MSA"),
 }
 
 

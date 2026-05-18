@@ -1,6 +1,6 @@
 # jsrc seq
 
-Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, promoter extraction, QC, codon usage, k-mer profiling, Entrez fetching, restriction digestion, and sliding-window analysis.
+Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, promoter extraction, QC, codon usage, k-mer profiling, Entrez fetching, restriction digestion, sliding-window analysis, ORF finding, CpG island prediction, primer analysis, tandem repeat finding, sequence complexity, and MSA entropy.
 
 ## extract
 
@@ -139,4 +139,75 @@ Specify window size and step, and the program slides along the sequence, computi
 ```bash
 jsrc seq window -fa genome.fa -w 100000 -s 20000 --head 20
 jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200 --json
+```
+
+## orf
+
+ORF finding is the first step in gene prediction from unannotated sequences. Given a FASTA file, this command scans for ATG-to-stop codon open reading frames and reports their coordinates, length, frame, and translated protein sequence.
+
+By default it searches frame 1 only and reports ORFs ≥ 100 nt. Use `--all-frames` to search all three forward frames, and `--min-len` to adjust the length cutoff. `--top N` keeps only the N longest ORFs per sequence.
+
+```bash
+jsrc seq orf -fa genome.fa --min-len 300 --all-frames
+jsrc seq orf -fa contigs.fa --top 5 --json
+```
+
+## cpg
+
+CpG islands are genomic regions with elevated CpG dinucleotide density and GC content, typically found near gene promoters and associated with gene regulation. This command predicts them using the classical sliding-window approach (Gardiner-Garden & Frommer 1987).
+
+A window is considered a CpG island candidate if GC% ≥ 50% and observed/expected CpG ratio ≥ 0.6. Adjacent qualifying windows are merged; merged regions shorter than `--min-len` are dropped.
+
+```bash
+jsrc seq cpg -fa genome.fa
+jsrc seq cpg -fa genome.fa --window 200 --min-len 200 --min-gc 55 --json
+```
+
+## primer
+
+Evaluates primer sequences for Tm, GC content, GC clamp, and hairpin risk. Two Tm models are provided: Wallace rule (fast estimate for short oligos) and the nearest-neighbor thermodynamic model (SantaLucia 1998, more accurate).
+
+Input is a FASTA file where each record is one primer sequence. `--conc` sets the primer concentration for the nearest-neighbor calculation (default 250 nM).
+
+```bash
+jsrc seq primer -fa primers.fa
+jsrc seq primer -fa primers.fa --conc 500 --json
+```
+
+## repeat
+
+Finds simple sequence repeats (SSRs / microsatellites / STRs) in genomic sequences. Scans for tandemly repeated motifs of specified unit length range with a minimum number of repeat copies.
+
+Default settings find mono- through hexanucleotide repeats (unit length 1–6) with at least 3 copies. Useful for microsatellite marker development and repeat annotation.
+
+```bash
+jsrc seq repeat -fa genome.fa
+jsrc seq repeat -fa genome.fa --min-unit 2 --max-unit 4 --min-reps 5 --json
+```
+
+## complexity
+
+Computes three complementary complexity metrics for each sequence:
+
+- **Shannon entropy** — information-theoretic diversity of nucleotide composition
+- **Linguistic complexity** — fraction of distinct k-mers observed vs theoretically possible (k = 1–6)
+- **DUST score** — low-complexity masking score; values > 7 suggest repetitive/low-complexity regions
+
+Useful for pre-filtering low-complexity sequences before alignment or assembly.
+
+```bash
+jsrc seq complexity -fa sequences.fa
+jsrc seq complexity -fa sequences.fa --json
+```
+
+## entropy
+
+Computes per-column Shannon entropy and conservation for a multiple sequence alignment (MSA). Entropy is high at variable positions, low at conserved ones. Useful for identifying conserved domains, functional residues, or designing degenerate primers.
+
+Expects an aligned FASTA where all sequences are the same length. `--summary` skips per-column output and prints only mean entropy and conservation.
+
+```bash
+jsrc seq entropy -fa aligned.fa
+jsrc seq entropy -fa aligned.fa --summary
+jsrc seq entropy -fa aligned.fa --json
 ```

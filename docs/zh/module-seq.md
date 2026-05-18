@@ -1,6 +1,6 @@
 # jsrc seq
 
-序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、启动子、质控、密码子偏好、k-mer 指纹、Entrez 下载、酶切模拟、滑窗统计这些常用功能。
+序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、启动子、质控、密码子偏好、k-mer 指纹、Entrez 下载、酶切模拟、滑窗统计、ORF 查找、CpG 岛预测、引物分析、串联重复查找、序列复杂度和 MSA 信息熵这些常用功能。
 
 ## extract
 
@@ -141,4 +141,75 @@ jsrc seq digest -fa seq.fa -e EcoRI --min-size 50
 ```bash
 jsrc seq window -fa genome.fa -w 100000 -s 20000 --head 20
 jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200 --json
+```
+
+## orf
+
+ORF 查找是对未注释序列进行基因预测的第一步。给定 FASTA 文件，这个命令扫描 ATG 到终止密码子的开放阅读框，报告坐标、长度、读框和翻译蛋白序列。
+
+默认只搜索读框 1，报告 ≥ 100 nt 的 ORF。用 `--all-frames` 搜索全部三个正链读框，用 `--min-len` 调整长度阈值。`--top N` 每条序列只保留最长的 N 个 ORF。
+
+```bash
+jsrc seq orf -fa genome.fa --min-len 300 --all-frames
+jsrc seq orf -fa contigs.fa --top 5 --json
+```
+
+## cpg
+
+CpG 岛是基因组中 CpG 二核苷酸密度和 GC 含量较高的区域，通常位于基因启动子附近，与基因调控密切相关。这个命令使用经典滑窗法（Gardiner-Garden & Frommer 1987）预测 CpG 岛。
+
+当一个窗口满足 GC% ≥ 50% 且观测/预期 CpG 比值 ≥ 0.6 时，被视为候选 CpG 岛区域。相邻满足条件的窗口会被合并，合并后长度不足 `--min-len` 的区域会被过滤掉。
+
+```bash
+jsrc seq cpg -fa genome.fa
+jsrc seq cpg -fa genome.fa --window 200 --min-len 200 --min-gc 55 --json
+```
+
+## primer
+
+对引物序列进行 Tm、GC 含量、GC 夹和发夹风险评估。提供两种 Tm 计算模型：Wallace 经验公式（短序列快速估算）和最近邻热力学模型（SantaLucia 1998，更准确）。
+
+输入是一个 FASTA 文件，每条记录对应一个引物序列。`--conc` 设置最近邻法计算用的引物浓度（默认 250 nM）。
+
+```bash
+jsrc seq primer -fa primers.fa
+jsrc seq primer -fa primers.fa --conc 500 --json
+```
+
+## repeat
+
+查找基因组序列中的简单串联重复（SSR / 微卫星 / STR）。扫描指定单元长度范围内、重复次数达到阈值的串联重复基序。
+
+默认设置查找单核苷酸到六核苷酸重复（单元长度 1–6），至少重复 3 次。常用于微卫星标记开发和重复序列注释。
+
+```bash
+jsrc seq repeat -fa genome.fa
+jsrc seq repeat -fa genome.fa --min-unit 2 --max-unit 4 --min-reps 5 --json
+```
+
+## complexity
+
+计算每条序列的三种互补复杂度指标：
+
+- **Shannon 熵** — 核苷酸组成的信息论多样性
+- **语言复杂度** — 观测到的不同 k-mer 数占理论可能 k-mer 数的比例（k = 1–6）
+- **DUST 分值** — 低复杂度屏蔽分值，大于 7 通常提示重复/低复杂度区域
+
+适合在比对或组装前过滤低复杂度序列。
+
+```bash
+jsrc seq complexity -fa sequences.fa
+jsrc seq complexity -fa sequences.fa --json
+```
+
+## entropy
+
+计算多序列比对（MSA）每列的 Shannon 熵和保守性。熵值高的位置变异大，熵值低的位置保守。适合识别保守结构域、功能位点，或设计简并引物。
+
+输入需要是已对齐的 FASTA（所有序列等长）。`--summary` 跳过逐列输出，只打印均值统计。
+
+```bash
+jsrc seq entropy -fa aligned.fa
+jsrc seq entropy -fa aligned.fa --summary
+jsrc seq entropy -fa aligned.fa --json
 ```
