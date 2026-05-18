@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3D Rose</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #fff; }
+canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+canvas:active { cursor: grabbing; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const NT = 420, NX = 18;
+const xv = new Float32Array(NX);
+for (let i = 0; i < NX; i++) xv[i] = i / (NX - 1);
+const tv = new Float32Array(NT);
+for (let i = 0; i < NT; i++) tv[i] = 4 * Math.PI + i / (NT - 1) * 20 * Math.PI;
+
+const vx = new Float32Array(NT * NX);
+const vy = new Float32Array(NT * NX);
+const vz = new Float32Array(NT * NX);
+let zMin = Infinity, zMax = -Infinity, maxExtent = 0;
+
+for (let j = 0; j < NT; j++) {
+  const t = tv[j];
+  const p = (Math.PI / 2) * Math.exp(-t / (8 * Math.PI));
+  const mod = (3.6 * t) % (2 * Math.PI);
+  const u = 1 - (1 - mod / Math.PI) ** 4 / 2 + Math.sin(15 * t) / 150;
+  const sinP = Math.sin(p), cosP = Math.cos(p);
+  const cosT = Math.cos(t), sinT = Math.sin(t);
+  for (let i = 0; i < NX; i++) {
+    const x = xv[i];
+    const y = 2 * (x * x - x) ** 2 * sinP;
+    const r = u * (x * sinP + y * cosP);
+    const k = j * NX + i;
+    vx[k] = r * cosT;
+    vy[k] = r * sinT;
+    const z = u * (x * cosP - y * sinP);
+    vz[k] = z;
+    if (z < zMin) zMin = z;
+    if (z > zMax) zMax = z;
+    const ext = Math.max(Math.abs(vx[k]), Math.abs(vy[k]), Math.abs(z));
+    if (ext > maxExtent) maxExtent = ext;
+  }
+}
+
+const nQuads = (NT - 1) * (NX - 1);
+const quadI = new Int32Array(nQuads * 4);
+const quadColor = new Array(nQuads);
+const zBuf = new Float64Array(nQuads);
+const sortBuf = Array.from({length: nQuads}, (_, i) => i);
+
+const N_LUT = 64;
+const colorLUT = new Array(N_LUT);
+for (let ci = 0; ci < N_LUT; ci++) {
+  const t = ci / (N_LUT - 1);
+  const s = t < 0.5 ? t * 2 : (t - 0.5) * 2;
+  const [r, g, b] = t < 0.5
+    ? [255 - 4 * s, 245 - 139 * s, 240 - 166 * s]
+    : [251 - 148 * s, 106 - 106 * s, 74 - 61 * s];
+  colorLUT[ci] = `rgb(${r|0},${g|0},${b|0})`;
+}
+
+for (let j = 0, qi = 0; j < NT - 1; j++) {
+  for (let i = 0; i < NX - 1; i++, qi++) {
+    quadI[qi*4  ] = j * NX + i;
+    quadI[qi*4+1] = j * NX + i + 1;
+    quadI[qi*4+2] = (j+1) * NX + i + 1;
+    quadI[qi*4+3] = (j+1) * NX + i;
+    const zAvg = (vz[quadI[qi*4]] + vz[quadI[qi*4+1]] + vz[quadI[qi*4+2]] + vz[quadI[qi*4+3]]) * 0.25;
+    quadColor[qi] = colorLUT[(((zAvg - zMin) / (zMax - zMin)) * (N_LUT - 1)) | 0];
+  }
+}
+
+const tx_ = new Float32Array(NT * NX);
+const ty_ = new Float32Array(NT * NX);
+const tz_ = new Float32Array(NT * NX);
+
+let rotX = -0.5, rotY = 0.5;
+let dragging = false, lastMX = 0, lastMY = 0;
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+
+function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+
+function render() {
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
+  const fov = maxExtent * 8;
+  const scale = Math.min(W, H) * 0.42 / maxExtent;
+  const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+  const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+
+  for (let k = 0; k < NT * NX; k++) {
+    const x = vx[k], y = vy[k], z = vz[k];
+    const x1 = x * cosY + z * sinY;
+    const z1 = -x * sinY + z * cosY;
+    tx_[k] = x1;
+    ty_[k] = y * cosX - z1 * sinX;
+    tz_[k] = y * sinX + z1 * cosX;
+  }
+
+  for (let qi = 0; qi < nQuads; qi++) {
+    const b = qi * 4;
+    zBuf[qi] = (tz_[quadI[b]] + tz_[quadI[b+1]] + tz_[quadI[b+2]] + tz_[quadI[b+3]]) * 0.25;
+  }
+  sortBuf.sort((a, b) => zBuf[a] - zBuf[b]);
+
+  for (let si = 0; si < nQuads; si++) {
+    const qi = sortBuf[si];
+    const b = qi * 4;
+    const i0=quadI[b], i1=quadI[b+1], i2=quadI[b+2], i3=quadI[b+3];
+    const f0 = fov/(tz_[i0]+fov)*scale, f1 = fov/(tz_[i1]+fov)*scale;
+    const f2 = fov/(tz_[i2]+fov)*scale, f3 = fov/(tz_[i3]+fov)*scale;
+    ctx.beginPath();
+    ctx.moveTo(cx+tx_[i0]*f0, cy-ty_[i0]*f0);
+    ctx.lineTo(cx+tx_[i1]*f1, cy-ty_[i1]*f1);
+    ctx.lineTo(cx+tx_[i2]*f2, cy-ty_[i2]*f2);
+    ctx.lineTo(cx+tx_[i3]*f3, cy-ty_[i3]*f3);
+    ctx.closePath();
+    ctx.fillStyle = quadColor[qi];
+    ctx.fill();
+  }
+
+  const stemZ = [-0.5, -0.333, -0.167, 0];
+  ctx.strokeStyle = '#2d8a2d'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.beginPath();
+  stemZ.forEach((z, si) => {
+    const x1 = z * sinY;
+    const ty2 = -z * cosY * sinX;
+    const tz2 = z * cosY * cosX;
+    const f = fov / (tz2 + fov) * scale;
+    si === 0 ? ctx.moveTo(cx+x1*f, cy-ty2*f) : ctx.lineTo(cx+x1*f, cy-ty2*f);
+  });
+  ctx.stroke();
+}
+
+canvas.addEventListener('mousedown', e => { dragging=true; lastMX=e.clientX; lastMY=e.clientY; });
+canvas.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  rotY += (e.clientX - lastMX) * 0.008;
+  rotX += (e.clientY - lastMY) * 0.008;
+  lastMX=e.clientX; lastMY=e.clientY;
+  render();
+});
+canvas.addEventListener('mouseup', () => dragging=false);
+canvas.addEventListener('mouseleave', () => dragging=false);
+
+canvas.addEventListener('touchstart', e => {
+  const t=e.touches[0]; dragging=true; lastMX=t.clientX; lastMY=t.clientY;
+  e.preventDefault();
+}, {passive:false});
+canvas.addEventListener('touchmove', e => {
+  if (!dragging) return;
+  const t=e.touches[0];
+  rotY += (t.clientX-lastMX)*0.008; rotX += (t.clientY-lastMY)*0.008;
+  lastMX=t.clientX; lastMY=t.clientY; render(); e.preventDefault();
+}, {passive:false});
+canvas.addEventListener('touchend', () => dragging=false);
+
+window.addEventListener('resize', () => { resize(); render(); });
+resize(); render();
+</script>
+</body>
+</html>

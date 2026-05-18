@@ -1,6 +1,6 @@
 [project]
 name = "jsrc"
-version = "0.2.6"
+version = "0.2.7"
 description = "Python library for bioinformatics and scientific computing"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -15,11 +15,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-plot = ["matplotlib>=3.5", "plotly>=5.0"]
+plot = ["matplotlib>=3.5"]
 vision = ["opencv-python>=4.7", "matplotlib>=3.5"]
 all = [
     "matplotlib>=3.5",
-    "plotly>=5.0",
     "opencv-python>=4.7",
 ]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "black>=22.0", "ruff>=0.1", "mypy>=1.0"]
@@ -37,6 +36,7 @@ include = ["jsrc*"]
 
 [tool.setuptools.package-data]
 "jsrc.grn" = ["sources/*"]
+"jsrc.plot" = ["sources/*"]
 
 [tool.black]
 target-version = ["py310"]
