@@ -36,27 +36,23 @@ class EllipticFourier:
             return np.zeros((order, 4), dtype=float)
 
         phi = (2.0 * np.pi * t) / total_len
-        coeffs = np.zeros((order, 4), dtype=float)
-        dphi_cos = {}
-        dphi_sin = {}
-
-        for n in range(1, order + 1):
-            phi_n = phi * n
-            dphi_cos[n] = np.cos(phi_n[1:]) - np.cos(phi_n[:-1])
-            dphi_sin[n] = np.sin(phi_n[1:]) - np.sin(phi_n[:-1])
+        ns = np.arange(1, order + 1)[:, None]
+        phi_n = ns * phi[None, :]
+        dphi_cos = np.cos(phi_n[:, 1:]) - np.cos(phi_n[:, :-1])
+        dphi_sin = np.sin(phi_n[:, 1:]) - np.sin(phi_n[:, :-1])
 
         dx_over_dt = np.zeros_like(dx, dtype=float)
         dy_over_dt = np.zeros_like(dy, dtype=float)
         dx_over_dt[valid] = dx[valid] / dt[valid]
         dy_over_dt[valid] = dy[valid] / dt[valid]
 
-        for n in range(1, order + 1):
-            const = total_len / (2.0 * (n * np.pi) ** 2)
-            an = const * np.sum(dx_over_dt * dphi_cos[n])
-            bn = const * np.sum(dx_over_dt * dphi_sin[n])
-            cn = const * np.sum(dy_over_dt * dphi_cos[n])
-            dn = const * np.sum(dy_over_dt * dphi_sin[n])
-            coeffs[n - 1] = [an, bn, cn, dn]
+        consts = total_len / (2.0 * (ns[:, 0] * np.pi) ** 2)
+        coeffs = np.column_stack([
+            consts * (dphi_cos @ dx_over_dt),
+            consts * (dphi_sin @ dx_over_dt),
+            consts * (dphi_cos @ dy_over_dt),
+            consts * (dphi_sin @ dy_over_dt),
+        ])
 
         if normalize:
             coeffs = EllipticFourier.normalize(coeffs)
@@ -108,11 +104,12 @@ class EllipticFourier:
     @staticmethod
     def reconstruct(coeffs: np.ndarray, num_points: int = 300) -> np.ndarray:
         t = np.linspace(0.0, 1.0, num_points)
-        xt = np.zeros(num_points)
-        yt = np.zeros(num_points)
-        for n, (an, bn, cn, dn) in enumerate(coeffs, start=1):
-            xt += an * np.cos(2.0 * np.pi * n * t) + bn * np.sin(2.0 * np.pi * n * t)
-            yt += cn * np.cos(2.0 * np.pi * n * t) + dn * np.sin(2.0 * np.pi * n * t)
+        ns = np.arange(1, len(coeffs) + 1)[:, None]
+        angles = 2.0 * np.pi * ns * t[None, :]
+        ab = coeffs[:, :2]
+        cd = coeffs[:, 2:]
+        xt = (ab[:, 0:1] * np.cos(angles) + ab[:, 1:2] * np.sin(angles)).sum(axis=0)
+        yt = (cd[:, 0:1] * np.cos(angles) + cd[:, 1:2] * np.sin(angles)).sum(axis=0)
         return np.stack([xt, yt], axis=1)
 
 

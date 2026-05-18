@@ -2,15 +2,13 @@ from Bio.Align import MultipleSeqAlignment
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+_NORM_TABLE = str.maketrans("U", "T", "".join(
+    c for c in map(chr, range(256)) if c not in "ACGTN"
+))
+
 
 def normalize_sequence(seq: str) -> str:
-    cleaned = []
-    for ch in seq.upper():
-        if ch == "U":
-            ch = "T"
-        if ch in {"A", "C", "G", "T", "N"}:
-            cleaned.append(ch)
-    return "".join(cleaned)
+    return seq.upper().translate(_NORM_TABLE)
 
 
 def pad_alignment(records: list[SeqRecord]) -> MultipleSeqAlignment:

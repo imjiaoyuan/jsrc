@@ -1,4 +1,3 @@
-import gzip
 import json
 import re
 from argparse import Namespace
@@ -6,23 +5,7 @@ from typing import Any
 
 from Bio import SeqIO
 
-
-def _open_text(path: str):
-    if path.endswith(".gz"):
-        return gzip.open(path, "rt", encoding="utf-8")
-    return open(path, encoding="utf-8")
-
-
-def _nxx(lengths: list[int], pct: float) -> int:
-    if not lengths:
-        return 0
-    target = sum(lengths) * pct
-    acc = 0
-    for v in sorted(lengths, reverse=True):
-        acc += v
-        if acc >= target:
-            return v
-    return 0
+from jsrc.core import nxx, open_text
 
 
 def _assembly_stats(fasta_path: str) -> dict[str, float | int]:
@@ -42,8 +25,8 @@ def _assembly_stats(fasta_path: str) -> dict[str, float | int]:
         "total_bases": total_len,
         "max_contig": max(lengths) if lengths else 0,
         "min_contig": min(lengths) if lengths else 0,
-        "n50": _nxx(lengths, 0.5),
-        "n90": _nxx(lengths, 0.9),
+        "n50": nxx(lengths, 0.5),
+        "n90": nxx(lengths, 0.9),
         "gc_percent": (gc / acgt * 100.0) if acgt else 0.0,
         "n_percent": (n_bases / total_len * 100.0) if total_len else 0.0,
     }
@@ -65,7 +48,7 @@ def _sam_stats(sam_path: str) -> dict[str, float | int]:
     mapped = 0
     covered_ref_bases = 0
     ref_len = 0
-    with _open_text(sam_path) as f:
+    with open_text(sam_path) as f:
         for line in f:
             if line.startswith("@SQ"):
                 fields = line.rstrip("\n").split("\t")
@@ -100,7 +83,7 @@ def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float |
     reads = 0
     bases = 0
     for path in paths:
-        with _open_text(path) as f:
+        with open_text(path) as f:
             for i, line in enumerate(f, start=1):
                 if i % 4 == 2:
                     reads += 1
@@ -120,7 +103,7 @@ def _vcf_stats(vcf_path: str) -> dict[str, int]:
     snp = 0
     indel = 0
     other = 0
-    with _open_text(vcf_path) as f:
+    with open_text(vcf_path) as f:
         for line in f:
             if line.startswith("#"):
                 continue

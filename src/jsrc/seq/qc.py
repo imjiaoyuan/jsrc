@@ -1,32 +1,13 @@
-import gzip
 import json
 import logging
 from argparse import Namespace
-from typing import IO, Any
+from typing import Any
 
 from Bio import SeqIO
 
-from jsrc.core import progressbar
+from jsrc.core import open_text, nxx, progressbar
 
 logger = logging.getLogger(__name__)
-
-
-def _open_text(path: str) -> IO[str]:
-    if path.endswith(".gz"):
-        return gzip.open(path, "rt", encoding="utf-8")
-    return open(path, encoding="utf-8")
-
-
-def _nxx(lengths: list[int], pct: float) -> int:
-    if not lengths:
-        return 0
-    target = sum(lengths) * pct
-    acc = 0
-    for x in sorted(lengths, reverse=True):
-        acc += x
-        if acc >= target:
-            return x
-    return 0
 
 
 def _fasta_stats(path: str) -> dict[str, float | int]:
@@ -46,8 +27,8 @@ def _fasta_stats(path: str) -> dict[str, float | int]:
         "total_bases": total,
         "max_len": max(lengths) if lengths else 0,
         "min_len": min(lengths) if lengths else 0,
-        "n50": _nxx(lengths, 0.5),
-        "n90": _nxx(lengths, 0.9),
+        "n50": nxx(lengths, 0.5),
+        "n90": nxx(lengths, 0.9),
         "gc_percent": (gc / acgt * 100.0) if acgt else 0.0,
         "n_percent": (n_bases / total * 100.0) if total else 0.0,
     }
@@ -58,7 +39,7 @@ def _fastq_stats(paths: list[str], genome_size: int | None) -> dict[str, float |
     bases = 0
     bar = progressbar(total=0, desc="FASTQ reads")
     for path in paths:
-        with _open_text(path) as f:
+        with open_text(path) as f:
             for line_no, line in enumerate(f, start=1):
                 if line_no % 4 == 2:
                     reads += 1

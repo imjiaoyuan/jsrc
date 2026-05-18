@@ -1,7 +1,26 @@
+import gzip
 import sys
 import time
 from collections.abc import Generator, Iterable
-from typing import Any
+from typing import IO, Any
+
+
+def open_text(path: str) -> IO[str]:
+    if path.endswith(".gz"):
+        return gzip.open(path, "rt", encoding="utf-8")
+    return open(path, encoding="utf-8")
+
+
+def nxx(lengths: list[int], pct: float) -> int:
+    if not lengths:
+        return 0
+    target = sum(lengths) * pct
+    acc = 0
+    for v in sorted(lengths, reverse=True):
+        acc += v
+        if acc >= target:
+            return v
+    return 0
 
 
 def _fmt_duration(seconds: float) -> str:

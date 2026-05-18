@@ -80,9 +80,10 @@ def cmd(args: Namespace) -> None:
                 if chrom not in genome:
                     continue
                 chrom_seq = genome[chrom].seq
-                seq = Seq("")
+                seq_parts = []
                 for start, end in regions:
-                    seq += chrom_seq[start:end]
+                    seq_parts.append(str(chrom_seq[start:end]))
+                seq = Seq("".join(seq_parts))
                 if strand == "-":
                     seq = seq.reverse_complement()
                 desc = f"feature={args.feature};match={args.match};locus={chrom};strand={strand}"

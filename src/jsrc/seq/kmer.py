@@ -9,6 +9,9 @@ from Bio import SeqIO
 from jsrc.core import progressbar
 
 
+_VALID_BASES = frozenset("ACGT")
+
+
 def _kmer_counter(path: str, k: int) -> Counter:
     c: Counter[str] = Counter()
     records = list(SeqIO.parse(path, "fasta"))
@@ -17,7 +20,7 @@ def _kmer_counter(path: str, k: int) -> Counter:
         seq = str(rec.seq).upper().replace("U", "T")
         for i in range(0, len(seq) - k + 1):
             kmer = seq[i : i + k]
-            if set(kmer) <= {"A", "C", "G", "T"}:
+            if all(b in _VALID_BASES for b in kmer):
                 c[kmer] += 1
         bar.update()
     bar.finish()
