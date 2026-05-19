@@ -3,7 +3,6 @@ import logging
 from argparse import Namespace
 
 import pytest
-
 from jsrc.seq.codon import cmd as codon_cmd
 from jsrc.seq.kmer import cmd as kmer_cmd
 

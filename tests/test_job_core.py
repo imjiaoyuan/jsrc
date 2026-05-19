@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pytest
-
 from jsrc.job import core
 
 

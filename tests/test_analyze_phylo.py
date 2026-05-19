@@ -1,7 +1,6 @@
 from argparse import Namespace
 
 import pytest
-
 from jsrc.analyze.phylo import cmd
 
 

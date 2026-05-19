@@ -15,7 +15,7 @@ def _cpg_islands(
     island_start = 0
 
     for i in range(0, max(1, n - window + 1), step):
-        sub = seq[i:i + window]
+        sub = seq[i : i + window]
         if len(sub) < window:
             break
         c_count = sub.count("C")
@@ -48,14 +48,16 @@ def _cpg_islands(
         cg_obs = sub.count("CG")
         cg_exp = (c_count * g_count) / length if length > 0 else 0
         oe = cg_obs / cg_exp if cg_exp > 0 else 0.0
-        results.append({
-            "start": start + 1,
-            "end": end,
-            "length": length,
-            "gc_percent": round(gc_pct * 100, 4),
-            "obs_exp_cpg": round(oe, 4),
-            "cpg_count": cg_obs,
-        })
+        results.append(
+            {
+                "start": start + 1,
+                "end": end,
+                "length": length,
+                "gc_percent": round(gc_pct * 100, 4),
+                "obs_exp_cpg": round(oe, 4),
+                "cpg_count": cg_obs,
+            }
+        )
     return results
 
 
@@ -66,8 +68,12 @@ def cmd(args: Namespace) -> None:
     all_results = []
     for rec in records:
         islands = _cpg_islands(
-            str(rec.seq), args.window, args.step,
-            args.min_len, args.min_gc / 100.0, args.min_oe,
+            str(rec.seq),
+            args.window,
+            args.step,
+            args.min_len,
+            args.min_gc / 100.0,
+            args.min_oe,
         )
         for isl in islands:
             isl["seq_id"] = rec.id
@@ -78,8 +84,10 @@ def cmd(args: Namespace) -> None:
         return
     print("seq_id\tstart\tend\tlength\tgc_percent\tobs_exp_cpg\tcpg_count")
     for r in all_results:
-        print(f"{r['seq_id']}\t{r['start']}\t{r['end']}\t{r['length']}\t"
-              f"{r['gc_percent']}\t{r['obs_exp_cpg']}\t{r['cpg_count']}")
+        print(
+            f"{r['seq_id']}\t{r['start']}\t{r['end']}\t{r['length']}\t"
+            f"{r['gc_percent']}\t{r['obs_exp_cpg']}\t{r['cpg_count']}"
+        )
 
 
 def register(subparsers: Any) -> None:
@@ -87,11 +95,20 @@ def register(subparsers: Any) -> None:
     p.add_argument("-fa", required=True, help="Input FASTA file")
     p.add_argument("--window", type=int, default=200, help="Window size (default: 200)")
     p.add_argument("--step", type=int, default=1, help="Step size (default: 1)")
-    p.add_argument("--min-len", type=int, default=500,
-                   help="Minimum island length bp (default: 500)")
-    p.add_argument("--min-gc", type=float, default=50.0,
-                   help="Minimum GC percent (default: 50.0)")
-    p.add_argument("--min-oe", type=float, default=0.6,
-                   help="Minimum observed/expected CpG ratio (default: 0.6)")
+    p.add_argument(
+        "--min-len",
+        type=int,
+        default=500,
+        help="Minimum island length bp (default: 500)",
+    )
+    p.add_argument(
+        "--min-gc", type=float, default=50.0, help="Minimum GC percent (default: 50.0)"
+    )
+    p.add_argument(
+        "--min-oe",
+        type=float,
+        default=0.6,
+        help="Minimum observed/expected CpG ratio (default: 0.6)",
+    )
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=cmd)

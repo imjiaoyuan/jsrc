@@ -1,7 +1,6 @@
 import sys
 
 import pytest
-
 from jsrc import cli
 
 

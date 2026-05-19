@@ -2,7 +2,6 @@ import json
 from argparse import Namespace
 
 import pytest
-
 from jsrc.seq.qc import cmd
 
 

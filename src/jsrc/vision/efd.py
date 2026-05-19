@@ -47,12 +47,14 @@ class EllipticFourier:
         dy_over_dt[valid] = dy[valid] / dt[valid]
 
         consts = total_len / (2.0 * (ns[:, 0] * np.pi) ** 2)
-        coeffs = np.column_stack([
-            consts * (dphi_cos @ dx_over_dt),
-            consts * (dphi_sin @ dx_over_dt),
-            consts * (dphi_cos @ dy_over_dt),
-            consts * (dphi_sin @ dy_over_dt),
-        ])
+        coeffs = np.column_stack(
+            [
+                consts * (dphi_cos @ dx_over_dt),
+                consts * (dphi_sin @ dx_over_dt),
+                consts * (dphi_cos @ dy_over_dt),
+                consts * (dphi_sin @ dy_over_dt),
+            ]
+        )
 
         if normalize:
             coeffs = EllipticFourier.normalize(coeffs)

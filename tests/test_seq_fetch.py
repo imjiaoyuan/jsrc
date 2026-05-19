@@ -4,7 +4,6 @@ from argparse import Namespace
 from unittest.mock import patch
 
 import pytest
-
 from jsrc.seq.fetch import _parse_ids, cmd
 
 

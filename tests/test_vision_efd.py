@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from jsrc.vision.efd import (
     EllipticFourier,
     _center_contour,

@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import pytest
-
 from jsrc.vision.core import ensure_odd, get_channel_image
 from jsrc.vision.extract import _extract_contours, _validate_image_file
 
