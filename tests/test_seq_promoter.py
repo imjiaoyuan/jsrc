@@ -2,6 +2,7 @@ import logging
 from argparse import Namespace
 
 from Bio import SeqIO
+
 from jsrc.seq.promoter import cmd
 
 

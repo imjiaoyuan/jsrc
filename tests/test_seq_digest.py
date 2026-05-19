@@ -3,6 +3,7 @@ import logging
 from argparse import Namespace
 
 import pytest
+
 from jsrc.seq.digest import _calc_fragments, cmd
 
 
