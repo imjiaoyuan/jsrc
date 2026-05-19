@@ -8,7 +8,6 @@ from Bio import SeqIO
 
 from jsrc.core import progressbar
 
-
 _VALID_BASES = frozenset("ACGT")
 
 

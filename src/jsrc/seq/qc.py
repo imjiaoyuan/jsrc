@@ -5,7 +5,7 @@ from typing import Any
 
 from Bio import SeqIO
 
-from jsrc.core import open_text, nxx, progressbar
+from jsrc.core import nxx, open_text, progressbar
 
 logger = logging.getLogger(__name__)
 

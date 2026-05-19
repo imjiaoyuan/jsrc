@@ -23,7 +23,7 @@ def _linguistic_complexity(seq: str, max_k: int = 6) -> float:
         len({seq[i:i+k] for i in range(n - k + 1)})
         for k in range(1, min(max_k, n) + 1)
     )
-    alphabet = len({c for c in seq})
+    alphabet = len(set(seq))
     if alphabet <= 1:
         return 0.0
     possible = sum(
@@ -44,8 +44,8 @@ def _dust_score(seq: str, window: int = 64) -> float:
         from collections import Counter
         tri = Counter(sub[j:j+3] for j in range(len(sub) - 2))
         s = sum(c * (c - 1) // 2 for c in tri.values())
-        l = len(sub) - 2
-        scores.append(s / l if l > 0 else 0.0)
+        sub_len = len(sub) - 2
+        scores.append(s / sub_len if sub_len > 0 else 0.0)
     return round(sum(scores) / len(scores), 4) if scores else 0.0
 
 
