@@ -1,7 +1,7 @@
 import json
 from argparse import Namespace
 
-from jsrc.seq.window import cmd
+from jsrc.genome.window import cmd
 
 
 def test_seq_window_json_output(tmp_path, capsys):

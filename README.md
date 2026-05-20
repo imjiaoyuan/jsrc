@@ -56,6 +56,7 @@ jsrc vision extract --help
 | module | focus | typical use |
 |---|---|---|
 | `seq` | Sequence extraction, translation, QC, k-mer, sliding window | `jsrc seq extract ...` |
+| `genome` | Genome statistics, feature detection, comparative/evolutionary analysis | `jsrc genome stats ...` |
 | `plot` | Gene/exon/chromosome/domain and other plots | `jsrc plot gene ...` |
 | `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC | `jsrc analyze phylo ...` |
 | `grn` | GRN conversion, centrality, build packaging, local serve | `jsrc grn build ...` |
@@ -134,6 +135,25 @@ jsrc grn centrality -i test/grn/network.tsv --top 5
 | 3 | GENE_0165 | 42.81 | 12.21 | 55.01 |
 | 4 | GENE_0394 | 14.82 | 33.04 | 47.86 |
 | 5 | GENE_0427 | 36.50 | 10.60 | 47.10 |
+
+---
+
+**genome module**
+
+```bash
+jsrc genome stats -fa genome.fa
+jsrc genome cpg -fa genome.fa --window 200 --min-len 500
+jsrc genome ani -fa1 genome1.fa -fa2 genome2.fa -k 21
+jsrc genome codon -fa cds.fa --cai reference.fa --enc
+```
+
+Genome statistics: N50 2,450,000 bp, L50 3, GC 45.2%, 15 gaps.
+
+CpG islands: 42 islands found, longest 1,250 bp.
+
+ANI: 96.8% (Jaccard 0.85, Mash distance 0.032).
+
+Codon usage: CAI 0.78, ENC 52.3, top codon CTG (RSCU 1.85).
 
 ---
 

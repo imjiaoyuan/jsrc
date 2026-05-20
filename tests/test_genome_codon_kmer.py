@@ -4,7 +4,7 @@ from argparse import Namespace
 
 import pytest
 
-from jsrc.seq.codon import cmd as codon_cmd
+from jsrc.genome.codon import cmd as codon_cmd
 from jsrc.seq.kmer import cmd as kmer_cmd
 
 
@@ -14,7 +14,7 @@ class TestCodonUsage:
         fa = tmp_path / "cds.fa"
         fa.write_text(">g1\nATGGCCACTTAA\n", encoding="utf-8")
 
-        args = Namespace(fa=str(fa), top=20, json=False)
+        args = Namespace(fa=str(fa), top=20, json=False, cai=None, enc=False)
         codon_cmd(args)
 
         captured = capsys.readouterr()
@@ -25,7 +25,7 @@ class TestCodonUsage:
         fa = tmp_path / "cds.fa"
         fa.write_text(">g1\nATGGCCACTTAA\n", encoding="utf-8")
 
-        args = Namespace(fa=str(fa), top=20, json=True)
+        args = Namespace(fa=str(fa), top=20, json=True, cai=None, enc=False)
         codon_cmd(args)
 
         payload = json.loads(capsys.readouterr().out)
@@ -36,7 +36,7 @@ class TestCodonUsage:
         fa = tmp_path / "empty.fa"
         fa.write_text(">g1\nNNNNNN\n", encoding="utf-8")
 
-        args = Namespace(fa=str(fa), top=20, json=True)
+        args = Namespace(fa=str(fa), top=20, json=True, cai=None, enc=False)
         codon_cmd(args)
 
         payload = json.loads(capsys.readouterr().out)
