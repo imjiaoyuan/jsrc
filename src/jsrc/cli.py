@@ -18,6 +18,7 @@ def setup_logging(verbose: bool = False) -> None:
 
 MODULES = {
     "seq": "jsrc.seq",
+    "genome": "jsrc.genome",
     "plot": "jsrc.plot",
     "analyze": "jsrc.analyze",
     "grn": "jsrc.grn",
@@ -27,6 +28,7 @@ MODULES = {
 
 MODULE_HELP = {
     "seq": "Sequence tools",
+    "genome": "Genome-level analysis",
     "plot": "Visualization",
     "analyze": "Analysis workflows",
     "grn": "GRN tools",
