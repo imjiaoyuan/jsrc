@@ -5,8 +5,6 @@ from typing import Any
 
 from Bio import SeqIO
 
-from jsrc.genome.core import parse_gff_attributes
-
 logger = logging.getLogger(__name__)
 
 

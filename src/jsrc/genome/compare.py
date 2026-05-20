@@ -8,11 +8,11 @@ from Bio import SeqIO
 def cmd(args: Namespace) -> None:
     try:
         import edlib
-    except ImportError:
+    except ImportError as err:
         raise SystemExit(
             "Error: edlib is required for genome comparison.\n"
             "Install with: pip install edlib"
-        )
+        ) from err
 
     records1 = list(SeqIO.parse(args.fa1, "fasta"))
     records2 = list(SeqIO.parse(args.fa2, "fasta"))
@@ -37,7 +37,7 @@ def cmd(args: Namespace) -> None:
 
     aln_len = len(aln1)
     matches = mismatches = ins1 = ins2 = 0
-    for c1, c2 in zip(aln1, aln2):
+    for c1, c2 in zip(aln1, aln2, strict=True):
         if c1 == c2 and c1 != "-":
             matches += 1
         elif c1 != "-" and c2 != "-" and c1 != c2:

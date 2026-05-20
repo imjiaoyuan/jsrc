@@ -88,7 +88,7 @@ def _iter_codons(seq: str) -> Iterator[str]:
 
 def _calculate_cai(counts: Counter[str], ref_counts: Counter[str], aa_to_codons: dict[str, list[str]]) -> float:
     w_values = {}
-    for aa, codons in aa_to_codons.items():
+    for _aa, codons in aa_to_codons.items():
         max_count = max((ref_counts[c] for c in codons), default=0)
         if max_count == 0:
             for c in codons:
@@ -115,7 +115,7 @@ def _calculate_enc(counts: Counter[str], aa_to_codons: dict[str, list[str]]) -> 
         return sum((counts[c] / total) ** 2 for c in codons)
 
     families = defaultdict(list)
-    for aa, codons in aa_to_codons.items():
+    for _aa, codons in aa_to_codons.items():
         k = len(codons)
         if k > 1:
             families[k].append(codons)

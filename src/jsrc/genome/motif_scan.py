@@ -47,7 +47,7 @@ def _scan_motif(seq: str, motif: str, allow_mismatch: int = 0) -> list[dict[str,
         for i in range(len(seq) - motif_len + 1):
             subseq = seq[i : i + motif_len]
             mismatches = 0
-            for m_char, s_char in zip(motif, subseq):
+            for m_char, s_char in zip(motif, subseq, strict=True):
                 if m_char in iupac_codes:
                     if not re.match(iupac_codes[m_char], s_char):
                         mismatches += 1

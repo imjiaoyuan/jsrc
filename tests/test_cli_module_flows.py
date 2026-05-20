@@ -28,7 +28,7 @@ def test_cli_debug_mode_raises_original_exception(monkeypatch):
         [
             "jsrc",
             "--debug",
-            "seq",
+            "genome",
             "window",
             "-fa",
             "/tmp/does-not-exist.fa",
@@ -78,7 +78,7 @@ def test_cli_root_help_does_not_import_modules(monkeypatch):
     ("argv", "expected_imports"),
     [
         (["jsrc", "plot", "heart", "-h"], ["jsrc.plot", "jsrc.plot.heart"]),
-        (["jsrc", "seq", "window", "-h"], ["jsrc.seq", "jsrc.seq.window"]),
+        (["jsrc", "genome", "window", "-h"], ["jsrc.genome", "jsrc.genome.window"]),
         (["jsrc", "grn", "centrality", "-h"], ["jsrc.grn", "jsrc.grn.centrality"]),
     ],
 )

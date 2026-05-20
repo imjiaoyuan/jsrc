@@ -11,7 +11,7 @@ def test_cli_handles_missing_input_file(capsys, monkeypatch):
         "argv",
         [
             "jsrc",
-            "seq",
+            "genome",
             "window",
             "-fa",
             "/tmp/does-not-exist.fa",

@@ -1,7 +1,6 @@
 import json
 import logging
 from argparse import Namespace
-from collections import Counter
 from typing import Any
 
 from Bio import SeqIO
@@ -77,7 +76,6 @@ GENETIC_CODE = {
 
 
 def _calculate_kaks(seq1: str, seq2: str) -> dict[str, Any]:
-    import math
 
     seq1 = seq1.upper().replace("U", "T")
     seq2 = seq2.upper().replace("U", "T")
@@ -105,7 +103,7 @@ def _calculate_kaks(seq1: str, seq2: str) -> dict[str, Any]:
         if aa1 is None or aa2 is None or aa1 == "*" or aa2 == "*":
             continue
 
-        diffs = sum(c1 != c2 for c1, c2 in zip(codon1, codon2))
+        diffs = sum(c1 != c2 for c1, c2 in zip(codon1, codon2, strict=True))
 
         if diffs == 0:
             synonymous_sites += 1.0

@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def _hamming_distance(seq1: str, seq2: str) -> int:
     if len(seq1) != len(seq2):
         raise ValueError("Sequences must have equal length for Hamming distance")
-    return sum(c1 != c2 for c1, c2 in zip(seq1, seq2))
+    return sum(c1 != c2 for c1, c2 in zip(seq1, seq2, strict=True))
 
 
 def _p_distance(seq1: str, seq2: str) -> float:
@@ -43,7 +43,7 @@ def _kimura_2p_distance(seq1: str, seq2: str) -> float:
 
     transitions = 0
     transversions = 0
-    for c1, c2 in zip(seq1, seq2):
+    for c1, c2 in zip(seq1, seq2, strict=True):
         if c1 == c2:
             continue
         if (c1 in "AG" and c2 in "AG") or (c1 in "CT" and c2 in "CT"):
