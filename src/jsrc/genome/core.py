@@ -1,13 +1,8 @@
-"""Shared utilities for genome module."""
-
-
 def normalize_sequence(seq: str) -> str:
-    """Normalize DNA/RNA sequence to uppercase DNA (U->T)."""
     return seq.upper().replace("U", "T")
 
 
 def gc_content(seq: str) -> float:
-    """Calculate GC content percentage."""
     seq = normalize_sequence(seq)
     g = seq.count("G")
     c = seq.count("C")
@@ -16,7 +11,6 @@ def gc_content(seq: str) -> float:
 
 
 def gc_skew(seq: str) -> float:
-    """Calculate GC skew: (G-C)/(G+C)."""
     seq = normalize_sequence(seq)
     g = seq.count("G")
     c = seq.count("C")
@@ -25,7 +19,6 @@ def gc_skew(seq: str) -> float:
 
 
 def at_skew(seq: str) -> float:
-    """Calculate AT skew: (A-T)/(A+T)."""
     seq = normalize_sequence(seq)
     a = seq.count("A")
     t = seq.count("T")
@@ -34,7 +27,6 @@ def at_skew(seq: str) -> float:
 
 
 def parse_gff_attributes(attr_string: str) -> dict[str, str]:
-    """Parse GFF3 attribute string into a dictionary."""
     attrs: dict[str, str] = {}
     for item in attr_string.strip().strip(";").split(";"):
         if "=" in item:

@@ -2,14 +2,16 @@ import importlib
 from typing import Any
 
 _SUBCOMMANDS: dict[str, tuple[str, str]] = {
-    # Genome features and structure
     "cpg": ("jsrc.genome.cpg", "Predict CpG islands"),
     "orf": ("jsrc.genome.orf", "Find open reading frames"),
     "promoter": ("jsrc.genome.promoter", "Extract promoter sequences"),
     "repeat": ("jsrc.genome.repeat", "Find simple tandem repeats (SSR/STR)"),
-    # Genome statistics
+    "stats": ("jsrc.genome.stats", "Genome statistics (N50/L50, gaps, GC)"),
+    "gc-skew": ("jsrc.genome.gc_skew", "Cumulative GC skew for replication origin"),
     "window": ("jsrc.genome.window", "Sliding-window GC and AT skew"),
     "codon": ("jsrc.genome.codon", "Codon usage and RSCU analysis"),
+    "ani": ("jsrc.genome.ani", "Average Nucleotide Identity (k-mer based)"),
+    "compare": ("jsrc.genome.compare", "Genome alignment and differences (requires edlib)"),
 }
 
 
