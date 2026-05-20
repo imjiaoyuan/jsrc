@@ -2,8 +2,14 @@ import importlib
 from typing import Any
 
 _SUBCOMMANDS: dict[str, tuple[str, str]] = {
-    # Genome statistics and features
-    # (will be populated as we add subcommands)
+    # Genome features and structure
+    "cpg": ("jsrc.genome.cpg", "Predict CpG islands"),
+    "orf": ("jsrc.genome.orf", "Find open reading frames"),
+    "promoter": ("jsrc.genome.promoter", "Extract promoter sequences"),
+    "repeat": ("jsrc.genome.repeat", "Find simple tandem repeats (SSR/STR)"),
+    # Genome statistics
+    "window": ("jsrc.genome.window", "Sliding-window GC and AT skew"),
+    "codon": ("jsrc.genome.codon", "Codon usage and RSCU analysis"),
 }
 
 
