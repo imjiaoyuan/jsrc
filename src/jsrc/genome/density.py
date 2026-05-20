@@ -8,7 +8,9 @@ from Bio import SeqIO
 logger = logging.getLogger(__name__)
 
 
-def _calculate_density(features: list[tuple[int, int]], genome_length: int, window: int, step: int) -> list[dict[str, Any]]:
+def _calculate_density(
+    features: list[tuple[int, int]], genome_length: int, window: int, step: int
+) -> list[dict[str, Any]]:
     results = []
     for i in range(0, max(1, genome_length - window + 1), step):
         window_start = i
@@ -82,16 +84,25 @@ def cmd(args: Namespace) -> None:
         return
 
     for item in results:
-        logger.info("seq_id\t%s\tlength\t%s\tfeatures\t%d", item["seq_id"], item["length"], item["total_features"])
+        logger.info(
+            "seq_id\t%s\tlength\t%s\tfeatures\t%d",
+            item["seq_id"],
+            item["length"],
+            item["total_features"],
+        )
         if item["density"]:
             print(f"# {item['seq_id']}")
             print("position\tcount\tdensity\tcoverage")
             for d in item["density"]:
-                print(f"{d['position']}\t{d['count']}\t{d['density']:.4f}\t{d['coverage']:.4f}")
+                print(
+                    f"{d['position']}\t{d['count']}\t{d['density']:.4f}\t{d['coverage']:.4f}"
+                )
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser("density", help="Calculate gene/feature density along genome")
+    p = subparsers.add_parser(
+        "density", help="Calculate gene/feature density along genome"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA file")
     p.add_argument("-gff", required=True, help="GFF annotation file")
     p.add_argument("--feature-type", help="Feature type to count (e.g., gene, CDS)")

@@ -86,7 +86,9 @@ def _iter_codons(seq: str) -> Iterator[str]:
             yield c
 
 
-def _calculate_cai(counts: Counter[str], ref_counts: Counter[str], aa_to_codons: dict[str, list[str]]) -> float:
+def _calculate_cai(
+    counts: Counter[str], ref_counts: Counter[str], aa_to_codons: dict[str, list[str]]
+) -> float:
     w_values = {}
     for _aa, codons in aa_to_codons.items():
         max_count = max((ref_counts[c] for c in codons), default=0)

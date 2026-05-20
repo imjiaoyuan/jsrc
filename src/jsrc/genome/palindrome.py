@@ -8,7 +8,9 @@ from Bio import SeqIO
 logger = logging.getLogger(__name__)
 
 
-def _find_palindromes(seq: str, min_length: int, max_length: int, max_gap: int) -> list[dict[str, Any]]:
+def _find_palindromes(
+    seq: str, min_length: int, max_length: int, max_gap: int
+) -> list[dict[str, Any]]:
     seq = seq.upper()
     n = len(seq)
     palindromes = []
@@ -31,7 +33,9 @@ def _find_palindromes(seq: str, min_length: int, max_length: int, max_gap: int) 
                 if not all(b in complement for b in right_arm):
                     continue
 
-                expected_right = "".join(complement.get(b, "N") for b in reversed(left_arm))
+                expected_right = "".join(
+                    complement.get(b, "N") for b in reversed(left_arm)
+                )
                 if right_arm == expected_right:
                     palindromes.append(
                         {
@@ -50,15 +54,24 @@ def _find_palindromes(seq: str, min_length: int, max_length: int, max_gap: int) 
 def cmd(args: Namespace) -> None:
     results = []
     for rec in SeqIO.parse(args.fa, "fasta"):
-        palindromes = _find_palindromes(str(rec.seq), args.min_arm, args.max_arm, args.max_gap)
-        results.append({"seq_id": rec.id, "length": len(rec.seq), "palindromes": palindromes})
+        palindromes = _find_palindromes(
+            str(rec.seq), args.min_arm, args.max_arm, args.max_gap
+        )
+        results.append(
+            {"seq_id": rec.id, "length": len(rec.seq), "palindromes": palindromes}
+        )
 
     if args.json:
         print(json.dumps(results, ensure_ascii=False, indent=2))
         return
 
     for item in results:
-        logger.info("seq_id\t%s\tlength\t%s\tpalindromes\t%d", item["seq_id"], item["length"], len(item["palindromes"]))
+        logger.info(
+            "seq_id\t%s\tlength\t%s\tpalindromes\t%d",
+            item["seq_id"],
+            item["length"],
+            len(item["palindromes"]),
+        )
         if item["palindromes"]:
             print(f"# {item['seq_id']}")
             print("start\tend\tarm_length\tgap\ttotal_length\tsequence")
@@ -69,11 +82,15 @@ def cmd(args: Namespace) -> None:
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser("palindrome", help="Find palindromic sequences (inverted repeats)")
+    p = subparsers.add_parser(
+        "palindrome", help="Find palindromic sequences (inverted repeats)"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA file")
     p.add_argument("--min-arm", type=int, default=6, help="Minimum arm length")
     p.add_argument("--max-arm", type=int, default=20, help="Maximum arm length")
     p.add_argument("--max-gap", type=int, default=10, help="Maximum gap between arms")
-    p.add_argument("--top", type=int, default=50, help="Show top N palindromes per sequence")
+    p.add_argument(
+        "--top", type=int, default=50, help="Show top N palindromes per sequence"
+    )
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=cmd)

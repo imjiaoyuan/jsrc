@@ -174,7 +174,11 @@ def cmd(args: Namespace) -> None:
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser("kaks", help="Calculate Ka/Ks ratio for two aligned CDS sequences")
-    p.add_argument("-fa", required=True, help="Aligned CDS FASTA file (exactly 2 sequences)")
+    p = subparsers.add_parser(
+        "kaks", help="Calculate Ka/Ks ratio for two aligned CDS sequences"
+    )
+    p.add_argument(
+        "-fa", required=True, help="Aligned CDS FASTA file (exactly 2 sequences)"
+    )
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=cmd)

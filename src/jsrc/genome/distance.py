@@ -36,7 +36,9 @@ def _kimura_2p_distance(seq1: str, seq2: str) -> float:
     import math
 
     if len(seq1) != len(seq2):
-        raise ValueError("Sequences must have equal length for Kimura 2-parameter distance")
+        raise ValueError(
+            "Sequences must have equal length for Kimura 2-parameter distance"
+        )
     n = len(seq1)
     if n == 0:
         return 0.0
@@ -96,7 +98,9 @@ def cmd(args: Namespace) -> None:
 
     print("seq1\tseq2\tdistance")
     for item in results:
-        dist_str = f"{item['distance']:.6f}" if item["distance"] != float("inf") else "inf"
+        dist_str = (
+            f"{item['distance']:.6f}" if item["distance"] != float("inf") else "inf"
+        )
         print(f"{item['seq1']}\t{item['seq2']}\t{dist_str}")
 
 

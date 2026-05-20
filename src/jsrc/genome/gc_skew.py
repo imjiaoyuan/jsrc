@@ -7,7 +7,9 @@ from Bio import SeqIO
 from jsrc.genome.core import normalize_sequence
 
 
-def _calculate_cumulative_gc_skew(seq: str, window: int, step: int) -> list[dict[str, Any]]:
+def _calculate_cumulative_gc_skew(
+    seq: str, window: int, step: int
+) -> list[dict[str, Any]]:
     seq = normalize_sequence(seq)
     n = len(seq)
     results = []
@@ -39,7 +41,7 @@ def _calculate_cumulative_gc_skew(seq: str, window: int, step: int) -> list[dict
 
 
 def _find_skew_extrema(
-    data: list[dict[str, Any]]
+    data: list[dict[str, Any]],
 ) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     if not data:
         return None, None
@@ -100,7 +102,9 @@ def cmd(args: Namespace) -> None:
         print(f"  Position: {max_point['position']:,} bp")
         print(f"  Cumulative GC skew: {max_point['cumulative_gc_skew']:.6f}")
     print()
-    print("position\twindow_start\twindow_end\tgc_skew\tcumulative_gc_skew\tg_count\tc_count")
+    print(
+        "position\twindow_start\twindow_end\tgc_skew\tcumulative_gc_skew\tg_count\tc_count"
+    )
     for row in output_data:
         print(
             f"{row['position']}\t{row['window_start']}\t{row['window_end']}\t"

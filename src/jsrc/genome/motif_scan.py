@@ -84,19 +84,32 @@ def cmd(args: Namespace) -> None:
         return
 
     for item in results:
-        logger.info("seq_id\t%s\tlength\t%s\tmatches\t%d", item["seq_id"], item["length"], len(item["matches"]))
+        logger.info(
+            "seq_id\t%s\tlength\t%s\tmatches\t%d",
+            item["seq_id"],
+            item["length"],
+            len(item["matches"]),
+        )
         if item["matches"]:
             print(f"# {item['seq_id']}")
             print("start\tend\tsequence\tmismatches")
             for match in item["matches"][: args.top]:
-                print(f"{match['start']}\t{match['end']}\t{match['sequence']}\t{match['mismatches']}")
+                print(
+                    f"{match['start']}\t{match['end']}\t{match['sequence']}\t{match['mismatches']}"
+                )
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser("motif-scan", help="Scan for DNA motifs (supports IUPAC codes)")
+    p = subparsers.add_parser(
+        "motif-scan", help="Scan for DNA motifs (supports IUPAC codes)"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA file")
-    p.add_argument("-m", "--motif", required=True, help="Motif pattern (IUPAC codes supported)")
+    p.add_argument(
+        "-m", "--motif", required=True, help="Motif pattern (IUPAC codes supported)"
+    )
     p.add_argument("--mismatch", type=int, default=0, help="Allow N mismatches")
-    p.add_argument("--top", type=int, default=100, help="Show top N matches per sequence")
+    p.add_argument(
+        "--top", type=int, default=100, help="Show top N matches per sequence"
+    )
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=cmd)

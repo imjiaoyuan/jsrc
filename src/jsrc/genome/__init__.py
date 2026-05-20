@@ -7,7 +7,10 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "promoter": ("jsrc.genome.promoter", "Extract promoter sequences"),
     "repeat": ("jsrc.genome.repeat", "Find simple tandem repeats (SSR/STR)"),
     "island": ("jsrc.genome.island", "Detect genomic islands by GC content deviation"),
-    "palindrome": ("jsrc.genome.palindrome", "Find palindromic sequences (inverted repeats)"),
+    "palindrome": (
+        "jsrc.genome.palindrome",
+        "Find palindromic sequences (inverted repeats)",
+    ),
     "stats": ("jsrc.genome.stats", "Genome statistics (N50/L50, gaps, GC)"),
     "gc-skew": ("jsrc.genome.gc_skew", "Cumulative GC skew for replication origin"),
     "window": ("jsrc.genome.window", "Sliding-window GC and AT skew"),
@@ -15,9 +18,15 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "distance": ("jsrc.genome.distance", "Calculate pairwise genetic distances"),
     "kaks": ("jsrc.genome.kaks", "Calculate Ka/Ks ratio for two aligned CDS sequences"),
     "density": ("jsrc.genome.density", "Calculate gene/feature density along genome"),
-    "motif-scan": ("jsrc.genome.motif_scan", "Scan for DNA motifs (supports IUPAC codes)"),
+    "motif-scan": (
+        "jsrc.genome.motif_scan",
+        "Scan for DNA motifs (supports IUPAC codes)",
+    ),
     "ani": ("jsrc.genome.ani", "Average Nucleotide Identity (k-mer based)"),
-    "compare": ("jsrc.genome.compare", "Genome alignment and differences (requires edlib)"),
+    "compare": (
+        "jsrc.genome.compare",
+        "Genome alignment and differences (requires edlib)",
+    ),
 }
 
 

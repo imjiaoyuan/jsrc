@@ -2,7 +2,7 @@ import logging
 from argparse import Namespace
 
 from Bio import SeqIO
-from jsrc.seq.promoter import cmd
+from jsrc.genome.promoter import cmd
 
 
 def test_seq_promoter_forward_strand(tmp_path, caplog):

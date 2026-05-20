@@ -75,8 +75,12 @@ def cmd(args: Namespace) -> None:
     print(f"{'Alignment length':40} : {stats['alignment_length']:>15,} bp")
     print(f"{'Matches':40} : {stats['matches']:>15,}")
     print(f"{'Mismatches (substitutions)':40} : {stats['mismatches']:>15,}")
-    print(f"{'Insertions in genome1 (gaps in genome2)':40} : {stats['insertions_in_genome1']:>15,}")
-    print(f"{'Insertions in genome2 (gaps in genome1)':40} : {stats['insertions_in_genome2']:>15,}")
+    print(
+        f"{'Insertions in genome1 (gaps in genome2)':40} : {stats['insertions_in_genome1']:>15,}"
+    )
+    print(
+        f"{'Insertions in genome2 (gaps in genome1)':40} : {stats['insertions_in_genome2']:>15,}"
+    )
     print(f"{'Total indels':40} : {stats['total_indels']:>15,}")
     print(f"{'Percent identity':40} : {stats['percent_identity']:>14.4f}%")
     print(f"{'Edit distance (Levenshtein)':40} : {stats['edit_distance']:>15,}")
@@ -85,7 +89,8 @@ def cmd(args: Namespace) -> None:
 
 def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
-        "compare", help="Genome-wide alignment and difference statistics (requires edlib)"
+        "compare",
+        help="Genome-wide alignment and difference statistics (requires edlib)",
     )
     p.add_argument("-fa1", required=True, help="First genome FASTA file")
     p.add_argument("-fa2", required=True, help="Second genome FASTA file")

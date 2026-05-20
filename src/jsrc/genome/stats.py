@@ -62,7 +62,13 @@ def cmd(args: Namespace) -> None:
     total_length = sum(lengths)
     n50, l50 = _calculate_n50_l50(lengths)
 
-    all_gaps = {"n_count": 0, "gap_count": 0, "min_gap": 0, "max_gap": 0, "mean_gap": 0.0}
+    all_gaps = {
+        "n_count": 0,
+        "gap_count": 0,
+        "min_gap": 0,
+        "max_gap": 0,
+        "mean_gap": 0.0,
+    }
     gap_lengths_all = []
     for rec in records:
         gap_info = _count_gaps(str(rec.seq))
@@ -89,7 +95,10 @@ def cmd(args: Namespace) -> None:
         all_gaps["max_gap"] = max(gap_lengths_all)
         all_gaps["mean_gap"] = sum(gap_lengths_all) / len(gap_lengths_all)
 
-    total_gc = sum(str(rec.seq).upper().count("G") + str(rec.seq).upper().count("C") for rec in records)
+    total_gc = sum(
+        str(rec.seq).upper().count("G") + str(rec.seq).upper().count("C")
+        for rec in records
+    )
     gc_percent = (total_gc / total_length * 100.0) if total_length > 0 else 0.0
 
     stats = {
@@ -102,7 +111,9 @@ def cmd(args: Namespace) -> None:
         "l50": l50,
         "gc_percent": round(gc_percent, 4),
         "n_count": all_gaps["n_count"],
-        "n_percent": round((all_gaps["n_count"] / total_length * 100.0) if total_length > 0 else 0.0, 4),
+        "n_percent": round(
+            (all_gaps["n_count"] / total_length * 100.0) if total_length > 0 else 0.0, 4
+        ),
         "gap_count": all_gaps["gap_count"],
         "min_gap_length": all_gaps["min_gap"],
         "max_gap_length": all_gaps["max_gap"],
@@ -125,7 +136,7 @@ def cmd(args: Namespace) -> None:
     print(f"{'N bases':30} : {stats['n_count']:>15,}")
     print(f"{'N percent (%)':30} : {stats['n_percent']:>15.4f}")
     print(f"{'Number of gaps':30} : {stats['gap_count']:>15,}")
-    if stats['gap_count'] > 0:
+    if stats["gap_count"] > 0:
         print(f"{'Min gap length (bp)':30} : {stats['min_gap_length']:>15,}")
         print(f"{'Max gap length (bp)':30} : {stats['max_gap_length']:>15,}")
         print(f"{'Mean gap length (bp)':30} : {stats['mean_gap_length']:>15.2f}")

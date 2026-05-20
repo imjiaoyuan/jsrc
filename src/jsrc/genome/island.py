@@ -8,7 +8,9 @@ from Bio import SeqIO
 logger = logging.getLogger(__name__)
 
 
-def _detect_islands(seq: str, window: int, step: int, gc_threshold: float) -> list[dict[str, Any]]:
+def _detect_islands(
+    seq: str, window: int, step: int, gc_threshold: float
+) -> list[dict[str, Any]]:
     seq = seq.upper()
     n = len(seq)
     islands = []
@@ -28,7 +30,9 @@ def _detect_islands(seq: str, window: int, step: int, gc_threshold: float) -> li
                 in_island = True
         else:
             if in_island:
-                islands.append({"start": island_start, "end": i, "length": i - island_start})
+                islands.append(
+                    {"start": island_start, "end": i, "length": i - island_start}
+                )
                 in_island = False
 
     if in_island:
@@ -40,7 +44,9 @@ def _detect_islands(seq: str, window: int, step: int, gc_threshold: float) -> li
 def cmd(args: Namespace) -> None:
     results = []
     for rec in SeqIO.parse(args.fa, "fasta"):
-        islands = _detect_islands(str(rec.seq), args.window, args.step, args.gc_threshold)
+        islands = _detect_islands(
+            str(rec.seq), args.window, args.step, args.gc_threshold
+        )
         if args.min_length:
             islands = [isl for isl in islands if isl["length"] >= args.min_length]
         results.append({"seq_id": rec.id, "length": len(rec.seq), "islands": islands})
@@ -50,7 +56,12 @@ def cmd(args: Namespace) -> None:
         return
 
     for item in results:
-        logger.info("seq_id\t%s\tlength\t%s\tislands\t%d", item["seq_id"], item["length"], len(item["islands"]))
+        logger.info(
+            "seq_id\t%s\tlength\t%s\tislands\t%d",
+            item["seq_id"],
+            item["length"],
+            len(item["islands"]),
+        )
         if item["islands"]:
             print(f"# {item['seq_id']}")
             print("start\tend\tlength")
@@ -59,11 +70,15 @@ def cmd(args: Namespace) -> None:
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser("island", help="Detect genomic islands by GC content deviation")
+    p = subparsers.add_parser(
+        "island", help="Detect genomic islands by GC content deviation"
+    )
     p.add_argument("-fa", required=True, help="Genome FASTA file")
     p.add_argument("--window", type=int, default=5000, help="Window size")
     p.add_argument("--step", type=int, default=1000, help="Step size")
-    p.add_argument("--gc-threshold", type=float, default=0.55, help="GC content threshold")
+    p.add_argument(
+        "--gc-threshold", type=float, default=0.55, help="GC content threshold"
+    )
     p.add_argument("--min-length", type=int, help="Minimum island length")
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=cmd)
