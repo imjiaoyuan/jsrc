@@ -1,6 +1,8 @@
 # jsrc seq
 
-序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、启动子、质控、密码子偏好、k-mer 指纹、Entrez 下载、酶切模拟、滑窗统计、ORF 查找、CpG 岛预测、引物分析、串联重复查找、序列复杂度和 MSA 信息熵这些常用功能。
+序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、质控、k-mer 指纹、Entrez 下载、酶切模拟、序列复杂度和 MSA 信息熵这些常用功能。
+
+基因组级别的分析功能（如 ORF 查找、CpG 岛预测、启动子提取、串联重复、密码子使用、滑窗统计等）已迁移到 [genome 模块](./module-genome.md)。
 
 ## extract
 
@@ -56,28 +58,6 @@ jsrc seq rename -fa in.fa -mode gff -gff genes.gff -parent Parent -o out.fa
 jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
 ```
 
-## promoter
-
-研究基因调控的时候经常要看启动子区域。比如你想知道某几个基因上游 2kb 有没有某个转录因子结合位点——这时候就得先把这些区域批量提取出来。
-
-这个命令就是干这个的：给基因组、GFF、基因 ID 列表，它自动计算坐标并把上下游序列取出来。
-
-示例输入（`genes.txt`）：
-
-```txt
-GENE001
-GENE002
-GENE003
-```
-
-默认向上游取 2000bp，下游不取（设为 0）。你也可以用 `-up` 和 `-down` 自由调整。
-
-```bash
-jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -up 1500 -down 500
-```
-
-如果你的 GFF 里基因特征的标签名不叫 `gene`（比如有的数据集用 `mRNA`），记得设一下 `-feature`。
-
 ## qc
 
 做大规模分析前我总是习惯先看一眼数据质量。这个命令就是用来快速"体检"的——它不替代 FastQC 那些深度报告，但胜在快，一条命令下去基本概况就有了。
@@ -87,16 +67,6 @@ jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -u
 ```bash
 jsrc seq qc -fa assembly.fa
 jsrc seq qc -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
-```
-
-## codon
-
-密码子偏好是一个很有意思的角度。不同物种、甚至同一个基因组上的不同基因，密码子使用模式都可能不一样。这种偏好背后有选择压力、突变偏好、tRNA 丰度各种因素。
-
-这个命令就是算密码子使用频率的。输入 CDS 序列的 FASTA，它会统计每个密码子的出现次数并计算 RSCU（相对同义密码子使用度）。默认显示使用频率最高的 20 个，想看更多用 `--top` 调整。
-
-```bash
-jsrc seq codon -fa cds.fa --top 20 --json
 ```
 
 ## kmer
@@ -130,61 +100,6 @@ jsrc seq fetch -ids ids.txt --format genbank --email me@example.com --json
 ```bash
 jsrc seq digest -fa plasmid.fa -e EcoRI,HindIII --circular --json
 jsrc seq digest -fa seq.fa -e EcoRI --min-size 50
-```
-
-## window
-
-这个命令解决的是一个很经典的问题：全局的 GC 含量是一个平均值，但基因组上的 GC 分布往往不均匀——某些区域（比如 CpG 岛附近）GC 含量就高，着丝粒附近就低。滑窗分析就是在一个个局部窗口里看这些变化。
-
-命令的逻辑很简单：指定窗口大小和步长，程序从序列起始位置开始滑动，在每个窗口里算 GC 含量和 GC 偏斜（(G-C)/(G+C)）。默认取最长的序列来分析，你也可以用 `-id` 指定某条序列。`--head` 可以只预览前 N 个窗口。
-
-```bash
-jsrc seq window -fa genome.fa -w 100000 -s 20000 --head 20
-jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200 --json
-```
-
-## orf
-
-ORF 查找是对未注释序列进行基因预测的第一步。给定 FASTA 文件，这个命令扫描 ATG 到终止密码子的开放阅读框，报告坐标、长度、读框和翻译蛋白序列。
-
-默认只搜索读框 1，报告 ≥ 100 nt 的 ORF。用 `--all-frames` 搜索全部三个正链读框，用 `--min-len` 调整长度阈值。`--top N` 每条序列只保留最长的 N 个 ORF。
-
-```bash
-jsrc seq orf -fa genome.fa --min-len 300 --all-frames
-jsrc seq orf -fa contigs.fa --top 5 --json
-```
-
-## cpg
-
-CpG 岛是基因组中 CpG 二核苷酸密度和 GC 含量较高的区域，通常位于基因启动子附近，与基因调控密切相关。这个命令使用经典滑窗法（Gardiner-Garden & Frommer 1987）预测 CpG 岛。
-
-当一个窗口满足 GC% ≥ 50% 且观测/预期 CpG 比值 ≥ 0.6 时，被视为候选 CpG 岛区域。相邻满足条件的窗口会被合并，合并后长度不足 `--min-len` 的区域会被过滤掉。
-
-```bash
-jsrc seq cpg -fa genome.fa
-jsrc seq cpg -fa genome.fa --window 200 --min-len 200 --min-gc 55 --json
-```
-
-## primer
-
-对引物序列进行 Tm、GC 含量、GC 夹和发夹风险评估。提供两种 Tm 计算模型：Wallace 经验公式（短序列快速估算）和最近邻热力学模型（SantaLucia 1998，更准确）。
-
-输入是一个 FASTA 文件，每条记录对应一个引物序列。`--conc` 设置最近邻法计算用的引物浓度（默认 250 nM）。
-
-```bash
-jsrc seq primer -fa primers.fa
-jsrc seq primer -fa primers.fa --conc 500 --json
-```
-
-## repeat
-
-查找基因组序列中的简单串联重复（SSR / 微卫星 / STR）。扫描指定单元长度范围内、重复次数达到阈值的串联重复基序。
-
-默认设置查找单核苷酸到六核苷酸重复（单元长度 1–6），至少重复 3 次。常用于微卫星标记开发和重复序列注释。
-
-```bash
-jsrc seq repeat -fa genome.fa
-jsrc seq repeat -fa genome.fa --min-unit 2 --max-unit 4 --min-reps 5 --json
 ```
 
 ## complexity

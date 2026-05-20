@@ -1,6 +1,8 @@
 # jsrc seq
 
-Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, promoter extraction, QC, codon usage, k-mer profiling, Entrez fetching, restriction digestion, sliding-window analysis, ORF finding, CpG island prediction, primer analysis, tandem repeat finding, sequence complexity, and MSA entropy.
+Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, QC, k-mer profiling, Entrez fetching, restriction digestion, sequence complexity, and MSA entropy.
+
+Genome-level analysis features (such as ORF finding, CpG island prediction, promoter extraction, tandem repeats, codon usage, sliding-window analysis, etc.) have been moved to the [genome module](./module-genome.md).
 
 ## extract
 
@@ -54,28 +56,6 @@ When doing cross-species comparison or looking for protein domains, what you act
 jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
 ```
 
-## promoter
-
-Studying gene regulation often means looking at promoter regions. Say you want to check whether a transcription factor binding site exists 2kb upstream of a set of genes — you need to extract those regions in bulk first.
-
-This command does exactly that. Given genome, GFF, and gene IDs, it automatically calculates coordinates and extracts flanking sequences.
-
-Example input (`genes.txt`):
-
-```txt
-GENE001
-GENE002
-GENE003
-```
-
-Default is 2000bp upstream, 0bp downstream. Adjust with `-up` and `-down`.
-
-```bash
-jsrc seq promoter -fa genome.fa -gff genes.gff -ids genes.txt -o promoters.fa -up 1500 -down 500
-```
-
-If your GFF uses a different feature label (some datasets use `mRNA` instead of `gene`), set `-feature` accordingly.
-
 ## qc
 
 I always check data quality before diving into large-scale analysis. This command is for a quick health check — it won't replace FastQC's deep reports, but it's fast and gives you the essentials in one go.
@@ -85,16 +65,6 @@ Supports FASTA and FASTQ (including gzip). For FASTA: sequence count, total leng
 ```bash
 jsrc seq qc -fa assembly.fa
 jsrc seq qc -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
-```
-
-## codon
-
-Codon bias is an interesting angle. Different species, and even different genes within the same genome, display distinct codon usage patterns — shaped by selection pressure, mutation bias, and tRNA abundance.
-
-This command calculates codon usage frequencies from CDS FASTA. It counts each codon and computes RSCU (Relative Synonymous Codon Usage). Shows the top 20 by default; increase with `--top`.
-
-```bash
-jsrc seq codon -fa cds.fa --top 20 --json
 ```
 
 ## kmer
@@ -130,60 +100,6 @@ jsrc seq digest -fa plasmid.fa -e EcoRI,HindIII --circular --json
 jsrc seq digest -fa seq.fa -e EcoRI --min-size 50
 ```
 
-## window
-
-Sliding-window analysis solves a common problem: global GC content is an average, but genomic GC distribution is uneven — high near CpG islands, low near centromeres. This command looks at these variations window by window.
-
-Specify window size and step, and the program slides along the sequence, computing GC content and GC skew ((G-C)/(G+C)) in each window. By default it uses the longest sequence in the FASTA; target a specific sequence with `-id`. `--head` limits output to the first N windows.
-
-```bash
-jsrc seq window -fa genome.fa -w 100000 -s 20000 --head 20
-jsrc seq window -fa genome.fa -id chr1 -w 1000 -s 200 --json
-```
-
-## orf
-
-ORF finding is the first step in gene prediction from unannotated sequences. Given a FASTA file, this command scans for ATG-to-stop codon open reading frames and reports their coordinates, length, frame, and translated protein sequence.
-
-By default it searches frame 1 only and reports ORFs ≥ 100 nt. Use `--all-frames` to search all three forward frames, and `--min-len` to adjust the length cutoff. `--top N` keeps only the N longest ORFs per sequence.
-
-```bash
-jsrc seq orf -fa genome.fa --min-len 300 --all-frames
-jsrc seq orf -fa contigs.fa --top 5 --json
-```
-
-## cpg
-
-CpG islands are genomic regions with elevated CpG dinucleotide density and GC content, typically found near gene promoters and associated with gene regulation. This command predicts them using the classical sliding-window approach (Gardiner-Garden & Frommer 1987).
-
-A window is considered a CpG island candidate if GC% ≥ 50% and observed/expected CpG ratio ≥ 0.6. Adjacent qualifying windows are merged; merged regions shorter than `--min-len` are dropped.
-
-```bash
-jsrc seq cpg -fa genome.fa
-jsrc seq cpg -fa genome.fa --window 200 --min-len 200 --min-gc 55 --json
-```
-
-## primer
-
-Evaluates primer sequences for Tm, GC content, GC clamp, and hairpin risk. Two Tm models are provided: Wallace rule (fast estimate for short oligos) and the nearest-neighbor thermodynamic model (SantaLucia 1998, more accurate).
-
-Input is a FASTA file where each record is one primer sequence. `--conc` sets the primer concentration for the nearest-neighbor calculation (default 250 nM).
-
-```bash
-jsrc seq primer -fa primers.fa
-jsrc seq primer -fa primers.fa --conc 500 --json
-```
-
-## repeat
-
-Finds simple sequence repeats (SSRs / microsatellites / STRs) in genomic sequences. Scans for tandemly repeated motifs of specified unit length range with a minimum number of repeat copies.
-
-Default settings find mono- through hexanucleotide repeats (unit length 1–6) with at least 3 copies. Useful for microsatellite marker development and repeat annotation.
-
-```bash
-jsrc seq repeat -fa genome.fa
-jsrc seq repeat -fa genome.fa --min-unit 2 --max-unit 4 --min-reps 5 --json
-```
 
 ## complexity
 

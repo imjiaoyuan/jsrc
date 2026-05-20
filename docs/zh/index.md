@@ -36,6 +36,7 @@ jsrc <module> <subcommand> --help
 | 模块 | 说明 |
 |---|---|
 | `seq` | 序列提取、重命名、翻译、QC、k-mer、滑窗分析 |
+| `genome` | 基因组统计、特征检测、比较分析、进化分析 |
 | `plot` | 基因/外显子/染色体/结构域等可视化 |
 | `analyze` | 系统发育、motif、一致序列、SNP/INDEL、QC |
 | `gs` | 基因组选择数据构建、划分与训练流程 |
@@ -51,6 +52,7 @@ jsrc <module> <subcommand> --help
 ## 模块文档
 
 - [序列模块](./module-seq.md)
+- [基因组模块](./module-genome.md)
 - [分析模块](./module-analyze.md)
 - [绘图模块](./module-plot.md)
 - [GS 模块](./module-gs.md)

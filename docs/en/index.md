@@ -36,6 +36,7 @@ jsrc <module> <subcommand> --help
 | module | description |
 |---|---|
 | `seq` | Sequence extraction, renaming, translation, QC, k-mer, window |
+| `genome` | Genome statistics, feature detection, comparative/evolutionary analysis |
 | `plot` | Gene/exon/chromosome/domain and utility visualizations |
 | `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC |
 | `gs` | Genomic selection dataset build/split/train workflows |
@@ -51,6 +52,7 @@ jsrc <module> <subcommand> --help
 ## Modules
 
 - [Sequence Module](./module-seq.md)
+- [Genome Module](./module-genome.md)
 - [Analyze Module](./module-analyze.md)
 - [Plot Module](./module-plot.md)
 - [GS Module](./module-gs.md)
