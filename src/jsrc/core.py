@@ -1,14 +1,42 @@
 import gzip
 import sys
 import time
-from collections.abc import Generator, Iterable
-from typing import IO, Any
+from collections.abc import Generator, Iterable, Sized
+from pathlib import Path
+from typing import IO, TypeVar
+
+T = TypeVar("T")
 
 
-def open_text(path: str) -> IO[str]:
-    if path.endswith(".gz"):
-        return gzip.open(path, "rt", encoding="utf-8")
-    return open(path, encoding="utf-8")
+class JsrcError(Exception):
+    pass
+
+
+class ValidationError(JsrcError):
+    pass
+
+
+class DataFormatError(JsrcError):
+    pass
+
+
+class FileNotFoundError(JsrcError):
+    pass
+
+
+class DependencyError(JsrcError):
+    pass
+
+
+class ConfigurationError(JsrcError):
+    pass
+
+
+def open_text(path: str | Path) -> IO[str]:
+    path_str = str(path)
+    if path_str.endswith(".gz"):
+        return gzip.open(path_str, "rt", encoding="utf-8")
+    return open(path_str, encoding="utf-8")
 
 
 def nxx(lengths: list[int], pct: float) -> int:
@@ -112,11 +140,11 @@ class progressbar:
         self.finish()
 
     def iter(
-        self, items: Iterable[Any], total: int | None = None
-    ) -> Generator[Any, None, None]:
+        self, items: Iterable[T], total: int | None = None
+    ) -> Generator[T, None, None]:
         if total is not None:
             self.total = total
-        elif hasattr(items, "__len__"):
+        elif isinstance(items, Sized):
             self.total = len(items)
         else:
             self.total = 0

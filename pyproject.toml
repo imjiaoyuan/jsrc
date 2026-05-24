@@ -69,8 +69,11 @@ exclude_lines = [
 
 [tool.mypy]
 python_version = "3.10"
-warn_return_any = false
+warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 ignore_missing_imports = true
-disable_error_code = ["no-any-return", "arg-type", "type-var", "assignment", "operator", "return-value", "attr-defined"]
+disable_error_code = ["no-any-return", "type-var", "assignment", "operator", "attr-defined"]
+warn_redundant_casts = true
+warn_unused_ignores = true
+check_untyped_defs = true

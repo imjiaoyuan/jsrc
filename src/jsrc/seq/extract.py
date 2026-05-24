@@ -1,11 +1,15 @@
+from __future__ import annotations
+
+import argparse
 import logging
 from argparse import Namespace
-from typing import Any
+from pathlib import Path
 
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+from jsrc.core import ValidationError
 from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
@@ -32,12 +36,25 @@ def _merge_regions(regions: list[tuple[int, int]]) -> list[tuple[int, int]]:
 
 def cmd(args: Namespace) -> None:
     if not args.feature.strip():
-        raise SystemExit("-feature must be a non-empty string")
+        raise ValidationError("Feature type cannot be empty (use -feature)")
     if not args.match.strip():
-        raise SystemExit("-match must be a non-empty string")
+        raise ValidationError("Match attribute cannot be empty (use -match)")
+
+    ids_path = Path(args.ids)
+    if not ids_path.exists():
+        raise FileNotFoundError(f"ID list file not found: {args.ids}")
+
+    gff_path = Path(args.gff)
+    if not gff_path.exists():
+        raise FileNotFoundError(f"GFF file not found: {args.gff}")
+
+    fa_path = Path(args.fa)
+    if not fa_path.exists():
+        raise FileNotFoundError(f"FASTA file not found: {args.fa}")
+
     targets = _load_target_ids(args.ids)
     if not targets:
-        raise SystemExit("No target IDs found in -ids file")
+        raise ValidationError(f"No valid IDs found in {args.ids}")
     target_set = set(targets)
     grouped: dict[str, list[tuple[str, int, int, str]]] = {tid: [] for tid in targets}
 
@@ -96,7 +113,7 @@ def cmd(args: Namespace) -> None:
     logger.info(f"Extracted {extracted}/{len(targets)} sequences to %s", args.o)
 
 
-def register(subparsers: Any) -> None:
+def register(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     p = subparsers.add_parser(
         "extract", help="Extract feature sequences by IDs from genome+GFF"
     )

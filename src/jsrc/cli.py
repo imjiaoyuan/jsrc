@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import argparse
 import importlib
 import inspect
 import logging
 import os
 import sys
-from typing import Any
 
 from jsrc import __version__
+from jsrc.core import JsrcError, ValidationError
 
 
 def setup_logging(verbose: bool = False) -> None:
@@ -60,13 +62,16 @@ def _build_base_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _register_stub_modules(subparsers: Any, enabled_modules: list[str]) -> None:
+def _register_stub_modules(
+    subparsers: argparse._SubParsersAction[argparse.ArgumentParser],
+    enabled_modules: list[str],
+) -> None:
     for name in enabled_modules:
         subparsers.add_parser(name, help=MODULE_HELP.get(name, f"{name} module"))
 
 
 def _register_one_module(
-    subparsers: Any,
+    subparsers: argparse._SubParsersAction[argparse.ArgumentParser],
     module_name: str,
     *,
     selected_subcommand: str | None = None,
@@ -148,17 +153,40 @@ def main() -> None:
             msg = str(code).strip()
             if not msg.startswith("Error:"):
                 msg = f"Error: {msg}"
-            logging.exception(msg)
+            logging.error(msg)
             sys.exit(2)
-        except (FileNotFoundError, ValueError) as exc:
+        except ValidationError as exc:
             if args.debug:
                 raise
-            logging.error("Error: %s", exc)  # noqa: TRY400
+            logging.error("Error: Invalid input - %s", exc)
             sys.exit(2)
+        except FileNotFoundError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: File not found - %s", exc)
+            sys.exit(2)
+        except PermissionError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: Permission denied - %s", exc)
+            sys.exit(2)
+        except ValueError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: Invalid value - %s", exc)
+            sys.exit(2)
+        except JsrcError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: %s", exc)
+            sys.exit(2)
+        except KeyboardInterrupt:
+            logging.error("\nInterrupted by user")
+            sys.exit(130)
         except Exception as exc:
             if args.debug:
                 raise
-            logging.error("Error: %s", exc)  # noqa: TRY400
+            logging.error("Error: Unexpected error - %s", exc)
             sys.exit(2)
         return
     group_parser = getattr(args, "_group_parser", None)
