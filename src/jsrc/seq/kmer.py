@@ -6,7 +6,7 @@ from typing import Any
 
 from Bio import SeqIO
 
-from jsrc.core import progressbar
+from jsrc.core import ValidationError, progressbar
 
 _VALID_BASES = frozenset("ACGT")
 
@@ -38,7 +38,7 @@ def _cosine_distance(a: Counter, b: Counter) -> float:
 
 def cmd(args: Namespace) -> None:
     if args.k < 1:
-        raise SystemExit("-k must be >= 1")
+        raise ValidationError("-k must be >= 1")
     profiles = {fa: _kmer_counter(fa, args.k) for fa in args.fa}
 
     if len(args.fa) == 1:

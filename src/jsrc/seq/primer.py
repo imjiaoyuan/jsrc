@@ -5,6 +5,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError
+
 _NN_DH: dict[str, float] = {
     "AA": -7.9,
     "AT": -7.2,
@@ -89,7 +91,7 @@ def _gc_clamp(seq: str, n: int = 3) -> bool:
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found in FASTA")
+        raise DataFormatError("No sequences found in FASTA")
     results = []
     for rec in records:
         seq = str(rec.seq).upper().replace("U", "T")

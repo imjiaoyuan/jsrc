@@ -4,6 +4,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import ValidationError
 from jsrc.genome.codon import cmd as codon_cmd
 from jsrc.seq.kmer import cmd as kmer_cmd
 
@@ -88,5 +89,5 @@ class TestKmer:
         fa.write_text(">s1\nATGC\n", encoding="utf-8")
 
         args = Namespace(fa=[str(fa)], k=0, top=10, json=False)
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             kmer_cmd(args)

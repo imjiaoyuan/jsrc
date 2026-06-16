@@ -8,7 +8,14 @@ import os
 import sys
 
 from jsrc import __version__
-from jsrc.core import JsrcError, ValidationError
+from jsrc.core import (
+    ConfigurationError,
+    DataFormatError,
+    DependencyError,
+    JsrcError,
+    ResourceNotFoundError,
+    ValidationError,
+)
 
 
 def setup_logging(verbose: bool = False) -> None:
@@ -160,10 +167,25 @@ def main() -> None:
                 raise
             logging.error("Error: Invalid input - %s", exc)
             sys.exit(2)
-        except FileNotFoundError as exc:
+        except ResourceNotFoundError as exc:
             if args.debug:
                 raise
-            logging.error("Error: File not found - %s", exc)
+            logging.error("Error: Resource not found - %s", exc)
+            sys.exit(2)
+        except DataFormatError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: Data format error - %s", exc)
+            sys.exit(2)
+        except DependencyError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: External dependency error - %s", exc)
+            sys.exit(2)
+        except ConfigurationError as exc:
+            if args.debug:
+                raise
+            logging.error("Error: Configuration error - %s", exc)
             sys.exit(2)
         except PermissionError as exc:
             if args.debug:

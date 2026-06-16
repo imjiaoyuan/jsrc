@@ -5,6 +5,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError
+
 logger = logging.getLogger(__name__)
 
 _CODON_TABLE = {
@@ -120,7 +122,7 @@ def _find_orfs(seq: str, min_len: int, all_frames: bool) -> list[dict[str, Any]]
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found in FASTA")
+        raise DataFormatError("No sequences found in FASTA")
     all_orfs = []
     for rec in records:
         seq = str(rec.seq).upper().replace("U", "T")

@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError
 from jsrc.genome.orf import _find_orfs, cmd
 
 
@@ -127,5 +128,5 @@ class TestOrfCmd:
 
         args = Namespace(fa=str(fa), min_len=100, all_frames=False, top=0, json=False)
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)

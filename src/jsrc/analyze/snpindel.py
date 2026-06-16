@@ -5,13 +5,15 @@ from typing import Any
 from Bio import SeqIO
 from Bio.Align import PairwiseAligner
 
+from jsrc.core import ResourceNotFoundError
+
 
 def _pick(records, seq_id, index):
     if seq_id:
         for rec in records:
             if rec.id == seq_id or rec.id.split()[0] == seq_id:
                 return rec
-        raise SystemExit(f"ID not found: {seq_id}")
+        raise ResourceNotFoundError(f"ID not found: {seq_id}")
     return records[index]
 
 

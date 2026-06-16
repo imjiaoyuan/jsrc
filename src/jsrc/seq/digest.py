@@ -6,6 +6,8 @@ from typing import Any
 from Bio import SeqIO
 from Bio.Restriction import AllEnzymes, RestrictionBatch
 
+from jsrc.core import DataFormatError, ValidationError
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,11 +38,11 @@ def _calc_fragments(
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found in input")
+        raise DataFormatError("No sequences found in input")
 
     enzyme_names = [e.strip() for e in args.enzymes.split(",") if e.strip()]
     if not enzyme_names:
-        raise SystemExit("No enzymes specified")
+        raise ValidationError("No enzymes specified")
 
     target = records[0]
     seq = target.seq

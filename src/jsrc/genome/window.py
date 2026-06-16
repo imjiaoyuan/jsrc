@@ -6,6 +6,8 @@ from typing import Any
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
+from jsrc.core import ValidationError
+
 
 def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
     if seq_id:
@@ -52,7 +54,7 @@ def _iter_windows(seq: str, w: int, s: int) -> Iterator[dict[str, float | int]]:
 
 def cmd(args: Namespace) -> None:
     if args.w < 1 or args.s < 1:
-        raise SystemExit("-w and -s must be >= 1")
+        raise ValidationError("-w and -s must be >= 1")
     rec = _pick_record(args.fa, args.id)
     rec_seq = rec.seq if rec.seq is not None else ""
     window_count = 0

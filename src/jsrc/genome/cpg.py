@@ -4,6 +4,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError
+
 
 def _cpg_islands(
     seq: str, window: int, step: int, min_len: int, min_gc: float, min_oe: float
@@ -64,7 +66,7 @@ def _cpg_islands(
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found in FASTA")
+        raise DataFormatError("No sequences found in FASTA")
     all_results = []
     for rec in records:
         islands = _cpg_islands(

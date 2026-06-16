@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError
 from jsrc.genome.cpg import _cpg_islands, cmd
 
 
@@ -157,5 +158,5 @@ class TestCpgCmd:
             json=False,
         )
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)

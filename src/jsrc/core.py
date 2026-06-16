@@ -9,26 +9,32 @@ T = TypeVar("T")
 
 
 class JsrcError(Exception):
+    """Base exception for all jsrc errors."""
     pass
 
 
 class ValidationError(JsrcError):
+    """Raised when input validation fails."""
     pass
 
 
 class DataFormatError(JsrcError):
+    """Raised when data format is invalid or cannot be parsed."""
     pass
 
 
-class FileNotFoundError(JsrcError):
+class ResourceNotFoundError(JsrcError):
+    """Raised when a required resource (file, ID, etc.) is not found."""
     pass
 
 
 class DependencyError(JsrcError):
+    """Raised when an external dependency is missing or fails."""
     pass
 
 
 class ConfigurationError(JsrcError):
+    """Raised when configuration is invalid or incomplete."""
     pass
 
 
