@@ -22,7 +22,7 @@ def _calculate_n50_l50(lengths: list[int]) -> tuple[int, int]:
     return 0, 0
 
 
-def _count_gaps(seq: str) -> dict[str, int]:
+def _count_gaps(seq: str) -> dict[str, int | float]:
     seq = seq.upper()
     n_count = seq.count("N")
     gap_count = 0

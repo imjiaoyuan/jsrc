@@ -3,7 +3,7 @@ from typing import Any
 
 from matplotlib.patches import Rectangle
 
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.core import parse_gff_attributes
 
 
 def setup_matplotlib() -> Any:

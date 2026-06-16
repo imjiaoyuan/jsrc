@@ -1,6 +1,6 @@
 import json
 from argparse import Namespace
-from typing import Any
+from typing import Any, cast
 
 from Bio import SeqIO
 
@@ -40,7 +40,7 @@ def _find_repeats(
                 i = j
             else:
                 i += 1
-    results.sort(key=lambda x: x["start"])
+    results = sorted(results, key=lambda x: cast(int, x.get("start", 0)))
     return results
 
 

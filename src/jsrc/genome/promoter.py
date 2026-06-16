@@ -6,7 +6,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.genome.core import parse_gff_attributes
+from jsrc.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 

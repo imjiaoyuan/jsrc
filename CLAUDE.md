@@ -36,6 +36,8 @@ uv run black src/
 
 # Test
 uv run pytest tests/
+uv run pytest tests/test_specific_file.py  # Run single test file
+uv run pytest tests/test_specific_file.py::test_function  # Run specific test
 ```
 
 ## Dependencies by module
@@ -88,6 +90,30 @@ src/jsrc/<module>/
 - `src/jsrc/plot/core.py` — `setup_matplotlib()` (sets Agg backend), `parse_gff_attributes()`, `natural_sort_key()`, `get_gene_structure()`
 - `src/jsrc/grn/core.py` — `ensure_dir()`, `write_text()`, `write_json()` for file I/O
 - `src/jsrc/analyze/core.py` — `normalize_sequence()` for DNA/RNA normalization
+
+## Development Patterns
+
+### Matplotlib configuration
+For visualization modules (plot, vision), always use the Agg backend to ensure headless operation:
+```python
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+```
+
+### External dependencies
+Some subcommands may require external bioinformatics tools. Check with `shutil.which()` and provide helpful error messages if missing:
+- MAFFT (multiple sequence alignment)
+- FastTree (maximum likelihood phylogenetic trees)
+- MEME suite (motif discovery)
+
+### Common argument patterns
+- `-fa` / `--fasta` — FASTA file input
+- `-gff` / `--gff` — GFF/GTF annotation file  
+- `-i` / `--input` — General input file
+- `-o` / `--output` — Output file
+- `-ids` / `--ids` — ID list file (one per line)
+- `-t` / `--threads` — Thread count for parallel operations
 
 ### Documentation
 

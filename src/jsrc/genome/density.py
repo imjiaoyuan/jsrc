@@ -45,7 +45,7 @@ def cmd(args: Namespace) -> None:
     for rec in SeqIO.parse(args.fa, "fasta"):
         genome_lengths[rec.id] = len(rec.seq)
 
-    features_by_seq = {}
+    features_by_seq: dict[str, list[tuple[int, int]]] = {}
     with open(args.gff) as f:
         for line in f:
             if line.startswith("#"):

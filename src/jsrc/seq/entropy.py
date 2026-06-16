@@ -6,6 +6,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+RowDict = dict[str, float | int | str]
+
 
 def _col_entropy(col: list[str]) -> float:
     n = len(col)
@@ -30,7 +32,7 @@ def cmd(args: Namespace) -> None:
     aln_len = max(len(s) for s in seqs)
     seqs = [s.ljust(aln_len, "-") for s in seqs]
 
-    rows = []
+    rows: list[RowDict] = []
     for i in range(aln_len):
         col = [s[i] for s in seqs if s[i] != "-"]
         if not col:
@@ -45,8 +47,8 @@ def cmd(args: Namespace) -> None:
             }
         )
 
-    mean_entropy = sum(r["entropy"] for r in rows) / len(rows) if rows else 0.0
-    mean_cons = sum(r["conservation"] for r in rows) / len(rows) if rows else 0.0
+    mean_entropy = sum(float(r["entropy"]) for r in rows) / len(rows) if rows else 0.0
+    mean_cons = sum(float(r["conservation"]) for r in rows) / len(rows) if rows else 0.0
 
     if args.json:
         print(

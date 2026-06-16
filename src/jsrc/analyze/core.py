@@ -12,10 +12,11 @@ def normalize_sequence(seq: str) -> str:
 
 
 def pad_alignment(records: list[SeqRecord]) -> MultipleSeqAlignment:
-    max_len = max(len(r.seq) for r in records)
+    max_len = max(len(r.seq) for r in records if r.seq is not None)
     aligned = []
     for r in records:
-        seq = normalize_sequence(str(r.seq))
+        seq_str = str(r.seq) if r.seq is not None else ""
+        seq = normalize_sequence(seq_str)
         if len(seq) < max_len:
             seq += "-" * (max_len - len(seq))
         aligned.append(SeqRecord(Seq(seq), id=r.id, description=""))

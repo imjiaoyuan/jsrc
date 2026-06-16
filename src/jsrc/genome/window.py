@@ -15,11 +15,13 @@ def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
         raise SystemExit(f"Sequence ID not found: {seq_id}")
     longest: SeqRecord | None = None
     for rec in SeqIO.parse(path, "fasta"):
-        if longest is None or len(rec.seq) > len(longest.seq):  # type: ignore[arg-type]
+        rec_seq = rec.seq
+        longest_seq = longest.seq if longest else None
+        if longest is None or (rec_seq is not None and longest_seq is not None and len(rec_seq) > len(longest_seq)):
             longest = rec
     if longest is None:
         raise SystemExit("No sequences found in FASTA")
-    return longest  # type: ignore[return-value]
+    return longest
 
 
 def _iter_windows(seq: str, w: int, s: int) -> Iterator[dict[str, float | int]]:
@@ -52,16 +54,17 @@ def cmd(args: Namespace) -> None:
     if args.w < 1 or args.s < 1:
         raise SystemExit("-w and -s must be >= 1")
     rec = _pick_record(args.fa, args.id)
+    rec_seq = rec.seq if rec.seq is not None else ""
     window_count = 0
     windows_head: list[dict[str, float | int]] = []
     head_limit = max(0, args.head)
-    for row in _iter_windows(str(rec.seq), args.w, args.s):
+    for row in _iter_windows(str(rec_seq), args.w, args.s):
         window_count += 1
         if len(windows_head) < head_limit:
             windows_head.append(row)
     payload = {
         "sequence_id": rec.id,
-        "sequence_length": len(rec.seq),  # type: ignore[arg-type]
+        "sequence_length": len(rec_seq),
         "window_size": args.w,
         "step_size": args.s,
         "window_count": window_count,
