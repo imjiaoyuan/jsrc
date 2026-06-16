@@ -3,16 +3,9 @@ from typing import Any
 
 from matplotlib.patches import Rectangle
 
-from jsrc.core import parse_gff_attributes
+from jsrc.core import parse_gff_attributes, setup_matplotlib
 
-
-def setup_matplotlib() -> Any:
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    return plt
+plt = setup_matplotlib()
 
 
 def natural_sort_key(value: str):

@@ -5,12 +5,11 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 
+from jsrc.core import setup_matplotlib
+
+plt = setup_matplotlib()
 logger = logging.getLogger(__name__)
 
 

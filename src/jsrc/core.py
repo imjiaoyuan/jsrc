@@ -46,6 +46,16 @@ def parse_gff_attributes(attr_string: str) -> dict[str, str]:
     return attrs
 
 
+def setup_matplotlib():
+    """Configure matplotlib to use Agg backend for headless operation."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    return plt
+
+
 def open_text(path: str | Path) -> IO[str]:
     path_str = str(path)
     if path_str.endswith(".gz"):
