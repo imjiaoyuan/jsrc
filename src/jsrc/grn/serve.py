@@ -3,6 +3,7 @@ import http.server
 import logging
 import os
 import shutil
+import signal
 from argparse import Namespace
 from typing import Any
 
@@ -30,9 +31,25 @@ def cmd(args: Namespace) -> None:
     handler = functools.partial(
         http.server.SimpleHTTPRequestHandler, directory=args.dir
     )
-    with http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler) as httpd:
-        logger.info("Serving %s at http://127.0.0.1:%s", args.dir, args.port)
-        httpd.serve_forever()
+    try:
+        with http.server.ThreadingHTTPServer(
+            (args.host, args.port), handler
+        ) as httpd:
+            logger.info(
+                "Serving %s at http://%s:%s", args.dir, args.host, args.port
+            )
+
+            def _shutdown(signum: int, frame: object) -> None:
+                logger.info("Received signal %s, shutting down...", signum)
+                httpd.shutdown()
+
+            signal.signal(signal.SIGINT, _shutdown)
+            signal.signal(signal.SIGTERM, _shutdown)
+            httpd.serve_forever()
+    except OSError as exc:
+        raise SystemExit(
+            f"Error: cannot start server on {args.host}:{args.port} — {exc}"
+        ) from exc
 
 
 def register(subparsers: Any) -> None:
@@ -40,7 +57,10 @@ def register(subparsers: Any) -> None:
     p.add_argument(
         "-d", "--dir", default=".", help="Viewer directory (default: current directory)"
     )
-    p.add_argument("-p", "--port", type=int, default=8000, help="Port")
+    p.add_argument("-p", "--port", type=int, default=8000, help="Port (default: 8000)")
+    p.add_argument(
+        "-H", "--host", default="127.0.0.1", help="Bind address (default: 127.0.0.1)"
+    )
     p.add_argument("-g", "--grn-json", required=True, help="Path to grn.json")
     p.add_argument(
         "-n",
@@ -61,7 +81,7 @@ def register(subparsers: Any) -> None:
         action="store_true",
         help="Click-to-expand mode",
     )
-    p.set_defaults(all=True, expand=False)
+    p.set_defaults(all=False, expand=False)
     p.add_argument(
         "-t",
         "--threshold",
