@@ -11,10 +11,26 @@ from jsrc.core import DataFormatError
 logger = logging.getLogger(__name__)
 
 _AA_VOLUMES: dict[str, float] = {
-    "A": 1.0, "R": 6.13, "N": 2.95, "D": 2.78, "C": 2.43,
-    "Q": 3.95, "E": 3.78, "G": 0.0, "H": 4.66, "I": 4.0,
-    "L": 4.0, "K": 4.77, "M": 4.43, "F": 5.89, "P": 2.72,
-    "S": 1.6, "T": 2.6, "W": 8.08, "Y": 6.47, "V": 3.0,
+    "A": 1.0,
+    "R": 6.13,
+    "N": 2.95,
+    "D": 2.78,
+    "C": 2.43,
+    "Q": 3.95,
+    "E": 3.78,
+    "G": 0.0,
+    "H": 4.66,
+    "I": 4.0,
+    "L": 4.0,
+    "K": 4.77,
+    "M": 4.43,
+    "F": 5.89,
+    "P": 2.72,
+    "S": 1.6,
+    "T": 2.6,
+    "W": 8.08,
+    "Y": 6.47,
+    "V": 3.0,
 }
 
 
@@ -121,9 +137,7 @@ def cmd(args: Namespace) -> None:
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser(
-        "protparam", help="Protein physicochemical properties"
-    )
+    p = subparsers.add_parser("protparam", help="Protein physicochemical properties")
     p.add_argument("-fa", required=True, help="Protein FASTA file")
     p.add_argument("--json", action="store_true", help="Print JSON output")
     p.add_argument("--ph", type=float, default=None, help="pH for net charge")

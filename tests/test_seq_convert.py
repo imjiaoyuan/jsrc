@@ -8,6 +8,7 @@ from jsrc.seq.convert import cmd
 
 def test_convert_genbank_to_fasta(tmp_path, capsys, caplog):
     import logging
+
     caplog.set_level(logging.INFO)
 
     gb = tmp_path / "test.gb"
@@ -29,6 +30,11 @@ def test_convert_genbank_to_fasta(tmp_path, capsys, caplog):
 
 
 def test_missing_input_raises(tmp_path):
-    args = Namespace(input="/nonexistent/file.gb", from_fmt="genbank", to_fmt="fasta", o="/tmp/out.fa")
+    args = Namespace(
+        input="/nonexistent/file.gb",
+        from_fmt="genbank",
+        to_fmt="fasta",
+        o="/tmp/out.fa",
+    )
     with pytest.raises(ValidationError):
         cmd(args)

@@ -14,10 +14,16 @@ class TestCmd:
         fa2.write_text(">s1\nACGTACGT\n", encoding="utf-8")
 
         args = Namespace(
-            fa=None, fa1=str(fa1), fa2=str(fa2),
-            mode="global", match=None, mismatch=None,
-            gap_open=None, gap_extend=None,
-            top=1, score_only=False,
+            fa=None,
+            fa1=str(fa1),
+            fa2=str(fa2),
+            mode="global",
+            match=None,
+            mismatch=None,
+            gap_open=None,
+            gap_extend=None,
+            top=1,
+            score_only=False,
         )
         cmd(args)
         out = capsys.readouterr().out
@@ -30,10 +36,16 @@ class TestCmd:
         fa2.write_text(">s1\nACGT\n", encoding="utf-8")
 
         args = Namespace(
-            fa=None, fa1=str(fa1), fa2=str(fa2),
-            mode="global", match=None, mismatch=None,
-            gap_open=None, gap_extend=None,
-            top=1, score_only=True,
+            fa=None,
+            fa1=str(fa1),
+            fa2=str(fa2),
+            mode="global",
+            match=None,
+            mismatch=None,
+            gap_open=None,
+            gap_extend=None,
+            top=1,
+            score_only=True,
         )
         cmd(args)
         out = capsys.readouterr().out.strip()
@@ -46,10 +58,16 @@ class TestCmd:
         fa2.write_text(">s1\nACGT\n", encoding="utf-8")
 
         args = Namespace(
-            fa=None, fa1=str(fa1), fa2=str(fa2),
-            mode="local", match=None, mismatch=None,
-            gap_open=None, gap_extend=None,
-            top=1, score_only=True,
+            fa=None,
+            fa1=str(fa1),
+            fa2=str(fa2),
+            mode="local",
+            match=None,
+            mismatch=None,
+            gap_open=None,
+            gap_extend=None,
+            top=1,
+            score_only=True,
         )
         cmd(args)
         out = capsys.readouterr().out.strip()
@@ -59,10 +77,16 @@ class TestCmd:
         fa = tmp_path / "both.fa"
         fa.write_text(">s1\nACGT\n>s2\nACGT\n", encoding="utf-8")
         args = Namespace(
-            fa=str(fa), fa1=None, fa2=None,
-            mode="global", match=None, mismatch=None,
-            gap_open=None, gap_extend=None,
-            top=1, score_only=True,
+            fa=str(fa),
+            fa1=None,
+            fa2=None,
+            mode="global",
+            match=None,
+            mismatch=None,
+            gap_open=None,
+            gap_extend=None,
+            top=1,
+            score_only=True,
         )
         cmd(args)
         out = capsys.readouterr().out.strip()
@@ -70,10 +94,16 @@ class TestCmd:
 
     def test_missing_input_raises(self):
         args = Namespace(
-            fa=None, fa1=None, fa2=None,
-            mode="global", match=None, mismatch=None,
-            gap_open=None, gap_extend=None,
-            top=1, score_only=False,
+            fa=None,
+            fa1=None,
+            fa2=None,
+            mode="global",
+            match=None,
+            mismatch=None,
+            gap_open=None,
+            gap_extend=None,
+            top=1,
+            score_only=False,
         )
         with pytest.raises(ValidationError):
             cmd(args)
@@ -85,10 +115,16 @@ class TestCmd:
         fa2.write_text(">s1\nACG\n", encoding="utf-8")
 
         args = Namespace(
-            fa=None, fa1=str(fa1), fa2=str(fa2),
-            mode="global", match=None, mismatch=None,
-            gap_open=-2.0, gap_extend=-0.5,
-            top=1, score_only=True,
+            fa=None,
+            fa1=str(fa1),
+            fa2=str(fa2),
+            mode="global",
+            match=None,
+            mismatch=None,
+            gap_open=-2.0,
+            gap_extend=-0.5,
+            top=1,
+            score_only=True,
         )
         cmd(args)
         out = capsys.readouterr().out.strip()

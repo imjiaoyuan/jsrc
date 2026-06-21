@@ -36,9 +36,7 @@ class TestConservation:
 class TestCmd:
     def test_basic_output(self, tmp_path, capsys):
         fa = tmp_path / "aln.fa"
-        fa.write_text(
-            ">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8"
-        )
+        fa.write_text(">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8")
         args = Namespace(fa=str(fa), json=False, summary=False)
         cmd(args)
         out = capsys.readouterr().out
@@ -50,9 +48,7 @@ class TestCmd:
 
     def test_summary_flag(self, tmp_path, capsys):
         fa = tmp_path / "aln.fa"
-        fa.write_text(
-            ">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8"
-        )
+        fa.write_text(">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8")
         args = Namespace(fa=str(fa), json=False, summary=True)
         cmd(args)
         out = capsys.readouterr().out
@@ -61,9 +57,7 @@ class TestCmd:
 
     def test_json_output(self, tmp_path, capsys):
         fa = tmp_path / "aln.fa"
-        fa.write_text(
-            ">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8"
-        )
+        fa.write_text(">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8")
         args = Namespace(fa=str(fa), json=True, summary=True)
         cmd(args)
         out = capsys.readouterr().out
@@ -74,9 +68,7 @@ class TestCmd:
 
     def test_unequal_lengths_padded(self, tmp_path, capsys):
         fa = tmp_path / "aln.fa"
-        fa.write_text(
-            ">s1\nACGT\n>s2\nACG\n>s3\nAC\n", encoding="utf-8"
-        )
+        fa.write_text(">s1\nACGT\n>s2\nACG\n>s3\nAC\n", encoding="utf-8")
         args = Namespace(fa=str(fa), json=True, summary=True)
         cmd(args)
         out = capsys.readouterr().out
@@ -92,9 +84,7 @@ class TestCmd:
 
     def test_entropy_nonzero_for_mixed_column(self, tmp_path, capsys):
         fa = tmp_path / "aln.fa"
-        fa.write_text(
-            ">s1\nACGT\n>s2\nTTTT\n>s3\nAAAA\n", encoding="utf-8"
-        )
+        fa.write_text(">s1\nACGT\n>s2\nTTTT\n>s3\nAAAA\n", encoding="utf-8")
         args = Namespace(fa=str(fa), json=True, summary=True)
         cmd(args)
         out = capsys.readouterr().out

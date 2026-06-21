@@ -96,13 +96,16 @@ def warn_portability_limits() -> None:
     if _PLATFORM_NOTE_EMITTED:
         return
     if not IS_LINUX:
-        logger.warning("non-Linux platform detected; /proc-based metrics may be limited.")
+        logger.warning(
+            "non-Linux platform detected; /proc-based metrics may be limited."
+        )
         _PLATFORM_NOTE_EMITTED = True
 
 
 def read_exit_code(job_id: str) -> str:
     """Read exit code from state file."""
     from .config import state_dir
+
     path = state_dir() / f"{job_id}.exit"
     if not path.exists():
         return ""

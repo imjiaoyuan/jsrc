@@ -65,9 +65,7 @@ def cmd(args: Namespace) -> None:
 
 
 def register(subparsers: Any) -> None:
-    p = subparsers.add_parser(
-        "cai", help="Codon Adaptation Index for each gene"
-    )
+    p = subparsers.add_parser("cai", help="Codon Adaptation Index for each gene")
     p.add_argument("-fa", required=True, help="Query CDS FASTA file")
     p.add_argument(
         "--reference",

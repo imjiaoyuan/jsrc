@@ -18,7 +18,11 @@ def cmd(args: Namespace) -> None:
 
     count = SeqIO.convert(str(in_path), args.from_fmt, str(out_path), args.to_fmt)
     logger.info(
-        "Converted %d records from %s → %s: %s", count, args.from_fmt, args.to_fmt, out_path
+        "Converted %d records from %s → %s: %s",
+        count,
+        args.from_fmt,
+        args.to_fmt,
+        out_path,
     )
 
 

@@ -24,9 +24,7 @@ def cmd(args: Namespace) -> None:
     elif args.fa:
         records = list(SeqIO.parse(args.fa, "fasta"))
         if len(records) < 2:
-            raise ValidationError(
-                "Need 2 sequences in FASTA (or use -fa1/-fa2)"
-            )
+            raise ValidationError("Need 2 sequences in FASTA (or use -fa1/-fa2)")
         s1 = str(records[0].seq).upper().replace("U", "T")
         s2 = str(records[1].seq).upper().replace("U", "T")
     else:

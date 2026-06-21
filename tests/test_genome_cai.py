@@ -46,8 +46,7 @@ def test_multiple_genes(tmp_path, capsys):
 
     query = tmp_path / "query.fa"
     query.write_text(
-        ">gene1\n" + "GCC" * 10 + "\n"
-        ">gene2\n" + "GCA" * 10 + "\n",
+        ">gene1\n" + "GCC" * 10 + "\n" ">gene2\n" + "GCA" * 10 + "\n",
         encoding="utf-8",
     )
 

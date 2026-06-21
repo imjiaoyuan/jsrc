@@ -19,7 +19,11 @@ def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
     for rec in SeqIO.parse(path, "fasta"):
         rec_seq = rec.seq
         longest_seq = longest.seq if longest else None
-        if longest is None or (rec_seq is not None and longest_seq is not None and len(rec_seq) > len(longest_seq)):
+        if longest is None or (
+            rec_seq is not None
+            and longest_seq is not None
+            and len(rec_seq) > len(longest_seq)
+        ):
             longest = rec
     if longest is None:
         raise SystemExit("No sequences found in FASTA")

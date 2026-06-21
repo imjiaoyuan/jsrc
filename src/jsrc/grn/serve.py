@@ -32,12 +32,8 @@ def cmd(args: Namespace) -> None:
         http.server.SimpleHTTPRequestHandler, directory=args.dir
     )
     try:
-        with http.server.ThreadingHTTPServer(
-            (args.host, args.port), handler
-        ) as httpd:
-            logger.info(
-                "Serving %s at http://%s:%s", args.dir, args.host, args.port
-            )
+        with http.server.ThreadingHTTPServer((args.host, args.port), handler) as httpd:
+            logger.info("Serving %s at http://%s:%s", args.dir, args.host, args.port)
 
             def _shutdown(signum: int, frame: object) -> None:
                 logger.info("Received signal %s, shutting down...", signum)

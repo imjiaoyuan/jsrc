@@ -25,6 +25,7 @@ def to_float(value: str, default: float = 0.0) -> float:
 def now_iso() -> str:
     """Get current timestamp in ISO format."""
     from datetime import timezone
+
     return datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds")
 
 
@@ -258,6 +259,7 @@ def parse_env(items: list[str]) -> dict[str, str]:
 def build_live(pid: int) -> dict[str, str]:
     """Build live process info dict."""
     from .process import ps_row
+
     ok, etime, pcpu, stat = ps_row(pid)
     if not ok:
         return {"etime": "", "pcpu": "0", "stat": ""}
@@ -267,6 +269,7 @@ def build_live(pid: int) -> dict[str, str]:
 def collect_render_rows(args: Any, refresh: bool) -> list[dict[str, str]]:
     """Collect and render job rows for display."""
     from .core import load_jobs, refresh_jobs, write_jobs
+
     rows = load_jobs()
     changed = False
     if refresh:
