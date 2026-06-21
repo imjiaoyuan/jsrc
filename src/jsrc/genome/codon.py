@@ -1,112 +1,19 @@
 import json
 import logging
-import math
 from argparse import Namespace
 from collections import Counter, defaultdict
-from collections.abc import Iterator
 from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.genome.core import (
+    AA_TABLE,
+    calculate_cai,
+    iter_codons,
+    make_aa_to_codons,
+)
+
 logger = logging.getLogger(__name__)
-
-AA_TABLE = {
-    "TTT": "F",
-    "TTC": "F",
-    "TTA": "L",
-    "TTG": "L",
-    "CTT": "L",
-    "CTC": "L",
-    "CTA": "L",
-    "CTG": "L",
-    "ATT": "I",
-    "ATC": "I",
-    "ATA": "I",
-    "ATG": "M",
-    "GTT": "V",
-    "GTC": "V",
-    "GTA": "V",
-    "GTG": "V",
-    "TCT": "S",
-    "TCC": "S",
-    "TCA": "S",
-    "TCG": "S",
-    "CCT": "P",
-    "CCC": "P",
-    "CCA": "P",
-    "CCG": "P",
-    "ACT": "T",
-    "ACC": "T",
-    "ACA": "T",
-    "ACG": "T",
-    "GCT": "A",
-    "GCC": "A",
-    "GCA": "A",
-    "GCG": "A",
-    "TAT": "Y",
-    "TAC": "Y",
-    "TAA": "*",
-    "TAG": "*",
-    "CAT": "H",
-    "CAC": "H",
-    "CAA": "Q",
-    "CAG": "Q",
-    "AAT": "N",
-    "AAC": "N",
-    "AAA": "K",
-    "AAG": "K",
-    "GAT": "D",
-    "GAC": "D",
-    "GAA": "E",
-    "GAG": "E",
-    "TGT": "C",
-    "TGC": "C",
-    "TGA": "*",
-    "TGG": "W",
-    "CGT": "R",
-    "CGC": "R",
-    "CGA": "R",
-    "CGG": "R",
-    "AGT": "S",
-    "AGC": "S",
-    "AGA": "R",
-    "AGG": "R",
-    "GGT": "G",
-    "GGC": "G",
-    "GGA": "G",
-    "GGG": "G",
-}
-
-
-def _iter_codons(seq: str) -> Iterator[str]:
-    seq = seq.upper().replace("U", "T")
-    for i in range(0, len(seq) - 2, 3):
-        c = seq[i : i + 3]
-        if len(c) == 3 and set(c) <= {"A", "C", "G", "T"}:
-            yield c
-
-
-def _calculate_cai(
-    counts: Counter[str], ref_counts: Counter[str], aa_to_codons: dict[str, list[str]]
-) -> float:
-    w_values = {}
-    for _aa, codons in aa_to_codons.items():
-        max_count = max((ref_counts[c] for c in codons), default=0)
-        if max_count == 0:
-            for c in codons:
-                w_values[c] = 1.0
-        else:
-            for c in codons:
-                w_values[c] = ref_counts[c] / max_count
-
-    log_sum = 0.0
-    total = 0
-    for codon, count in counts.items():
-        if codon in w_values and count > 0:
-            log_sum += count * math.log(w_values[codon]) if w_values[codon] > 0 else 0
-            total += count
-
-    return math.exp(log_sum / total) if total > 0 else 0.0
 
 
 def _calculate_enc(counts: Counter[str], aa_to_codons: dict[str, list[str]]) -> float:
@@ -144,14 +51,11 @@ def _calculate_enc(counts: Counter[str], aa_to_codons: dict[str, list[str]]) -> 
 
 def cmd(args: Namespace) -> None:
     counts: Counter[str] = Counter()
-    aa_to_codons: dict[str, list[str]] = defaultdict(list)
-    for codon, aa in AA_TABLE.items():
-        if aa != "*":
-            aa_to_codons[aa].append(codon)
+    aa_to_codons = make_aa_to_codons(AA_TABLE)
 
     total_codons = 0
     for rec in SeqIO.parse(args.fa, "fasta"):
-        for codon in _iter_codons(str(rec.seq)):
+        for codon in iter_codons(str(rec.seq)):
             if AA_TABLE.get(codon) == "*":
                 continue
             counts[codon] += 1
@@ -172,10 +76,10 @@ def cmd(args: Namespace) -> None:
     if args.cai:
         ref_counts: Counter[str] = Counter()
         for rec in SeqIO.parse(args.cai, "fasta"):
-            for codon in _iter_codons(str(rec.seq)):
+            for codon in iter_codons(str(rec.seq)):
                 if AA_TABLE.get(codon) != "*":
                     ref_counts[codon] += 1
-        cai_value = _calculate_cai(counts, ref_counts, aa_to_codons)
+        cai_value = calculate_cai(counts, ref_counts, aa_to_codons)
 
     enc_value = None
     if args.enc:

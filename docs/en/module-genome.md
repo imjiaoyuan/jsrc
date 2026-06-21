@@ -1,6 +1,6 @@
 # jsrc genome
 
-Genome-level analysis tools. `jsrc genome` covers genome statistics, feature detection, comparative analysis, evolutionary analysis, and annotation utilities.
+Genome-level analysis tools. `jsrc genome` covers genome statistics, feature detection, codon analysis, comparative analysis, evolutionary analysis, and annotation utilities.
 
 ## cpg
 
@@ -110,6 +110,19 @@ GC skew = (G-C)/(G+C), AT skew = (A-T)/(A+T). These metrics reveal local composi
 ```bash
 jsrc genome window -fa genome.fa
 jsrc genome window -fa genome.fa --window 50000 --step 10000 --json
+```
+
+## cai
+
+Codon Adaptation Index measures how well a gene's codon usage matches a reference set of highly expressed genes. CAI ranges from 0 to 1; higher values indicate stronger similarity to the reference (and potentially higher expression).
+
+Unlike `codon --cai` which computes a single global CAI for all input sequences combined, this command computes per-gene CAI values. Each gene in the query FASTA gets an individual score, making it suitable for genome-wide CAI profiling.
+
+The reference should be a FASTA of highly expressed genes (e.g., ribosomal proteins, elongation factors). Both query and reference should be CDS sequences — introns and UTRs are not handled.
+
+```bash
+jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa
+jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa --json
 ```
 
 ## codon

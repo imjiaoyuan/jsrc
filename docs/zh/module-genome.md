@@ -1,6 +1,6 @@
 # jsrc genome
 
-基因组级别的分析功能。`jsrc genome` 涵盖了基因组统计、特征检测、比较分析、进化分析和注释辅助等常用功能。
+基因组级别的分析功能。`jsrc genome` 涵盖了基因组统计、特征检测、密码子分析、比较分析、进化分析和注释辅助等常用功能。
 
 ## cpg
 
@@ -110,6 +110,19 @@ GC 偏斜 = (G-C)/(G+C)，AT 偏斜 = (A-T)/(A+T)。这些指标可以揭示基�
 ```bash
 jsrc genome window -fa genome.fa
 jsrc genome window -fa genome.fa --window 50000 --step 10000 --json
+```
+
+## cai
+
+密码子适应指数（CAI），衡量一个基因的密码子使用模式与参考高表达基因集的匹配程度。CAI 范围 0 到 1，值越高表示与参考集越相似（通常意味着更高的表达潜力）。
+
+与 `codon --cai`（对所有输入序列计算一个全局 CAI 值）不同，这个命令对每个基因单独计算 CAI，适合全基因组范围的 CAI 分析。
+
+参考序列应使用高表达基因的 CDS（如核糖体蛋白、延伸因子等）。输入的查询和参考都应该是 CDS 序列，不处理内含子和 UTR。
+
+```bash
+jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa
+jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa --json
 ```
 
 ## codon

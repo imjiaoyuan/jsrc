@@ -15,6 +15,7 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "gc-skew": ("jsrc.genome.gc_skew", "Cumulative GC skew for replication origin"),
     "window": ("jsrc.genome.window", "Sliding-window GC and AT skew"),
     "codon": ("jsrc.genome.codon", "Codon usage and RSCU analysis"),
+    "cai": ("jsrc.genome.cai", "Codon Adaptation Index"),
     "distance": ("jsrc.genome.distance", "Calculate pairwise genetic distances"),
     "kaks": ("jsrc.genome.kaks", "Calculate Ka/Ks ratio for two aligned CDS sequences"),
     "density": ("jsrc.genome.density", "Calculate gene/feature density along genome"),
