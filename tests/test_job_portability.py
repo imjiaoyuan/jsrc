@@ -1,7 +1,6 @@
 import logging
 import subprocess
 
-from jsrc.job import core
 from jsrc.job import process
 
 

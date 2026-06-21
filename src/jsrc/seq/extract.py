@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import argparse
 import logging
 from argparse import Namespace
 from pathlib import Path
+from typing import Any
 
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -113,7 +113,7 @@ def cmd(args: Namespace) -> None:
     logger.info(f"Extracted {extracted}/{len(targets)} sequences to %s", args.o)
 
 
-def register(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
+def register(subparsers: Any) -> None:
     p = subparsers.add_parser(
         "extract", help="Extract feature sequences by IDs from genome+GFF"
     )
