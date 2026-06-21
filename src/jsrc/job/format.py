@@ -2,8 +2,8 @@
 
 import json
 from datetime import datetime
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 
 def to_int(value: str, default: int = 0) -> int:

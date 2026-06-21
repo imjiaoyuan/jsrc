@@ -5,7 +5,6 @@ import logging
 import os
 import subprocess
 from pathlib import Path
-from typing import Any
 
 from .config import (
     _migrate_old_history,
@@ -20,7 +19,7 @@ from .format import (
     build_live,
     collect_render_rows,
     etime_to_seconds,
-    filter_rows,
+    filter_rows,  # noqa: F401 (re-export)
     format_duration,
     now_iso,
     parse_env,
@@ -28,15 +27,15 @@ from .format import (
     print_rows,
     print_table,
     runtime_seconds,
-    sort_rows,
+    sort_rows,  # noqa: F401 (re-export)
     tail_lines,
     to_float,
     to_int,
     to_row_view,
 )
 from .process import (
-    IS_LINUX,
     _PLATFORM_NOTE_EMITTED,
+    IS_LINUX,
     get_rss_kb_from_status,
     process_alive,
     ps_row,

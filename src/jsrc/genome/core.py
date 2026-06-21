@@ -25,5 +25,3 @@ def at_skew(seq: str) -> float:
     at = a + t
     return (a - t) / at if at > 0 else 0.0
 
-
-from jsrc.core import parse_gff_attributes

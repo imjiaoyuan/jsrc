@@ -2,7 +2,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.plot.core import natural_sort_key, setup_matplotlib
+from jsrc.plot.core import setup_matplotlib
 
 logger = logging.getLogger(__name__)
 plt = setup_matplotlib()
@@ -25,7 +25,7 @@ def cmd(args: Namespace) -> None:
                     }
                 )
 
-    chromosomes = sorted(set(e["chr"] for e in elements))
+    chromosomes = sorted({e["chr"] for e in elements})
     fig, ax = plt.subplots(figsize=(12, max(6, len(chromosomes) * 0.5)))
     for i, chrom in enumerate(chromosomes):
         y = len(chromosomes) - i - 1

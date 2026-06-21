@@ -2,8 +2,8 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.plot.core import natural_sort_key, setup_matplotlib
 from jsrc.core import parse_gff_attributes
+from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)
 plt = setup_matplotlib()
