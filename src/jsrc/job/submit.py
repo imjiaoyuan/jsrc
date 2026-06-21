@@ -1,10 +1,12 @@
 import os
 import shlex
+import shutil
 import subprocess
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
+from jsrc.core import DependencyError
 from jsrc.job.core import (
     default_log_dir,
     ensure_dirs,
@@ -20,6 +22,15 @@ from jsrc.job.core import (
 
 def cmd(args: Namespace) -> None:
     ensure_dirs()
+    if not shutil.which("nohup"):
+        raise DependencyError(
+            "'nohup' command not found on this system; install coreutils"
+        )
+    if not shutil.which(args.shell):
+        raise DependencyError(
+            f"shell '{args.shell}' not found on this system; "
+            "use -S to specify an installed shell"
+        )
     rows = load_jobs()
     job_id = str(next_job_id(rows))
     cwd = str(Path(args.cwd).expanduser().resolve())

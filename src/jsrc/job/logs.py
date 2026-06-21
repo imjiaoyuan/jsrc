@@ -1,8 +1,10 @@
+import shutil
 import subprocess
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
+from jsrc.core import DependencyError
 from jsrc.job.core import find_row, load_jobs, tail_lines
 
 
@@ -15,6 +17,11 @@ def cmd(args: Namespace) -> None:
     if not path.exists():
         raise SystemExit(f"log file not found: {path}")
     if args.follow:
+        if not shutil.which("tail"):
+            raise DependencyError(
+                "'tail' command not found on this system; "
+                "install coreutils or use -F without following"
+            )
         subprocess.run(["tail", "-n", str(args.lines), "-f", str(path)], check=False)
         return
     for line in tail_lines(path, args.lines):
