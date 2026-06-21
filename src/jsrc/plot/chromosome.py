@@ -65,7 +65,7 @@ def cmd(args: Namespace) -> None:
     plt.tight_layout()
     plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
     plt.close()
-    logger.info(f"Chromosome map saved to {args.o}")
+    logger.info("Chromosome map saved to %s", args.o)
 
 
 def register(subparsers: Any) -> None:

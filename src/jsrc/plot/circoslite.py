@@ -77,7 +77,7 @@ def cmd(args: Namespace) -> None:
     if args.o:
         plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
         plt.close(fig)
-        logger.info(f"CircosLite plot saved to {args.o}")
+        logger.info("CircosLite plot saved to %s", args.o)
         return
     plt.show()
 

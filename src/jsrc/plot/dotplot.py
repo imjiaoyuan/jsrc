@@ -47,7 +47,7 @@ def cmd(args: Namespace) -> None:
     if args.o:
         plt.savefig(args.o, dpi=args.dpi, bbox_inches="tight")
         plt.close(fig)
-        logger.info(f"Dotplot saved to {args.o}")
+        logger.info("Dotplot saved to %s", args.o)
         return
     plt.show()
 

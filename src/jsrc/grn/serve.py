@@ -1,5 +1,6 @@
 import functools
 import http.server
+import logging
 import os
 import shutil
 from argparse import Namespace
@@ -7,6 +8,8 @@ from typing import Any
 
 from jsrc.grn.build import _sync_assets
 from jsrc.grn.core import ensure_dir, write_json
+
+logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:
@@ -28,7 +31,7 @@ def cmd(args: Namespace) -> None:
         http.server.SimpleHTTPRequestHandler, directory=args.dir
     )
     with http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler) as httpd:
-        print(f"Serving {args.dir} at http://127.0.0.1:{args.port}")
+        logger.info("Serving %s at http://127.0.0.1:%s", args.dir, args.port)
         httpd.serve_forever()
 
 

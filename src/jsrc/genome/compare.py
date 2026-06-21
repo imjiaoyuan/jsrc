@@ -1,8 +1,11 @@
 import json
+import logging
 from argparse import Namespace
 from typing import Any
 
 from Bio import SeqIO
+
+logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:
@@ -23,9 +26,9 @@ def cmd(args: Namespace) -> None:
     genome1 = "".join(str(rec.seq).upper().replace("U", "T") for rec in records1)
     genome2 = "".join(str(rec.seq).upper().replace("U", "T") for rec in records2)
 
-    print(f"Genome 1 ({args.fa1}): {len(genome1):,} bp")
-    print(f"Genome 2 ({args.fa2}): {len(genome2):,} bp")
-    print("\nPerforming global alignment (this may take a while)...")
+    logger.info("Genome 1 (%s): %s bp", args.fa1, f"{len(genome1):,}")
+    logger.info("Genome 2 (%s): %s bp", args.fa2, f"{len(genome2):,}")
+    logger.info("Performing global alignment (this may take a while)...")
 
     result = edlib.align(genome2, genome1, mode="NW", task="path")
     if result["editDistance"] == -1:
