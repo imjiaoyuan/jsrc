@@ -7,11 +7,15 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "digest": ("jsrc.seq.digest", "Simulate restriction enzyme digestion"),
     "rename": ("jsrc.seq.rename", "Rename FASTA headers"),
     "translate": ("jsrc.seq.translate", "Translate CDS/DNA to protein"),
+    "protparam": ("jsrc.seq.protparam", "Protein physicochemical properties"),
     "qc": ("jsrc.seq.qc", "Sequence quality statistics"),
     "kmer": ("jsrc.seq.kmer", "Count k-mer frequencies"),
     "primer": ("jsrc.seq.primer", "Primer Tm, GC, and hairpin analysis"),
     "complexity": ("jsrc.seq.complexity", "Sequence complexity metrics"),
     "entropy": ("jsrc.seq.entropy", "Per-column Shannon entropy of MSA"),
+    "align": ("jsrc.seq.align", "Pairwise sequence alignment"),
+    "convert": ("jsrc.seq.convert", "Convert between sequence file formats"),
+    "random": ("jsrc.seq.random", "Generate random sequences"),
 }
 
 

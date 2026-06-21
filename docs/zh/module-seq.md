@@ -1,6 +1,6 @@
 # jsrc seq
 
-序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、质控、k-mer 指纹、Entrez 下载、酶切模拟、序列复杂度和 MSA 信息熵这些常用功能。
+序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、蛋白理化分析、质控、k-mer 指纹、Entrez 下载、酶切模拟、序列复杂度、MSA 信息熵、双序列比对、格式转换和随机序列生成这些常用功能。
 
 基因组级别的分析功能（如 ORF 查找、CpG 岛预测、启动子提取、串联重复、密码子使用、滑窗统计等）已迁移到 [genome 模块](./module-genome.md)。
 
@@ -127,4 +127,46 @@ jsrc seq complexity -fa sequences.fa --json
 jsrc seq entropy -fa aligned.fa
 jsrc seq entropy -fa aligned.fa --summary
 jsrc seq entropy -fa aligned.fa --json
+```
+
+## protparam
+
+翻译完蛋白之后，自然想知道它们的理化性质。给一个蛋白序列的 FASTA 文件，这个命令会输出每个蛋白的核心指标：分子量、等电点（pI）、消光系数、不稳定指数、脂肪族指数、GRAVY（亲水性）、芳香性、以及二级结构分数（螺旋/转角/折叠）。还可以指定 pH 值算净电荷。
+
+底层用的是 Biopython 的 `ProteinAnalysis`，不需要额外依赖。
+
+```bash
+jsrc seq protparam -fa proteins.fa
+jsrc seq protparam -fa proteins.fa --json
+jsrc seq protparam -fa proteins.fa --ph 7.4           # 算 pH 7.4 时的净电荷
+```
+
+## align
+
+无需额外安装任何东西就能做双序列比对。用的是 Biopython 的 `PairwiseAligner`（C 实现，大多数场景下速度够用）。支持全局和局部比对，可自定义匹配/错配/空位罚分，也可以输出多个最优比对结果。
+
+两种输入方式：两个独立的 FASTA 文件（`-fa1` + `-fa2`），或者一个包含至少两条序列的 FASTA（`-fa`）。`--score-only` 可以快速得到纯分值，方便批量比较。
+
+```bash
+jsrc seq align -fa1 seq1.fa -fa2 seq2.fa
+jsrc seq align -fa both.fa --mode local --top 3
+jsrc seq align -fa1 a.fa -fa2 b.fa --match 2 --mismatch -1 --gap-open -2 --score-only
+```
+
+## convert
+
+工具箱里最简单的命令——就一行 `Bio.SeqIO.convert()`。在 Biopython 支持的所有格式之间互转：FASTA、GenBank、EMBL、Swiss-Prot 等等。不用记每个格式专用的转换工具。
+
+```bash
+jsrc seq convert -i genome.gbk --from genbank --to fasta -o genome.fa
+jsrc seq convert -i proteins.swiss --from swiss --to fasta -o proteins.fa
+```
+
+## random
+
+生成模拟序列，用于测试、基准测试或模拟分析。DNA 模式可精确控制 GC 含量，也支持生成蛋白序列。种子可复现，输出可选写入文件或打印到标准输出。
+
+```bash
+jsrc seq random -t dna -n 10 -l 1000 --gc 0.45 --seed 123 -o sim.fa
+jsrc seq random -t protein -n 5 -l 300                    # 输出到标准输出
 ```

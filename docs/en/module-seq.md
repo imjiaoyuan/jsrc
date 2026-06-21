@@ -1,6 +1,6 @@
 # jsrc seq
 
-Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, QC, k-mer profiling, Entrez fetching, restriction digestion, sequence complexity, and MSA entropy.
+Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, protein characterization, QC, k-mer profiling, Entrez fetching, restriction digestion, sequence complexity, MSA entropy, pairwise alignment, format conversion, and random sequence generation.
 
 Genome-level analysis features (such as ORF finding, CpG island prediction, promoter extraction, tandem repeats, codon usage, sliding-window analysis, etc.) have been moved to the [genome module](./module-genome.md).
 
@@ -126,4 +126,46 @@ Expects an aligned FASTA where all sequences are the same length. `--summary` sk
 jsrc seq entropy -fa aligned.fa
 jsrc seq entropy -fa aligned.fa --summary
 jsrc seq entropy -fa aligned.fa --json
+```
+
+## protparam
+
+After translation comes protein characterization. Given a FASTA of protein sequences, this command reports the core physicochemical properties for each protein: molecular weight, isoelectric point (pI), extinction coefficient, instability index, aliphatic index, GRAVY (hydropathy), aromaticity, and secondary structure fractions (helix/turn/sheet). Optionally computes net charge at a given pH.
+
+Uses Biopython's `ProteinAnalysis` under the hood. No external tools needed.
+
+```bash
+jsrc seq protparam -fa proteins.fa
+jsrc seq protparam -fa proteins.fa --json
+jsrc seq protparam -fa proteins.fa --ph 7.4           # with net charge at pH 7.4
+```
+
+## align
+
+Pairwise sequence alignment without installing anything extra. Uses Biopython's `PairwiseAligner` (a C implementation, fast enough for most needs). Supports global and local alignment, customizable match/mismatch/gap scores, and multi-top output.
+
+Two ways to provide input: two separate FASTA files (`-fa1` + `-fa2`), or one FASTA with at least two sequences (`-fa`). Use `--score-only` for quick numeric comparisons.
+
+```bash
+jsrc seq align -fa1 seq1.fa -fa2 seq2.fa
+jsrc seq align -fa both.fa --mode local --top 3
+jsrc seq align -fa1 a.fa -fa2 b.fa --match 2 --mismatch -1 --gap-open -2 --score-only
+```
+
+## convert
+
+The simplest command in the toolbox — one call to `Bio.SeqIO.convert()`. Converts between any formats Biopython understands: FASTA, GenBank, EMBL, Swiss-Prot, and many more. No need to remember format-specific conversion tools.
+
+```bash
+jsrc seq convert -i genome.gbk --from genbank --to fasta -o genome.fa
+jsrc seq convert -i proteins.swiss --from swiss --to fasta -o proteins.fa
+```
+
+## random
+
+Generate synthetic sequences for testing, benchmarking, or simulation. Produces DNA (controllable GC content) or protein sequences with reproducible seeds. Output to FASTA file or stdout.
+
+```bash
+jsrc seq random -t dna -n 10 -l 1000 --gc 0.45 --seed 123 -o sim.fa
+jsrc seq random -t protein -n 5 -l 300                    # to stdout
 ```
