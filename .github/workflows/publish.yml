@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: Publish
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - "v*"
 
 jobs:
-  build-n-publish:
+  pypi:
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
@@ -27,3 +27,52 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  aur:
+    needs: pypi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Download release tarball
+        run: |
+          wget https://github.com/${{ github.repository }}/archive/v${{ steps.version.outputs.version }}.tar.gz
+
+      - name: Calculate SHA256
+        id: checksum
+        run: echo "sha256=$(sha256sum v${{ steps.version.outputs.version }}.tar.gz | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+      - name: Setup SSH for AUR
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AUR_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan aur.archlinux.org >> ~/.ssh/known_hosts
+
+      - name: Clone AUR repo
+        run: |
+          git clone ssh://aur@aur.archlinux.org/python-jsrc.git /tmp/aur-python-jsrc
+
+      - name: Update PKGBUILD
+        run: |
+          cd /tmp/aur-python-jsrc
+          sed -i "s/^pkgver=.*/pkgver=${{ steps.version.outputs.version }}/" PKGBUILD
+          sed -i "s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+          sed -i "s/^sha256sums=.*/sha256sums=('${{ steps.checksum.outputs.sha256 }}')/" PKGBUILD
+          makepkg --printsrcinfo > .SRCINFO
+
+      - name: Test AUR package build
+        run: |
+          cd /tmp/aur-python-jsrc
+          makepkg -s --noconfirm
+
+      - name: Commit and push to AUR
+        run: |
+          cd /tmp/aur-python-jsrc
+          git config user.name "github-actions[bot]"
+          git config user.email "actions@github.comusers.noreply.github.com"
+          git add PKGBUILD .SRCINFO
+          git commit -m "Update to version ${{ steps.version.outputs.version }}"
+          git push
