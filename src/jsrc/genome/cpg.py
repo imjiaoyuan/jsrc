@@ -4,9 +4,7 @@ import json
 from argparse import Namespace
 from typing import Any
 
-from Bio import SeqIO
-
-from jsrc.core import DataFormatError
+from jsrc.core import load_fasta
 
 
 def _cpg_islands(
@@ -66,9 +64,7 @@ def _cpg_islands(
 
 
 def cmd(args: Namespace) -> None:
-    records = list(SeqIO.parse(args.fa, "fasta"))
-    if not records:
-        raise DataFormatError("No sequences found in FASTA")
+    records = load_fasta(args.fa)
     all_results = []
     for rec in records:
         islands = _cpg_islands(

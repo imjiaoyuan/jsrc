@@ -4,9 +4,7 @@ import json
 from argparse import Namespace
 from typing import Any
 
-from Bio import SeqIO
-
-from jsrc.core import DataFormatError
+from jsrc.core import DataFormatError, load_fasta
 from jsrc.genome.core import normalize_sequence
 
 
@@ -56,9 +54,7 @@ def _find_skew_extrema(
 
 
 def cmd(args: Namespace) -> None:
-    records = list(SeqIO.parse(args.fa, "fasta"))
-    if not records:
-        raise DataFormatError("No sequences found in FASTA")
+    records = load_fasta(args.fa)
 
     if args.id:
         rec = next((r for r in records if r.id == args.id), None)

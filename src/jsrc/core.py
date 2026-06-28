@@ -7,6 +7,9 @@ from collections.abc import Generator, Iterable, Sized
 from pathlib import Path
 from typing import IO, TypeVar
 
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+
 T = TypeVar("T")
 
 
@@ -75,6 +78,13 @@ def open_text(path: str | Path) -> IO[str]:
     if path_str.endswith(".gz"):
         return gzip.open(path_str, "rt", encoding="utf-8")
     return open(path_str, encoding="utf-8")
+
+
+def load_fasta(path: str | Path) -> list[SeqRecord]:
+    records = list(SeqIO.parse(str(path), "fasta"))
+    if not records:
+        raise DataFormatError(f"No sequences found in FASTA: {path}")
+    return records
 
 
 def nxx(lengths: list[int], pct: float) -> int:

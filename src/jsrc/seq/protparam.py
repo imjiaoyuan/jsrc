@@ -5,10 +5,9 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from Bio import SeqIO
 from Bio.SeqUtils.ProtParam import ProteinAnalysis
 
-from jsrc.core import DataFormatError
+from jsrc.core import load_fasta
 
 logger = logging.getLogger(__name__)
 
@@ -50,9 +49,7 @@ def _aliphatic_index(seq: str) -> float:
 
 
 def cmd(args: Namespace) -> None:
-    records = list(SeqIO.parse(args.fa, "fasta"))
-    if not records:
-        raise DataFormatError("No protein sequences found in FASTA")
+    records = load_fasta(args.fa)
 
     results = []
     for rec in records:

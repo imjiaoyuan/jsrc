@@ -6,9 +6,7 @@ from argparse import Namespace
 from collections import Counter
 from typing import Any
 
-from Bio import SeqIO
-
-from jsrc.core import DataFormatError, ValidationError
+from jsrc.core import ValidationError, load_fasta
 from jsrc.genome.core import normalize_sequence
 
 
@@ -53,11 +51,8 @@ def cmd(args: Namespace) -> None:
     if args.k < 1:
         raise ValidationError("-k must be >= 1")
 
-    records1 = list(SeqIO.parse(args.fa1, "fasta"))
-    records2 = list(SeqIO.parse(args.fa2, "fasta"))
-
-    if not records1 or not records2:
-        raise DataFormatError("One or both FASTA files contain no sequences")
+    records1 = load_fasta(args.fa1)
+    records2 = load_fasta(args.fa2)
 
     seq1 = "".join(str(rec.seq) for rec in records1)
     seq2 = "".join(str(rec.seq) for rec in records2)

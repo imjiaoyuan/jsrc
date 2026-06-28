@@ -5,9 +5,7 @@ import math
 from argparse import Namespace
 from typing import Any
 
-from Bio import SeqIO
-
-from jsrc.core import DataFormatError
+from jsrc.core import load_fasta
 
 
 def _shannon_entropy(seq: str) -> float:
@@ -53,9 +51,7 @@ def _dust_score(seq: str, window: int = 64) -> float:
 
 
 def cmd(args: Namespace) -> None:
-    records = list(SeqIO.parse(args.fa, "fasta"))
-    if not records:
-        raise DataFormatError("No sequences found in FASTA")
+    records = load_fasta(args.fa)
     results = []
     for rec in records:
         seq = str(rec.seq).upper().replace("U", "T")

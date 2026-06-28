@@ -5,9 +5,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from Bio import SeqIO
-
-from jsrc.core import DataFormatError, DependencyError
+from jsrc.core import DataFormatError, DependencyError, load_fasta
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +19,8 @@ def cmd(args: Namespace) -> None:
             "Install with: pip install edlib"
         ) from err
 
-    records1 = list(SeqIO.parse(args.fa1, "fasta"))
-    records2 = list(SeqIO.parse(args.fa2, "fasta"))
-
-    if not records1 or not records2:
-        raise DataFormatError("One or both FASTA files contain no sequences")
+    records1 = load_fasta(args.fa1)
+    records2 = load_fasta(args.fa2)
 
     genome1 = "".join(str(rec.seq).upper().replace("U", "T") for rec in records1)
     genome2 = "".join(str(rec.seq).upper().replace("U", "T") for rec in records2)
