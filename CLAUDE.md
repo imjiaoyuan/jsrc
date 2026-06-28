@@ -101,6 +101,7 @@ This is the primary shared module used across the codebase:
 | `parse_gff_attributes(attr_string)` | Parse GFF/GTF attribute column into a dict (handles both `key=value` and `key value` formats) |
 | `setup_matplotlib()` | Configure Agg backend for headless operation, returns `plt` |
 | `open_text(path)` | Open a file as UTF-8 text, transparently handling `.gz` compression |
+| `load_fasta(path)` | Parse FASTA file into list of SeqRecord, raising `DataFormatError` if empty |
 | `nxx(lengths, pct)` | N50/N90/etc. calculation — the smallest contig length at which cumulative sum reaches `pct` of total |
 | `progressbar` | Custom progress bar (context manager + `iter()` wrapper), writes to stderr, respects `--verbose` |
 
