@@ -9,8 +9,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.core import ValidationError, open_text
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.core import ValidationError, open_text, parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 

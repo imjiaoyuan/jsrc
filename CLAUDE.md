@@ -123,8 +123,7 @@ These are caught by `cli.py` and formatted as `Error: <message>` to stderr. Use 
 
 - `src/jsrc/plot/core.py` — `natural_sort_key()`, `get_gene_structure()`, `plot_gene_track()` (re-exports GFF parser and matplotlib setup from `jsrc.core`)
 - `src/jsrc/analyze/core.py` — `normalize_sequence()`, `pad_alignment()`
-- `src/jsrc/grn/core.py` — `ensure_dir()`, `write_text()`, `write_json()`
-- `src/jsrc/seq/core.py` — re-exports `parse_gff_attributes` from `jsrc.core`
+- `src/jsrc/grn/core.py` — `ensure_dir()`, `write_text()`, `write_json()`, `sync_assets()`
 - `src/jsrc/job/core.py` — background job management utilities
 - `src/jsrc/genome/core.py` — genome analysis shared helpers
 

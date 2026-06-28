@@ -1,44 +1,12 @@
 from __future__ import annotations
 
-import os
-import pathlib
 import shutil
 import zipfile
 from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
-from jsrc.grn.core import ensure_dir, write_text
-
-_SCRIPT_TEMPLATE = (pathlib.Path(__file__).parent / "sources" / "script.js").read_text(
-    encoding="utf-8"
-)
-_INDEX_HTML = (pathlib.Path(__file__).parent / "sources" / "index.html").read_text(
-    encoding="utf-8"
-)
-_STYLE_CSS = (pathlib.Path(__file__).parent / "sources" / "style.css").read_text(
-    encoding="utf-8"
-)
-
-
-def _sync_assets(
-    base: str,
-    view_mode: str,
-    threshold: int,
-    max_nodes: int,
-) -> None:
-    ensure_dir(base)
-    ensure_dir(os.path.join(base, "css"))
-    ensure_dir(os.path.join(base, "js"))
-    ensure_dir(os.path.join(base, "json"))
-    write_text(os.path.join(base, "index.html"), _INDEX_HTML)
-    write_text(os.path.join(base, "css/style.css"), _STYLE_CSS)
-    script = (
-        _SCRIPT_TEMPLATE.replace("__JSRC_VIEW_MODE__", view_mode)
-        .replace("__JSRC_FULL_THRESHOLD__", str(threshold))
-        .replace("__JSRC_MAX_DISPLAY_NODES__", str(max_nodes))
-    )
-    write_text(os.path.join(base, "js/script.js"), script)
+from jsrc.grn.core import sync_assets
 
 
 def _zip_viewer(viewer_dir: Path, zip_output: str) -> None:
@@ -60,7 +28,7 @@ def _zip_viewer(viewer_dir: Path, zip_output: str) -> None:
 def cmd(args: Namespace) -> None:
     root = Path(args.dir).expanduser().resolve()
     view_mode = "full" if args.all else "expand" if args.expand else "auto"
-    _sync_assets(str(root), view_mode, args.threshold, args.max_nodes)
+    sync_assets(str(root), view_mode, args.threshold, args.max_nodes)
     if args.grn_json:
         shutil.copy(args.grn_json, root / "json" / "grn.json")
     if args.annotation_json:

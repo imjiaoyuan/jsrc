@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import csv
 import logging
-import os
-import subprocess
 from pathlib import Path
 
 from .config import (
@@ -217,6 +215,4 @@ __all__ = [
     "ps_row",
     "get_rss_kb_from_status",
     "process_alive",
-    "os",
-    "subprocess",
 ]

@@ -10,15 +10,14 @@ from argparse import Namespace
 from typing import Any
 
 from jsrc.core import ConfigurationError
-from jsrc.grn.build import _sync_assets
-from jsrc.grn.core import ensure_dir, write_json
+from jsrc.grn.core import ensure_dir, sync_assets, write_json
 
 logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:
     view_mode = "full" if args.all else "expand" if args.expand else "auto"
-    _sync_assets(args.dir, view_mode, args.threshold, 0)
+    sync_assets(args.dir, view_mode, args.threshold, 0)
     ensure_dir(f"{args.dir}/json")
     src_grn = os.path.abspath(args.grn_json)
     dst_grn = os.path.abspath(f"{args.dir}/json/grn.json")
