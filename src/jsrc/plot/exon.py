@@ -4,6 +4,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import open_text
 from jsrc.plot.core import (
     get_gene_structure,
     natural_sort_key,
@@ -16,7 +17,7 @@ plt = setup_matplotlib()
 
 
 def cmd(args: Namespace) -> None:
-    with open(args.ids, encoding="utf-8") as f:
+    with open_text(args.ids) as f:
         gene_ids = [line.strip() for line in f if line.strip()]
     coords = get_gene_structure(args.gff, gene_ids, feature_types=["exon"])
     gene_ids_sorted = sorted(gene_ids, key=natural_sort_key)

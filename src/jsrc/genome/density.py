@@ -7,6 +7,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import open_text
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,7 +50,7 @@ def cmd(args: Namespace) -> None:
         genome_lengths[rec.id] = len(rec.seq)
 
     features_by_seq: dict[str, list[tuple[int, int]]] = {}
-    with open(args.gff) as f:
+    with open_text(args.gff) as f:
         for line in f:
             if line.startswith("#"):
                 continue

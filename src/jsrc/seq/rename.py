@@ -5,7 +5,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.core import ValidationError
+from jsrc.core import ValidationError, open_text
 from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 def _load_csv_mapping(path: str) -> dict[str, str]:
     mapping = {}
-    with open(path, encoding="utf-8") as f:
+    with open_text(path) as f:
         for row in csv.reader(f):
             if len(row) >= 2:
                 mapping[row[0].strip()] = row[1].strip()
@@ -22,7 +22,7 @@ def _load_csv_mapping(path: str) -> dict[str, str]:
 
 def _load_gff_mapping(gff_path: str, parent_field: str) -> dict[str, str]:
     mapping = {}
-    with open(gff_path, encoding="utf-8") as f:
+    with open_text(gff_path) as f:
         for line in f:
             if line.startswith("#"):
                 continue

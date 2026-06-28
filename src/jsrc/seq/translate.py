@@ -9,6 +9,7 @@ from Bio.Data.CodonTable import TranslationError
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+from jsrc.core import open_text
 from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
@@ -18,7 +19,7 @@ def cmd(args: Namespace) -> None:
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     cds_dict: dict[str, dict[str, Any]] = {}
 
-    with open(args.gff, encoding="utf-8") as f:
+    with open_text(args.gff) as f:
         for line in f:
             if line.startswith("#"):
                 continue

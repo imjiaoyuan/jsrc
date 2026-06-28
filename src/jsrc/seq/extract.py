@@ -9,14 +9,14 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.core import ValidationError
+from jsrc.core import ValidationError, open_text
 from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 
 
 def _load_target_ids(path: str) -> list[str]:
-    with open(path, encoding="utf-8") as f:
+    with open_text(path) as f:
         return [line.strip() for line in f if line.strip()]
 
 
@@ -58,7 +58,7 @@ def cmd(args: Namespace) -> None:
     target_set = set(targets)
     grouped: dict[str, list[tuple[str, int, int, str]]] = {tid: [] for tid in targets}
 
-    with open(args.gff, encoding="utf-8") as f:
+    with open_text(args.gff) as f:
         for line in f:
             if line.startswith("#"):
                 continue

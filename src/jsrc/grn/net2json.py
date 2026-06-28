@@ -5,6 +5,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import open_text
 from jsrc.grn.core import write_json
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ def network_to_json(
     input_path: str, output_path: str
 ) -> tuple[list[dict[str, Any]], int]:
     links = []
-    with open(input_path, encoding="utf-8") as f:
+    with open_text(input_path) as f:
         reader = csv.reader(f, delimiter="\t")
         for row in reader:
             if len(row) < 3:

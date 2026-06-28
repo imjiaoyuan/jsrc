@@ -8,7 +8,7 @@ from typing import Any
 
 from Bio import Entrez, SeqIO
 
-from jsrc.core import DataFormatError, DependencyError, ValidationError
+from jsrc.core import DataFormatError, DependencyError, ValidationError, open_text
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ def _parse_ids(raw: list[str]) -> list[str]:
     ids: list[str] = []
     for item in raw:
         try:
-            with open(item, encoding="utf-8") as fh:
+            with open_text(item) as fh:
                 content = [line.strip() for line in fh if line.strip()]
                 if content:
                     ids.extend(content)

@@ -5,7 +5,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.core import DataFormatError
+from jsrc.core import DataFormatError, open_text
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ plt = setup_matplotlib()
 
 
 def cmd(args: Namespace) -> None:
-    with open(args.tsv, encoding="utf-8") as f:
+    with open_text(args.tsv) as f:
         rows = list(csv.DictReader(f, delimiter="\t"))
     required = {"protein", "domain", "start", "end"}
     if not rows or not required.issubset(rows[0].keys()):

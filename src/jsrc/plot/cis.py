@@ -4,6 +4,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import open_text
 from jsrc.plot.core import setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ plt = setup_matplotlib()
 
 def cmd(args: Namespace) -> None:
     elements = []
-    with open(args.bed, encoding="utf-8") as f:
+    with open_text(args.bed) as f:
         for line in f:
             if line.startswith("#") or not line.strip():
                 continue

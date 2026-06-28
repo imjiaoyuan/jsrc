@@ -4,6 +4,8 @@ from argparse import Namespace
 from collections import defaultdict
 from typing import Any
 
+from jsrc.core import open_text
+
 
 def cmd(args: Namespace) -> None:
     out_degree: dict[str, float] = defaultdict(float)
@@ -11,7 +13,7 @@ def cmd(args: Namespace) -> None:
     nodes = set()
     edge_count = 0
 
-    with open(args.input, encoding="utf-8") as f:
+    with open_text(args.input) as f:
         for line in f:
             line = line.strip()
             if not line or line.startswith("#"):

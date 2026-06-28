@@ -4,7 +4,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.core import DataFormatError, parse_gff_attributes
+from jsrc.core import DataFormatError, open_text, parse_gff_attributes
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ plt = setup_matplotlib()
 def _load_ids(path: str | None) -> set[str] | None:
     if not path:
         return None
-    with open(path, encoding="utf-8") as f:
+    with open_text(path) as f:
         return {line.strip() for line in f if line.strip()}
 
 
@@ -22,7 +22,7 @@ def cmd(args: Namespace) -> None:
     target_ids = _load_ids(args.ids)
     chr_lengths = {}
     gene_positions = []
-    with open(args.gff, encoding="utf-8") as f:
+    with open_text(args.gff) as f:
         for line in f:
             if line.startswith("##sequence-region"):
                 parts = line.strip().split()
