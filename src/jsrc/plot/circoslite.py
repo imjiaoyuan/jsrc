@@ -5,6 +5,7 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError, ValidationError
 from jsrc.plot.core import setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -22,13 +23,13 @@ def _iter_windows(seq: str, w: int) -> Any:
 
 def cmd(args: Namespace) -> None:
     if args.w < 1:
-        raise SystemExit("-w must be >= 1")
+        raise ValidationError("-w must be >= 1")
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found")
+        raise DataFormatError("No sequences found")
     total = sum(len(r.seq) for r in records)
     if total == 0:
-        raise SystemExit("Empty sequences found")
+        raise DataFormatError("Empty sequences found")
 
     fig, ax = plt.subplots(figsize=(9, 9), subplot_kw={"projection": "polar"})
     ax.set_theta_direction(-1)

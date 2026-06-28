@@ -7,7 +7,7 @@ from typing import Any
 from Bio import SeqIO
 
 from jsrc.analyze.core import pad_alignment
-from jsrc.core import progressbar
+from jsrc.core import ValidationError, progressbar
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
-        raise SystemExit("Need at least two sequences")
+        raise ValidationError("Need at least two sequences")
     lengths = [len(r.seq) for r in records]
     min_len, max_len = min(lengths), max(lengths)
     if max_len > min_len * 1.2:

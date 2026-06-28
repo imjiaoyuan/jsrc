@@ -10,6 +10,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from jsrc.analyze.core import pad_alignment
+from jsrc.core import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +39,9 @@ def _clade_key(clade):
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 3:
-        raise SystemExit("Need at least three sequences for bootstrap phylogeny")
+        raise ValidationError("Need at least three sequences for bootstrap phylogeny")
     if args.n < 1:
-        raise SystemExit("-n must be >= 1")
+        raise ValidationError("-n must be >= 1")
     aln = pad_alignment(records)
     base_tree = _tree_from_alignment(aln)
     rng = random.Random(args.seed)

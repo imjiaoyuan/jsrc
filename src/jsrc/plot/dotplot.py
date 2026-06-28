@@ -4,6 +4,7 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError, ValidationError
 from jsrc.plot.core import setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -13,17 +14,17 @@ plt = setup_matplotlib()
 def _first_seq(path: str) -> str:
     rec = next(SeqIO.parse(path, "fasta"), None)
     if rec is None:
-        raise SystemExit(f"No sequence found in {path}")
+        raise DataFormatError(f"No sequence found in {path}")
     return str(rec.seq).upper().replace("U", "T")
 
 
 def cmd(args: Namespace) -> None:
     if args.k < 1:
-        raise SystemExit("-k must be >= 1")
+        raise ValidationError("-k must be >= 1")
     s1 = _first_seq(args.fa1)
     s2 = _first_seq(args.fa2)
     if len(s1) < args.k or len(s2) < args.k:
-        raise SystemExit("Sequence length must be >= k")
+        raise ValidationError("Sequence length must be >= k")
 
     index: dict[str, list[int]] = {}
     for j in range(0, len(s2) - args.k + 1):

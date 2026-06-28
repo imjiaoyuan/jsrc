@@ -2,7 +2,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.core import parse_gff_attributes
+from jsrc.core import DataFormatError, parse_gff_attributes
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -43,7 +43,7 @@ def cmd(args: Namespace) -> None:
                         chr_lengths[chrom] = max(chr_lengths.get(chrom, 0), end)
 
     if target_ids is not None and not gene_positions:
-        raise SystemExit("No matching genes found for provided -ids list.")
+        raise DataFormatError("No matching genes found for provided -ids list.")
 
     chr_sorted = sorted(chr_lengths.keys(), key=natural_sort_key)
     fig, ax = plt.subplots(figsize=(12, max(6, len(chr_sorted) * 0.5)))

@@ -4,6 +4,7 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError
 from jsrc.genome.core import normalize_sequence
 
 
@@ -55,12 +56,12 @@ def _find_skew_extrema(
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found in FASTA")
+        raise DataFormatError("No sequences found in FASTA")
 
     if args.id:
         rec = next((r for r in records if r.id == args.id), None)
         if rec is None:
-            raise SystemExit(f"Sequence ID not found: {args.id}")
+            raise DataFormatError(f"Sequence ID not found: {args.id}")
     else:
         rec = max(records, key=lambda r: len(r.seq))
 

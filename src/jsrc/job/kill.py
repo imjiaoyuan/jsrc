@@ -3,6 +3,7 @@ import signal
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import ResourceNotFoundError, ValidationError
 from jsrc.job.core import (
     find_row,
     load_jobs,
@@ -17,10 +18,10 @@ def cmd(args: Namespace) -> None:
     rows = load_jobs()
     row = find_row(rows, str(args.target))
     if row is None:
-        raise SystemExit(f"job not found: {args.target}")
+        raise ResourceNotFoundError(f"job not found: {args.target}")
     pid = to_int(row.get("pid", "0"), 0)
     if pid <= 0:
-        raise SystemExit("invalid pid")
+        raise ValidationError("invalid pid")
     sig = {"TERM": signal.SIGTERM, "KILL": signal.SIGKILL, "INT": signal.SIGINT}[
         args.signal
     ]

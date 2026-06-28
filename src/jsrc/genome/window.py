@@ -6,7 +6,7 @@ from typing import Any
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.core import ValidationError
+from jsrc.core import DataFormatError, ValidationError
 
 
 def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
@@ -14,7 +14,7 @@ def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
         for rec in SeqIO.parse(path, "fasta"):
             if rec.id == seq_id or rec.id.split()[0] == seq_id:
                 return rec
-        raise SystemExit(f"Sequence ID not found: {seq_id}")
+        raise DataFormatError(f"Sequence ID not found: {seq_id}")
     longest: SeqRecord | None = None
     for rec in SeqIO.parse(path, "fasta"):
         rec_seq = rec.seq
@@ -26,7 +26,7 @@ def _pick_record(path: str, seq_id: str | None) -> SeqRecord:
         ):
             longest = rec
     if longest is None:
-        raise SystemExit("No sequences found in FASTA")
+        raise DataFormatError("No sequences found in FASTA")
     return longest
 
 

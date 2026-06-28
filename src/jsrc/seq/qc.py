@@ -5,7 +5,7 @@ from typing import Any
 
 from Bio import SeqIO
 
-from jsrc.core import nxx, open_text, progressbar
+from jsrc.core import ValidationError, nxx, open_text, progressbar
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ def _print_kv(section: str, data: dict[str, float | int]) -> None:
 
 def cmd(args: Namespace) -> None:
     if not args.fa and not args.fq:
-        raise SystemExit("Need at least one input: -fa and/or -fq")
+        raise ValidationError("Need at least one input: -fa and/or -fq")
     out: dict[str, dict[str, float | int]] = {}
     if args.fa:
         out["fasta"] = _fasta_stats(args.fa)

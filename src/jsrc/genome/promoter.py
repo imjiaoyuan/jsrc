@@ -6,7 +6,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.core import parse_gff_attributes
+from jsrc.core import ValidationError, parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def _read_target_ids(path: str) -> set[str]:
 
 def cmd(args: Namespace) -> None:
     if args.up < 0 or args.down < 0:
-        raise SystemExit("-up and -down must be non-negative.")
+        raise ValidationError("-up and -down must be non-negative.")
     genome = SeqIO.to_dict(SeqIO.parse(args.fa, "fasta"))
     targets = _read_target_ids(args.ids)
     promoters: list[SeqRecord] = []

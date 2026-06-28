@@ -6,6 +6,8 @@ from typing import Any
 
 from Bio import Entrez, SeqIO
 
+from jsrc.core import DataFormatError, DependencyError, ValidationError
+
 logger = logging.getLogger(__name__)
 
 
@@ -29,7 +31,7 @@ def cmd(args: Namespace) -> None:
 
     ids = _parse_ids(args.ids)
     if not ids:
-        raise SystemExit("No accession IDs provided")
+        raise ValidationError("No accession IDs provided")
 
     id_str = ",".join(ids)
     if args.format == "genbank":
@@ -46,10 +48,10 @@ def cmd(args: Namespace) -> None:
         ) as handle:
             records = list(SeqIO.parse(handle, parse_fmt))
     except Exception as exc:
-        raise SystemExit(f"Entrez fetch failed: {exc}") from exc
+        raise DependencyError(f"Entrez fetch failed: {exc}") from exc
 
     if not records:
-        raise SystemExit("No records returned from NCBI")
+        raise DataFormatError("No records returned from NCBI")
 
     if args.o:
         SeqIO.write(records, args.o, parse_fmt)

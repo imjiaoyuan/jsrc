@@ -5,7 +5,7 @@ from typing import Any
 
 from Bio import SeqIO
 
-from jsrc.core import nxx, open_text
+from jsrc.core import ValidationError, nxx, open_text
 
 
 def _assembly_stats(fasta_path: str) -> dict[str, float | int]:
@@ -155,7 +155,7 @@ def _print_human(stats: dict[str, dict[str, float | int]]) -> None:
 
 def cmd(args: Namespace) -> None:
     if not any([args.fa, args.sam, args.vcf, args.fq]):
-        raise SystemExit(
+        raise ValidationError(
             "At least one input is required: -fa and/or -sam and/or -vcf and/or -fq"
         )
 

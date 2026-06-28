@@ -5,6 +5,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError, DependencyError
+
 logger = logging.getLogger(__name__)
 
 
@@ -12,8 +14,8 @@ def cmd(args: Namespace) -> None:
     try:
         import edlib
     except ImportError as err:
-        raise SystemExit(
-            "Error: edlib is required for genome comparison.\n"
+        raise DependencyError(
+            "edlib is required for genome comparison. "
             "Install with: pip install edlib"
         ) from err
 
@@ -21,7 +23,7 @@ def cmd(args: Namespace) -> None:
     records2 = list(SeqIO.parse(args.fa2, "fasta"))
 
     if not records1 or not records2:
-        raise SystemExit("One or both FASTA files contain no sequences")
+        raise DataFormatError("One or both FASTA files contain no sequences")
 
     genome1 = "".join(str(rec.seq).upper().replace("U", "T") for rec in records1)
     genome2 = "".join(str(rec.seq).upper().replace("U", "T") for rec in records2)
@@ -32,7 +34,7 @@ def cmd(args: Namespace) -> None:
 
     result = edlib.align(genome2, genome1, mode="NW", task="path")
     if result["editDistance"] == -1:
-        raise SystemExit("Alignment failed")
+        raise DataFormatError("Alignment failed")
 
     nice = edlib.getNiceAlignment(result, genome2, genome1)
     aln1 = nice["target_aligned"]

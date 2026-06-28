@@ -4,7 +4,7 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Any
 
-from jsrc.core import DependencyError
+from jsrc.core import DependencyError, ResourceNotFoundError
 from jsrc.job.core import find_row, load_jobs, tail_lines
 
 
@@ -12,10 +12,10 @@ def cmd(args: Namespace) -> None:
     rows = load_jobs()
     row = find_row(rows, str(args.target))
     if row is None:
-        raise SystemExit(f"job not found: {args.target}")
+        raise ResourceNotFoundError(f"job not found: {args.target}")
     path = Path(row.get("log_path", "")).expanduser()
     if not path.exists():
-        raise SystemExit(f"log file not found: {path}")
+        raise ResourceNotFoundError(f"log file not found: {path}")
     if args.follow:
         if not shutil.which("tail"):
             raise DependencyError(

@@ -5,6 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from jsrc.core import ValidationError
+
 
 def to_int(value: str, default: int = 0) -> int:
     """Convert string to integer with default fallback."""
@@ -248,10 +250,10 @@ def parse_env(items: list[str]) -> dict[str, str]:
     extra = {}
     for item in items:
         if "=" not in item:
-            raise SystemExit(f"invalid --env value: {item!r}, expected KEY=VAL")
+            raise ValidationError(f"invalid --env value: {item!r}, expected KEY=VAL")
         k, v = item.split("=", 1)
         if not k:
-            raise SystemExit(f"invalid --env key in {item!r}")
+            raise ValidationError(f"invalid --env key in {item!r}")
         extra[k] = v
     return extra
 

@@ -5,6 +5,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,7 +58,7 @@ def _count_gaps(seq: str) -> dict[str, int | float]:
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if not records:
-        raise SystemExit("No sequences found in FASTA")
+        raise DataFormatError("No sequences found in FASTA")
 
     lengths = [len(rec.seq) for rec in records]
     total_length = sum(lengths)

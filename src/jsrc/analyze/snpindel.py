@@ -5,7 +5,7 @@ from typing import Any
 from Bio import SeqIO
 from Bio.Align import PairwiseAligner
 
-from jsrc.core import ResourceNotFoundError
+from jsrc.core import ResourceNotFoundError, ValidationError
 
 
 def _pick(records, seq_id, index):
@@ -31,7 +31,7 @@ def _count_indel_events(a: str, b: str) -> int:
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
-        raise SystemExit("Need at least two sequences in FASTA")
+        raise ValidationError("Need at least two sequences in FASTA")
     r1 = _pick(records, args.id1, 0)
     r2 = _pick(records, args.id2, 1)
     s1 = str(r1.seq).upper().replace("U", "T")

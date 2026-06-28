@@ -3,6 +3,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import DataFormatError
 from jsrc.plot.core import natural_sort_key, setup_matplotlib
 
 logger = logging.getLogger(__name__)
@@ -14,7 +15,7 @@ def cmd(args: Namespace) -> None:
         rows = list(csv.DictReader(f, delimiter="\t"))
     required = {"protein", "domain", "start", "end"}
     if not rows or not required.issubset(rows[0].keys()):
-        raise SystemExit("Error: TSV must have columns protein,domain,start,end")
+        raise DataFormatError("TSV must have columns protein,domain,start,end")
 
     proteins = sorted({row["protein"] for row in rows}, key=natural_sort_key)
     fig, ax = plt.subplots(figsize=(12, max(6, len(proteins) * 0.5)))

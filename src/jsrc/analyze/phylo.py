@@ -6,6 +6,7 @@ from Bio import Phylo, SeqIO
 from Bio.Phylo.TreeConstruction import DistanceCalculator, DistanceTreeConstructor
 
 from jsrc.analyze.core import pad_alignment
+from jsrc.core import ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ def _build_tree(records, algo: str):
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
-        raise SystemExit("At least 2 sequences are required.")
+        raise ValidationError("At least 2 sequences are required.")
     tree = _build_tree(records, args.a)
     Phylo.write(tree, args.o, "newick")
     logger.info("Phylogenetic tree (%s) saved to %s", args.a, args.o)

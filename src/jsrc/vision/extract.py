@@ -6,6 +6,7 @@ from typing import Any
 import cv2
 import numpy as np
 
+from jsrc.core import ValidationError
 from jsrc.vision.core import ensure_odd, get_channel_image
 
 logger = logging.getLogger(__name__)
@@ -17,11 +18,11 @@ def _validate_image_file(input_path: str) -> Path:
     if not path.exists():
         raise FileNotFoundError(f"Input path not found: {input_path}")
     if not path.is_file():
-        raise SystemExit(
+        raise ValidationError(
             f"Input must be a single image file, got directory: {input_path}"
         )
     if path.suffix.lower() not in IMAGE_SUFFIXES:
-        raise SystemExit(f"Unsupported image format: {path.suffix}")
+        raise ValidationError(f"Unsupported image format: {path.suffix}")
     return path
 
 
@@ -97,17 +98,17 @@ def cmd(args: Namespace) -> None:
         or args.max_area_ratio < 0
         or args.min_area_ratio > args.max_area_ratio
     ):
-        raise SystemExit(
+        raise ValidationError(
             "Invalid area ratio range: require 0 <= min_area_ratio <= max_area_ratio"
         )
     if args.max_area_ratio > 1:
-        raise SystemExit("Invalid max_area_ratio: must be <= 1")
+        raise ValidationError("Invalid max_area_ratio: must be <= 1")
     if (
         args.min_aspect_ratio <= 0
         or args.max_aspect_ratio <= 0
         or args.min_aspect_ratio > args.max_aspect_ratio
     ):
-        raise SystemExit(
+        raise ValidationError(
             "Invalid aspect ratio range: require 0 < min_aspect_ratio <= max_aspect_ratio"
         )
     output_dir = Path(args.output)

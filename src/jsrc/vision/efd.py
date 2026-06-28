@@ -7,7 +7,7 @@ from typing import Any
 
 import numpy as np
 
-from jsrc.core import setup_matplotlib
+from jsrc.core import DataFormatError, ValidationError, setup_matplotlib
 
 plt = setup_matplotlib()
 logger = logging.getLogger(__name__)
@@ -118,7 +118,7 @@ def _iter_contours(input_path: str) -> list[Path]:
     path = Path(input_path)
     if path.is_file():
         if path.suffix.lower() != ".npy":
-            raise SystemExit(f"Input file must be .npy: {input_path}")
+            raise ValidationError(f"Input file must be .npy: {input_path}")
         return [path]
     if not path.is_dir():
         raise FileNotFoundError(f"Input path not found: {input_path}")
@@ -128,7 +128,7 @@ def _iter_contours(input_path: str) -> list[Path]:
 def _center_contour(contour: np.ndarray) -> np.ndarray:
     contour = contour.squeeze()
     if contour.ndim != 2 or contour.shape[1] != 2:
-        raise SystemExit(f"Invalid contour shape: {contour.shape}")
+        raise ValidationError(f"Invalid contour shape: {contour.shape}")
 
     centroid_x = float(np.mean(contour[:, 0]))
     centroid_y = float(np.mean(contour[:, 1]))
@@ -165,7 +165,7 @@ def cmd(args: Namespace) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     contour_files = _iter_contours(args.input)
     if not contour_files:
-        raise SystemExit(f"No .npy files found in {args.input}")
+        raise DataFormatError(f"No .npy files found in {args.input}")
 
     for npy_file in contour_files:
         file_name = npy_file.stem

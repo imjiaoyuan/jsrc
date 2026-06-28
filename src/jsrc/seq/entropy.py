@@ -6,6 +6,8 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import ValidationError
+
 RowDict = dict[str, float | int | str]
 
 
@@ -27,7 +29,7 @@ def _conservation(col: list[str]) -> float:
 def cmd(args: Namespace) -> None:
     records = list(SeqIO.parse(args.fa, "fasta"))
     if len(records) < 2:
-        raise SystemExit("Need at least 2 sequences for entropy analysis")
+        raise ValidationError("Need at least 2 sequences for entropy analysis")
     seqs = [str(r.seq).upper() for r in records]
     aln_len = max(len(s) for s in seqs)
     seqs = [s.ljust(aln_len, "-") for s in seqs]

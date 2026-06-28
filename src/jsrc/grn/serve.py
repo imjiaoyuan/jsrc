@@ -7,6 +7,7 @@ import signal
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import ConfigurationError
 from jsrc.grn.build import _sync_assets
 from jsrc.grn.core import ensure_dir, write_json
 
@@ -43,8 +44,8 @@ def cmd(args: Namespace) -> None:
             signal.signal(signal.SIGTERM, _shutdown)
             httpd.serve_forever()
     except OSError as exc:
-        raise SystemExit(
-            f"Error: cannot start server on {args.host}:{args.port} — {exc}"
+        raise ConfigurationError(
+            f"cannot start server on {args.host}:{args.port} — {exc}"
         ) from exc
 
 

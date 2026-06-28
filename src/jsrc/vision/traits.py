@@ -4,6 +4,7 @@ from typing import Any
 
 import cv2
 
+from jsrc.core import ValidationError
 from jsrc.vision.core import ensure_odd, get_channel_image
 
 
@@ -11,7 +12,7 @@ def cmd(args: Namespace) -> None:
     path = Path(args.input)
     img = cv2.imread(str(path))
     if img is None:
-        raise SystemExit(f"Cannot read image: {args.input}")
+        raise ValidationError(f"Cannot read image: {args.input}")
 
     blur_ksize = ensure_odd(args.blur)
     blurred = cv2.GaussianBlur(img, (blur_ksize, blur_ksize), 0)
@@ -26,7 +27,7 @@ def cmd(args: Namespace) -> None:
 
     contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
-        raise SystemExit("No contour found")
+        raise ValidationError("No contour found")
     cnt = max(contours, key=cv2.contourArea)
 
     area = float(cv2.contourArea(cnt))

@@ -3,6 +3,7 @@ import logging
 from argparse import Namespace
 from typing import Any
 
+from jsrc.core import ValidationError
 from jsrc.seq.core import parse_gff_attributes
 
 logger = logging.getLogger(__name__)
@@ -57,11 +58,11 @@ def cmd(args: Namespace) -> None:
     mode = args.mode
     if mode == "csv":
         if not args.map:
-            raise SystemExit("Error: mode=csv requires -map")
+            raise ValidationError("mode=csv requires -map")
         mapping = _load_csv_mapping(args.map)
     else:
         if not args.gff or not args.parent:
-            raise SystemExit("Error: mode=gff requires -gff and -parent")
+            raise ValidationError("mode=gff requires -gff and -parent")
         mapping = _load_gff_mapping(args.gff, args.parent)
 
     renamed = _apply_mapping(args.fa, args.o, mapping)
