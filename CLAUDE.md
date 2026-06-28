@@ -31,13 +31,15 @@ pip install -e .
 pip install -e ".[plot,vision]"  # with extras
 
 # Format / lint
-uv run ruff check src/
-uv run black src/
+uv run ruff check src/ tests/
+uv run black src/ tests/
+uv run mypy src/jsrc/           # Type checking (configured in pyproject.toml)
 
 # Test
 uv run pytest tests/
 uv run pytest tests/test_specific_file.py  # Run single test file
 uv run pytest tests/test_specific_file.py::test_function  # Run specific test
+uv run pytest --cov=jsrc --cov-report=html  # With coverage HTML report
 ```
 
 ## Dependencies by module
@@ -50,7 +52,7 @@ Extras in `pyproject.toml`:
 | plot | matplotlib, plotly | plot, vision |
 | vision | opencv-python, matplotlib | vision |
 | all | all of the above | — |
-| dev | pytest, black, ruff | — |
+| dev | pytest, pytest-cov, black, ruff, mypy | — |
 
 ## CI/CD
 
@@ -87,7 +89,8 @@ Each `__init__.py` uses a `_SUBCOMMANDS` dict mapping subcommand name → `(dott
 - `register_subparser(subparsers, selected_subcommand=None)` — creates the module-level parser, sets `_group_parser`, then either registers one selected subcommand or all stubs
 
 - Each subcommand file should own its argparse options in `register(subparsers)` and execution logic in `cmd(args)`
-- Argparse `set_defaults(_group_parser=...)` is used so that typing a parent command (e.g. `jsrc seq`) prints its subcommand help instead of falling through to the root parser
+- Argparse `set_defaults(_group_parser=...)` is used so that typing a parent command (e.g. `jsrc seq`) prints its subcommand help instead of falling through to the root parser. Each module-level parser also sets `dest="{module}_cmd"` on its subparser (e.g., `dest="seq_cmd"`) — the dest value is available on `Namespace` for conditional logic but rarely used in practice
+- Version is derived at runtime from `importlib.metadata.version("jsrc")` — no hardcoded version string in source
 
 ### Central shared utilities (`src/jsrc/core.py`)
 
@@ -131,6 +134,12 @@ These are caught by `cli.py` and formatted as `Error: <message>` to stderr. Use 
 - `cli.py:main()` catches all exceptions and formats them uniformly as `Error: <message>` to stderr
 - `--debug` flag suppresses the catch-all and lets exceptions propagate with full traceback
 - Use `shutil.which()` to check for external tools and raise `DependencyError` if missing
+
+### Code style conventions
+
+- Use `from __future__ import annotations` in all files — enables PEP 604 (`X | Y`) and deferred annotation evaluation
+- Use the `logging` module (configured by `cli.setup_logging()`), **not** `print()`, for output to stderr. `print()` is only acceptable for stdout data output (e.g., writing tables, JSON, or sequences the user may pipe elsewhere)
+- Python 3.10+ compatibility required — features like `match`/`case` (3.10), `StrEnum` (3.11), and PEP 695 (3.12) are off-limits
 
 ### Subcommand pattern
 

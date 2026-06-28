@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import gzip
 import sys
 import time
@@ -169,7 +171,7 @@ class progressbar:
         else:
             sys.stderr.flush()
 
-    def __enter__(self) -> "progressbar":
+    def __enter__(self) -> progressbar:
         return self
 
     def __exit__(self, *args: object) -> None:

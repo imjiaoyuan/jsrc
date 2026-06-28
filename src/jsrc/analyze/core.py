@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from Bio.Align import MultipleSeqAlignment
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord

@@ -1,5 +1,7 @@
 """Process monitoring utilities for job module."""
 
+from __future__ import annotations
+
 import logging
 import os
 import subprocess
@@ -13,6 +15,7 @@ _PLATFORM_NOTE_EMITTED = False
 
 def ps_rss_kb(pid: int) -> int:
     """Get RSS memory in KB from ps command."""
+
     try:
         proc = subprocess.run(
             ["ps", "-o", "rss=", "-p", str(pid)],

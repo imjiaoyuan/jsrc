@@ -1,11 +1,14 @@
 """Job module configuration and path management."""
 
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
 
 def config_home() -> Path:
     """Get XDG config home directory."""
+
     xdg = os.getenv("XDG_CONFIG_HOME")
     if xdg:
         return Path(xdg).expanduser() / "jsrc"

@@ -1,5 +1,7 @@
 """Core job data management functions."""
 
+from __future__ import annotations
+
 import csv
 import logging
 import os
@@ -69,6 +71,7 @@ DEFAULT_KEEP = 100
 
 def load_jobs() -> list[dict[str, str]]:
     """Load all jobs from history file."""
+
     _migrate_old_history()
     path = history_path()
     if not path.exists():

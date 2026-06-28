@@ -1,5 +1,7 @@
 """Data formatting and display utilities for job module."""
 
+from __future__ import annotations
+
 import json
 from datetime import datetime
 from pathlib import Path
@@ -10,6 +12,7 @@ from jsrc.core import ValidationError
 
 def to_int(value: str, default: int = 0) -> int:
     """Convert string to integer with default fallback."""
+
     try:
         return int(value)
     except (TypeError, ValueError):
