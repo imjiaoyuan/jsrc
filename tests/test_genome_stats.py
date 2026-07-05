@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError
 from jsrc.genome.stats import _calculate_n50_l50, _count_gaps, cmd
 
 
@@ -176,7 +177,7 @@ class TestStatsCmd:
 
         args = Namespace(fa=str(fa), json=False)
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)
 
     def test_stats_text_output(self, tmp_path):

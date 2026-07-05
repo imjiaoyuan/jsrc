@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import pytest
 
+from jsrc.core import ValidationError
 from jsrc.vision.core import ensure_odd, get_channel_image
 from jsrc.vision.extract import _extract_contours, _validate_image_file
 
@@ -53,13 +54,13 @@ class TestVisionExtractValidate:
             _validate_image_file("/nonexistent/file.png")
 
     def test_validate_directory_raises(self, tmp_path):
-        with pytest.raises(SystemExit, match="single image file"):
+        with pytest.raises(ValidationError, match="single image file"):
             _validate_image_file(str(tmp_path))
 
     def test_validate_unsupported_format_raises(self, tmp_path):
         bad = tmp_path / "data.txt"
         bad.write_text("stuff", encoding="utf-8")
-        with pytest.raises(SystemExit, match="Unsupported image format"):
+        with pytest.raises(ValidationError, match="Unsupported image format"):
             _validate_image_file(str(bad))
 
     def test_validate_supported_formats(self, tmp_path):
@@ -224,7 +225,7 @@ class TestVisionExtractCmd:
             max_aspect_ratio=10.0,
             min_aspect_ratio=0.1,
         )
-        with pytest.raises(SystemExit, match="Invalid area ratio"):
+        with pytest.raises(ValidationError, match="Invalid area ratio"):
             cmd(args)
 
     def test_invalid_aspect_ratio_raises(self, tmp_path):
@@ -240,7 +241,7 @@ class TestVisionExtractCmd:
             max_aspect_ratio=0.05,
             min_aspect_ratio=0.1,
         )
-        with pytest.raises(SystemExit, match="Invalid aspect ratio"):
+        with pytest.raises(ValidationError, match="Invalid aspect ratio"):
             cmd(args)
 
     def test_max_area_ratio_too_high_raises(self, tmp_path):
@@ -256,5 +257,5 @@ class TestVisionExtractCmd:
             max_aspect_ratio=10.0,
             min_aspect_ratio=0.1,
         )
-        with pytest.raises(SystemExit, match="max_area_ratio"):
+        with pytest.raises(ValidationError, match="max_area_ratio"):
             cmd(args)

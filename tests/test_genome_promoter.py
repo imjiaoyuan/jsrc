@@ -3,6 +3,8 @@ from argparse import Namespace
 import pytest
 from Bio import SeqIO
 
+from jsrc.core import ValidationError
+
 
 class TestPromoterCmd:
     def test_promoter_extraction_plus_strand(self, tmp_path):
@@ -157,7 +159,7 @@ class TestPromoterCmd:
 
         from jsrc.genome.promoter import cmd
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             cmd(args)
 
     def test_promoter_custom_id_field(self, tmp_path):

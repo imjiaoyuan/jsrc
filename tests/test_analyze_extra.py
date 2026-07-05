@@ -8,6 +8,7 @@ from jsrc.analyze.motif import cmd as motif_cmd
 from jsrc.analyze.msa_consensus import cmd as msa_cmd
 from jsrc.analyze.qc import cmd as qc_cmd
 from jsrc.analyze.snpindel import cmd as snpindel_cmd
+from jsrc.core import ValidationError
 
 
 class TestAnalyzeQC:
@@ -37,7 +38,7 @@ class TestAnalyzeQC:
 
     def test_qc_no_input_raises(self):
         args = Namespace(fa=None, sam=None, fq=None, vcf=None, gs=None, json=False)
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             qc_cmd(args)
 
     def test_qc_vcf(self, tmp_path, capsys):
@@ -110,7 +111,7 @@ class TestAnalyzeMsaConsensus:
         fa.write_text(">s1\nATGC\n", encoding="utf-8")
 
         args = Namespace(fa=str(fa), json=False)
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             msa_cmd(args)
 
 

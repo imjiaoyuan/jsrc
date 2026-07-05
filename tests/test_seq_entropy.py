@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import ValidationError
 from jsrc.seq.entropy import _col_entropy, _conservation, cmd
 
 
@@ -79,7 +80,7 @@ class TestCmd:
         fa = tmp_path / "single.fa"
         fa.write_text(">s1\nACGT\n", encoding="utf-8")
         args = Namespace(fa=str(fa), json=False, summary=True)
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             cmd(args)
 
     def test_entropy_nonzero_for_mixed_column(self, tmp_path, capsys):

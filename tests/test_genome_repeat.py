@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError
 from jsrc.genome.repeat import _find_repeats, cmd
 
 
@@ -136,5 +137,5 @@ class TestRepeatCmd:
 
         args = Namespace(fa=str(fa), min_unit=2, max_unit=2, min_reps=3, json=False)
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)

@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from jsrc.core import ValidationError
 from jsrc.job import core
 
 
@@ -263,11 +264,11 @@ class TestParseEnv:
         assert core.parse_env(["KEY=VAL", "FOO=bar"]) == {"KEY": "VAL", "FOO": "bar"}
 
     def test_no_equals_raises(self):
-        with pytest.raises(SystemExit, match="invalid --env"):
+        with pytest.raises(ValidationError, match="invalid --env"):
             core.parse_env(["BADINPUT"])
 
     def test_empty_key_raises(self):
-        with pytest.raises(SystemExit, match="invalid --env"):
+        with pytest.raises(ValidationError, match="invalid --env"):
             core.parse_env(["=val"])
 
 

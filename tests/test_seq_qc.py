@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import ValidationError
 from jsrc.seq.qc import cmd
 
 
@@ -35,7 +36,7 @@ def test_seq_qc_fasta_json(tmp_path, capsys):
 
 def test_seq_qc_no_input_raises(tmp_path):
     args = Namespace(fa=None, fq=None, gs=None, json=False)
-    with pytest.raises(SystemExit):
+    with pytest.raises(ValidationError):
         cmd(args)
 
 

@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError
 from jsrc.genome.gc_skew import _calculate_cumulative_gc_skew, _find_skew_extrema, cmd
 
 
@@ -115,7 +116,7 @@ class TestGcSkewCmd:
 
         args = Namespace(fa=str(fa), id=None, window=100, step=50, head=20, json=False)
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)
 
     def test_gc_skew_sequence_not_found_raises(self, tmp_path):
@@ -126,7 +127,7 @@ class TestGcSkewCmd:
             fa=str(fa), id="seq999", window=100, step=50, head=20, json=False
         )
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)
 
     def test_gc_skew_head_limit(self, tmp_path):

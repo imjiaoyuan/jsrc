@@ -1,4 +1,4 @@
-from jsrc.seq.core import parse_gff_attributes
+from jsrc.core import parse_gff_attributes
 
 
 def test_parse_gff_attributes_eq_and_gtf_style():

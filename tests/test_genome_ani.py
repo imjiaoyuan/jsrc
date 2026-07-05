@@ -3,6 +3,7 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError, ValidationError
 from jsrc.genome.ani import (
     _cosine_similarity,
     _jaccard_similarity,
@@ -178,7 +179,7 @@ class TestAniCmd:
 
         args = Namespace(fa1=str(fa1), fa2=str(fa2), k=0, json=False)
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             cmd(args)
 
     def test_ani_empty_file_raises(self, tmp_path):
@@ -190,7 +191,7 @@ class TestAniCmd:
 
         args = Namespace(fa1=str(fa1), fa2=str(fa2), k=3, json=False)
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(DataFormatError):
             cmd(args)
 
     def test_ani_multiple_sequences(self, tmp_path):

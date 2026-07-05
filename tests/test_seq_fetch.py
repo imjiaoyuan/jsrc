@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
+from jsrc.core import DataFormatError, DependencyError, ValidationError
 from jsrc.seq.fetch import _parse_ids, cmd
 
 
@@ -36,7 +37,7 @@ class TestFetchCmd:
             db="nucleotide",
             json=False,
         )
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             cmd(args)
 
     @patch("jsrc.seq.fetch.Entrez.efetch")
@@ -136,7 +137,7 @@ class TestFetchCmd:
             db="nucleotide",
             json=False,
         )
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(DependencyError) as e:
             cmd(args)
         assert "Network error" in str(e.value)
 
@@ -153,6 +154,6 @@ class TestFetchCmd:
             db="nucleotide",
             json=False,
         )
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(DataFormatError) as e:
             cmd(args)
         assert "No records returned" in str(e.value)

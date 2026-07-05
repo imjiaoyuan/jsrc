@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from jsrc.core import DataFormatError, ValidationError
 from jsrc.vision.efd import (
     EllipticFourier,
     _center_contour,
@@ -97,12 +98,12 @@ class TestCenterContour:
 
     def test_center_invalid_shape_raises(self):
         contour = np.zeros((10,), dtype=np.float32)
-        with pytest.raises(SystemExit, match="Invalid contour shape"):
+        with pytest.raises(ValidationError, match="Invalid contour shape"):
             _center_contour(contour)
 
     def test_center_1d_contour_raises(self):
         contour = np.array([1, 2, 3], dtype=np.float32)
-        with pytest.raises(SystemExit, match="Invalid contour shape"):
+        with pytest.raises(ValidationError, match="Invalid contour shape"):
             _center_contour(contour)
 
 
@@ -116,7 +117,7 @@ class TestIterContours:
     def test_non_npy_file_raises(self, tmp_path):
         txt = tmp_path / "data.txt"
         txt.write_text("hello", encoding="utf-8")
-        with pytest.raises(SystemExit, match="must be .npy"):
+        with pytest.raises(ValidationError, match="must be .npy"):
             _iter_contours(str(txt))
 
     def test_directory_of_npy_files(self, tmp_path):
@@ -203,5 +204,5 @@ class TestEFDCmd:
             points=50,
             no_plot=True,
         )
-        with pytest.raises(SystemExit, match="No .npy files found"):
+        with pytest.raises(DataFormatError, match="No .npy files found"):
             cmd(args)

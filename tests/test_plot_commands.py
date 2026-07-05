@@ -2,6 +2,8 @@ from argparse import Namespace
 
 import pytest
 
+from jsrc.core import DataFormatError, ValidationError
+
 
 class TestPlotGene:
     def test_gene_structure_basic(self, tmp_path):
@@ -136,7 +138,7 @@ class TestPlotChromosome:
         from jsrc.plot.chromosome import cmd
 
         args = Namespace(gff=str(gff), ids=str(ids), o=str(out), dpi=72)
-        with pytest.raises(SystemExit, match="No matching genes"):
+        with pytest.raises(DataFormatError, match="No matching genes"):
             cmd(args)
 
 
@@ -167,7 +169,7 @@ class TestPlotDomain:
         from jsrc.plot.domain import cmd
 
         args = Namespace(tsv=str(tsv), o=str(out), dpi=72)
-        with pytest.raises(SystemExit, match="TSV must have columns"):
+        with pytest.raises(DataFormatError, match="TSV must have columns"):
             cmd(args)
 
 
@@ -257,7 +259,7 @@ class TestPlotCircosLite:
         from jsrc.plot.circoslite import cmd
 
         args = Namespace(fa=str(fa), w=10, o=str(out), dpi=72)
-        with pytest.raises(SystemExit, match="No sequences found"):
+        with pytest.raises(DataFormatError, match="No sequences found"):
             cmd(args)
 
     def test_circoslite_window_too_small_raises(self, tmp_path):
@@ -267,7 +269,7 @@ class TestPlotCircosLite:
         from jsrc.plot.circoslite import cmd
 
         args = Namespace(fa=str(fa), w=0, o="/dev/null", dpi=72)
-        with pytest.raises(SystemExit, match="-w must be >= 1"):
+        with pytest.raises(ValidationError, match="-w must be >= 1"):
             cmd(args)
 
 
@@ -311,7 +313,7 @@ class TestPlotDotplot:
         args = Namespace(
             fa1=str(fa1), fa2=str(fa2), k=0, o=str(tmp_path / "x.png"), dpi=72
         )
-        with pytest.raises(SystemExit, match="-k must be >= 1"):
+        with pytest.raises(ValidationError, match="-k must be >= 1"):
             cmd(args)
 
     def test_dotplot_sequence_too_short_raises(self, tmp_path):
@@ -325,7 +327,7 @@ class TestPlotDotplot:
         args = Namespace(
             fa1=str(fa1), fa2=str(fa2), k=3, o=str(tmp_path / "x.png"), dpi=72
         )
-        with pytest.raises(SystemExit, match="Sequence length must be >= k"):
+        with pytest.raises(ValidationError, match="Sequence length must be >= k"):
             cmd(args)
 
     def test_dotplot_empty_fasta_raises(self, tmp_path):
@@ -336,5 +338,5 @@ class TestPlotDotplot:
 
         from jsrc.plot.dotplot import _first_seq
 
-        with pytest.raises(SystemExit, match="No sequence found"):
+        with pytest.raises(DataFormatError, match="No sequence found"):
             _first_seq(str(fa2))

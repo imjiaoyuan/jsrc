@@ -8,6 +8,7 @@ from jsrc.analyze.bootstrap_phylo import (
     _resample_columns,
     cmd,
 )
+from jsrc.core import ValidationError
 
 
 class TestCladeKey:
@@ -75,12 +76,12 @@ class TestCmd:
         fa = tmp_path / "two.fa"
         fa.write_text(">s1\nACGT\n>s2\nACGT\n", encoding="utf-8")
         args = Namespace(fa=str(fa), n=10, seed=42, o=None)
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             cmd(args)
 
     def test_n_must_be_positive(self, tmp_path):
         fa = tmp_path / "aln.fa"
         fa.write_text(">s1\nACGT\n>s2\nACGT\n>s3\nACGT\n", encoding="utf-8")
         args = Namespace(fa=str(fa), n=0, seed=42, o=None)
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValidationError):
             cmd(args)
