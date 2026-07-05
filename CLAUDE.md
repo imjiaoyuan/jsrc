@@ -89,7 +89,9 @@ Each `__init__.py` uses a `_SUBCOMMANDS` dict mapping subcommand name → `(dott
 - `register_subparser(subparsers, selected_subcommand=None)` — creates the module-level parser, sets `_group_parser`, then either registers one selected subcommand or all stubs
 
 - Each subcommand file should own its argparse options in `register(subparsers)` and execution logic in `cmd(args)`
-- Argparse `set_defaults(_group_parser=...)` is used so that typing a parent command (e.g. `jsrc seq`) prints its subcommand help instead of falling through to the root parser. Each module-level parser also sets `dest="{module}_cmd"` on its subparser (e.g., `dest="seq_cmd"`) — the dest value is available on `Namespace` for conditional logic but rarely used in practice
+- Argparse `set_defaults(_group_parser=...)` is used so that typing a parent command (e.g. `jsrc seq`) prints its subcommand help instead of falling through to the root parser. Each module-level parser sets this on itself: `seq_parser.set_defaults(_group_parser=seq_parser)`. When `cli.py` detects a module was invoked without a subcommand, it reads `_group_parser` from the namespace and calls `.print_help()` on it — this is the mechanism that gives per-module help rather than the root help
+- Each module-level parser also sets `dest="{module}_cmd"` on its subparser (e.g., `dest="seq_cmd"`) — the dest value is available on `Namespace` for conditional logic but rarely used in practice
+- Every module `__init__.py` should expose `__all__ = ["register_subparser"]` — this is the only public API the CLI layer depends on
 - Version is derived at runtime from `importlib.metadata.version("jsrc")` — no hardcoded version string in source
 
 ### Central shared utilities (`src/jsrc/core.py`)
@@ -100,10 +102,10 @@ This is the primary shared module used across the codebase:
 |----------------|---------|
 | `parse_gff_attributes(attr_string)` | Parse GFF/GTF attribute column into a dict (handles both `key=value` and `key value` formats) |
 | `setup_matplotlib()` | Configure Agg backend for headless operation, returns `plt` |
-| `open_text(path)` | Open a file as UTF-8 text, transparently handling `.gz` compression |
-| `load_fasta(path)` | Parse FASTA file into list of SeqRecord, raising `DataFormatError` if empty |
+| `open_text(path)` | Open a file as UTF-8 text, transparently handling `.gz` compression — prefer this over `open()` for all user-provided files |
+| `load_fasta(path)` | Canonical FASTA loader: parse into list of SeqRecord, raise `DataFormatError` if empty — use this instead of raw `SeqIO.parse()` in subcommands |
 | `nxx(lengths, pct)` | N50/N90/etc. calculation — the smallest contig length at which cumulative sum reaches `pct` of total |
-| `progressbar` | Custom progress bar (context manager + `iter()` wrapper), writes to stderr, respects `--verbose` |
+| `progressbar` | Custom progress bar (context manager + `iter()` wrapper), writes to stderr, self-disables when stderr is not a TTY |
 
 ### Custom exception hierarchy (`src/jsrc/core.py`)
 
@@ -132,7 +134,8 @@ These are caught by `cli.py` and formatted as `Error: <message>` to stderr. Use 
 
 - Subcommand `cmd()` functions should raise exceptions from the hierarchy above rather than calling `sys.exit()` directly
 - `cli.py:main()` catches all exceptions and formats them uniformly as `Error: <message>` to stderr
-- `--debug` flag suppresses the catch-all and lets exceptions propagate with full traceback
+- `--debug` flag suppresses the catch-all and lets exceptions propagate with full traceback; also enables DEBUG-level logging (same as `--verbose` for logging purposes)
+- `--verbose` sets logging to DEBUG level but keeps exception catching active — use it to see detailed log output without raw tracebacks
 - Use `shutil.which()` to check for external tools and raise `DependencyError` if missing
 
 ### Code style conventions
@@ -177,10 +180,11 @@ Some subcommands require external bioinformatics tools. Check with `shutil.which
 - `-ids` / `--ids` — ID list file (one per line)
 - `-t` / `--threads` — Thread count for parallel operations
 
-### Test configuration
+## Test configuration
 - `tests/conftest.py` adds `src/` to `sys.path` so tests can import `jsrc` directly
 - Coverage config is in `pyproject.toml` (`[tool.coverage.*]`): source under `src/`, HTML + term-missing + XML reports
-- Test files are organized as `tests/test_<module>_<subcommand>.py` (with some variations)
+- Test files follow the convention `tests/test_<module>_<subcommand>.py` (e.g. `test_seq_extract.py`, `test_genome_stats.py`). Shared module-level tests use `tests/test_<module>_core.py`
+- Some broader integration/CLI tests use descriptive names like `test_cli_error_behavior.py` and `test_cli_module_flows.py`
 
 ### Documentation
 
