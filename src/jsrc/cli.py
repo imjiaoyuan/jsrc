@@ -52,7 +52,10 @@ def _iter_enabled_modules() -> list[str]:
         x.strip() for x in os.getenv("JSRC_DISABLE_MODULES", "").split(",") if x.strip()
     }
     names = only if only else list(MODULES.keys())
-    return [n for n in names if n in MODULES and n not in disabled]
+    result = [n for n in names if n in MODULES and n not in disabled]
+    if sys.platform == "win32" and "job" in result:
+        result.remove("job")
+    return result
 
 
 def _build_base_parser() -> argparse.ArgumentParser:
@@ -129,6 +132,12 @@ def main() -> None:
         sys.exit(2)
 
     requested_module, requested_subcommand = _probe_route(argv)
+    if requested_module == "job" and sys.platform == "win32":
+        logging.error(
+            "Error: 'job' module is not supported on Windows. "
+            "Background job management requires Unix commands (nohup, bash, ps, tail)."
+        )
+        sys.exit(2)
     parser = _build_base_parser()
     subparsers = parser.add_subparsers(dest="command", help="Available modules")
     if requested_module and requested_module in enabled_modules:

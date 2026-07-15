@@ -10,12 +10,12 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 IS_LINUX = sys.platform.startswith("linux")
+IS_MACOS = sys.platform == "darwin"
+IS_WINDOWS = sys.platform == "win32"
 _PLATFORM_NOTE_EMITTED = False
 
 
 def ps_rss_kb(pid: int) -> int:
-    """Get RSS memory in KB from ps command."""
-
     try:
         proc = subprocess.run(
             ["ps", "-o", "rss=", "-p", str(pid)],
@@ -30,11 +30,13 @@ def ps_rss_kb(pid: int) -> int:
     text = proc.stdout.strip()
     if not text:
         return 0
-    return int(text.split()[0]) if text.split()[0].isdigit() else 0
+    for token in text.split():
+        if token.isdigit():
+            return int(token)
+    return 0
 
 
 def get_rss_kb_from_status(pid: int) -> int:
-    """Get RSS memory from /proc/pid/status (Linux) or ps (other platforms)."""
     if not IS_LINUX:
         return ps_rss_kb(pid)
     status = Path(f"/proc/{pid}/status")
@@ -52,11 +54,12 @@ def get_rss_kb_from_status(pid: int) -> int:
 
 
 def process_alive(pid: int) -> bool:
-    """Check if a process is still alive."""
     if pid <= 0:
         return False
     if IS_LINUX:
         return Path(f"/proc/{pid}").exists()
+    if IS_WINDOWS:
+        return False
     try:
         os.kill(pid, 0)
     except ProcessLookupError:
@@ -69,8 +72,7 @@ def process_alive(pid: int) -> bool:
         return True
 
 
-def ps_row(pid: int):
-    """Get process info from ps command: (success, etime, pcpu, stat)."""
+def ps_row(pid: int) -> tuple[bool, str, float, str]:
     try:
         proc = subprocess.run(
             ["ps", "-o", "etime=,pcpu=,stat=", "-p", str(pid)],
@@ -94,19 +96,26 @@ def ps_row(pid: int):
 
 
 def warn_portability_limits() -> None:
-    """Warn about platform-specific limitations (Linux vs others)."""
     global _PLATFORM_NOTE_EMITTED
     if _PLATFORM_NOTE_EMITTED:
         return
-    if not IS_LINUX:
+    _PLATFORM_NOTE_EMITTED = True
+    if IS_WINDOWS:
+        logger.warning(
+            "Windows detected; job module is not supported on this platform."
+        )
+    elif IS_MACOS:
+        logger.info(
+            "macOS detected; /proc-based process metrics unavailable. "
+            "Using ps fallback."
+        )
+    elif not IS_LINUX:
         logger.warning(
             "non-Linux platform detected; /proc-based metrics may be limited."
         )
-        _PLATFORM_NOTE_EMITTED = True
 
 
 def read_exit_code(job_id: str) -> str:
-    """Read exit code from state file."""
     from .config import state_dir
 
     path = state_dir() / f"{job_id}.exit"

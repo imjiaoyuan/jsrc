@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from jsrc.core import ValidationError
-from jsrc.job import core
+from jsrc.job import config, core
 
 
 class TestJobCoreHelpers:
@@ -27,13 +27,34 @@ class TestJobCoreHelpers:
 class TestJobCorePaths:
     def test_data_home_uses_xdg_when_set(self, monkeypatch):
         monkeypatch.setenv("XDG_DATA_HOME", "/custom/xdg")
+        monkeypatch.setattr(config, "_is_windows", lambda: False)
+        monkeypatch.setattr(config, "_is_macos", lambda: False)
         path = core.data_home()
         assert path == Path("/custom/xdg/jsrc")
 
-    def test_data_home_default(self, monkeypatch):
+    def test_data_home_default_linux(self, monkeypatch):
         monkeypatch.delenv("XDG_DATA_HOME", raising=False)
+        monkeypatch.delenv("LOCALAPPDATA", raising=False)
+        monkeypatch.delenv("APPDATA", raising=False)
+        monkeypatch.setattr(config, "_is_windows", lambda: False)
+        monkeypatch.setattr(config, "_is_macos", lambda: False)
         path = core.data_home()
         assert str(path).endswith(".local/share/jsrc")
+
+    def test_data_home_default_macos(self, monkeypatch):
+        monkeypatch.delenv("XDG_DATA_HOME", raising=False)
+        monkeypatch.setattr(config, "_is_windows", lambda: False)
+        monkeypatch.setattr(config, "_is_macos", lambda: True)
+        path = core.data_home()
+        assert str(path).endswith("Library/Application Support/jsrc")
+
+    def test_data_home_default_windows(self, monkeypatch):
+        monkeypatch.setenv("LOCALAPPDATA", "C:\\Users\\test\\AppData\\Local")
+        monkeypatch.setattr(config, "_is_windows", lambda: True)
+        monkeypatch.setattr(config, "_is_macos", lambda: False)
+        path = core.data_home()
+        assert "AppData" in str(path)
+        assert "jsrc" in str(path)
 
     def test_history_path_uses_env_var(self, monkeypatch):
         monkeypatch.setenv("JSRC_JOBS_FILE", "/custom/path/jobs.tsv")
@@ -90,6 +111,8 @@ class TestJobCoreIO:
 
     def test_state_file_read_and_write(self, tmp_path, monkeypatch):
         monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+        monkeypatch.setattr(config, "_is_windows", lambda: False)
+        monkeypatch.setattr(config, "_is_macos", lambda: False)
         core.state_dir().mkdir(parents=True)
         sf = core.state_file("42")
         sf.write_text("0\n", encoding="utf-8")
@@ -97,10 +120,15 @@ class TestJobCoreIO:
 
     def test_read_exit_code_missing(self, tmp_path, monkeypatch):
         monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+        monkeypatch.setattr(config, "_is_windows", lambda: False)
+        monkeypatch.setattr(config, "_is_macos", lambda: False)
         assert core.read_exit_code("999") == ""
 
     def test_ensure_dirs_creates_directories(self, tmp_path, monkeypatch):
         monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path))
+        monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path))
+        monkeypatch.setattr(config, "_is_windows", lambda: False)
+        monkeypatch.setattr(config, "_is_macos", lambda: False)
         core.ensure_dirs()
         assert core.history_path().parent.exists()
         assert core.default_log_dir().exists()
