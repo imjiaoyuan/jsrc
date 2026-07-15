@@ -6,6 +6,7 @@ from jsrc.job import process
 
 def test_process_alive_fallback_non_linux(monkeypatch):
     monkeypatch.setattr(process, "IS_LINUX", False)
+    monkeypatch.setattr(process, "IS_WINDOWS", False)
 
     def _fake_kill(pid, sig):
         raise PermissionError

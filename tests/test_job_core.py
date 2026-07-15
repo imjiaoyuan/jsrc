@@ -39,14 +39,14 @@ class TestJobCorePaths:
         monkeypatch.setattr(config, "_is_windows", lambda: False)
         monkeypatch.setattr(config, "_is_macos", lambda: False)
         path = core.data_home()
-        assert str(path).endswith(".local/share/jsrc")
+        assert path.parts[-3:] == (".local", "share", "jsrc")
 
     def test_data_home_default_macos(self, monkeypatch):
         monkeypatch.delenv("XDG_DATA_HOME", raising=False)
         monkeypatch.setattr(config, "_is_windows", lambda: False)
         monkeypatch.setattr(config, "_is_macos", lambda: True)
         path = core.data_home()
-        assert str(path).endswith("Library/Application Support/jsrc")
+        assert path.parts[-3:] == ("Library", "Application Support", "jsrc")
 
     def test_data_home_default_windows(self, monkeypatch):
         monkeypatch.setenv("LOCALAPPDATA", "C:\\Users\\test\\AppData\\Local")

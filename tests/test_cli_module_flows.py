@@ -13,6 +13,8 @@ def _run_cli(monkeypatch, argv):
 
 @pytest.mark.parametrize("module_name", ["job", "vision", "plot", "grn"])
 def test_module_parent_help_via_cli(module_name, capsys, monkeypatch):
+    if module_name == "job" and sys.platform == "win32":
+        pytest.skip("job module is not supported on Windows")
     monkeypatch.setattr(sys, "argv", ["jsrc", module_name])
     with pytest.raises(SystemExit) as exc:
         cli.main()
@@ -99,6 +101,8 @@ def test_cli_imports_only_selected_subcommand(monkeypatch, argv, expected_import
 
 
 def test_job_submit_and_list_flow(tmp_path, capsys, monkeypatch):
+    if sys.platform == "win32":
+        pytest.skip("job module is not supported on Windows")
     monkeypatch.setenv("XDG_DATA_HOME", str(tmp_path / "xdg"))
     monkeypatch.setenv("JSRC_JOBS_FILE", str(tmp_path / "jobs.tsv"))
 
