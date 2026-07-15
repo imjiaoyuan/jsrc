@@ -48,6 +48,14 @@ def _aliphatic_index(seq: str) -> float:
     return (a + 2.9 * v + 3.9 * (ile + leu)) / total * 100.0
 
 
+def _safe_protparam(func, default, label, rec_id):
+    try:
+        return func()
+    except (ValueError, KeyError, IndexError, ZeroDivisionError, TypeError) as exc:
+        logger.warning("ProteinAnalysis.%s failed for %s: %s", label, rec_id, exc)
+        return default
+
+
 def cmd(args: Namespace) -> None:
     records = load_fasta(args.fa)
 
@@ -58,38 +66,17 @@ def cmd(args: Namespace) -> None:
         if not clean:
             continue
         pa = ProteinAnalysis(clean)
-        try:
-            mw = pa.molecular_weight()
-        except Exception:
-            mw = 0.0
-        try:
-            pi = pa.isoelectric_point()
-        except Exception:
-            pi = 0.0
-        try:
-            ec = pa.molar_extinction_coefficient()
-        except Exception:
-            ec = (0, 0)
-        try:
-            ii = pa.instability_index()
-        except Exception:
-            ii = 0.0
-        try:
-            ai = _aliphatic_index(clean)
-        except Exception:
-            ai = 0.0
-        try:
-            gv = pa.gravy()
-        except Exception:
-            gv = 0.0
-        try:
-            ar = pa.aromaticity()
-        except Exception:
-            ar = 0.0
-        try:
-            ss = pa.secondary_structure_fraction()
-        except Exception:
-            ss = (0.0, 0.0, 0.0)
+        mw = _safe_protparam(pa.molecular_weight, 0.0, "molecular_weight", rec.id)
+        pi = _safe_protparam(pa.isoelectric_point, 0.0, "isoelectric_point", rec.id)
+        ec = _safe_protparam(pa.molar_extinction_coefficient, (0, 0),
+                             "molar_extinction_coefficient", rec.id)
+        ii = _safe_protparam(pa.instability_index, 0.0, "instability_index", rec.id)
+        ai = _safe_protparam(lambda: _aliphatic_index(clean), 0.0,
+                             "aliphatic_index", rec.id)
+        gv = _safe_protparam(pa.gravy, 0.0, "gravy", rec.id)
+        ar = _safe_protparam(pa.aromaticity, 0.0, "aromaticity", rec.id)
+        ss = _safe_protparam(pa.secondary_structure_fraction, (0.0, 0.0, 0.0),
+                             "secondary_structure_fraction", rec.id)
         charge = pa.charge_at_pH(args.ph) if args.ph is not None else None
 
         entry: dict[str, Any] = {

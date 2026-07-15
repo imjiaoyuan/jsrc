@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import logging
 import os
 import signal
 from argparse import Namespace
 from typing import Any
 
 from jsrc.core import ResourceNotFoundError, ValidationError
+
+logger = logging.getLogger(__name__)
 from jsrc.job.core import (
     find_row,
     load_jobs,
@@ -33,8 +36,12 @@ def cmd(args: Namespace) -> None:
             os.killpg(pgid, sig)
         else:
             os.kill(pid, sig)
-    except (ProcessLookupError, FileNotFoundError):
-        pass
+    except ProcessLookupError:
+        logger.warning("Process %d not found; may have already exited", pid)
+    except PermissionError:
+        logger.error("Permission denied killing process %d", pid)
+    except OSError as exc:
+        logger.warning("Failed to kill process %d: %s", pid, exc)
     row["status"] = "killed"
     row["end_time"] = now_iso()
     row["runtime_sec"] = str(runtime_seconds(row, {}))

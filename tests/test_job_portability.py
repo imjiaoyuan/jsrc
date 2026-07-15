@@ -39,6 +39,7 @@ def test_non_linux_rss_uses_ps(monkeypatch):
 def test_portability_warning_only_once(monkeypatch, caplog):
     caplog.set_level(logging.WARNING)
     monkeypatch.setattr(process, "IS_LINUX", False)
+    monkeypatch.setattr(process, "IS_MACOS", False)
     monkeypatch.setattr(process, "_PLATFORM_NOTE_EMITTED", False)
     process.warn_portability_limits()
     process.warn_portability_limits()

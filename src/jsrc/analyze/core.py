@@ -4,9 +4,10 @@ from Bio.Align import MultipleSeqAlignment
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-_NORM_TABLE = str.maketrans(
-    "U", "T", "".join(c for c in map(chr, range(256)) if c not in "ACGTN")
+_DELETE_CHARS = "".join(
+    chr(i) for i in range(256) if chr(i) not in "ACGTN"
 )
+_NORM_TABLE = str.maketrans("U", "T", _DELETE_CHARS)
 
 
 def normalize_sequence(seq: str) -> str:

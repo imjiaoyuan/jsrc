@@ -81,7 +81,7 @@ def iter_codons(seq: str) -> Iterator[str]:
     seq = seq.upper().replace("U", "T")
     for i in range(0, len(seq) - 2, 3):
         c = seq[i : i + 3]
-        if len(c) == 3 and set(c) <= {"A", "C", "G", "T"}:
+        if len(c) == 3 and all(b in "ACGT" for b in c):
             yield c
 
 

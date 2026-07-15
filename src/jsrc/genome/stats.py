@@ -24,11 +24,11 @@ def _calculate_n50_l50(lengths: list[int]) -> tuple[int, int]:
     return 0, 0
 
 
-def _count_gaps(seq: str) -> dict[str, int | float]:
+def _count_gaps(seq: str) -> dict[str, int | float | list[int]]:
     seq = seq.upper()
     n_count = seq.count("N")
     gap_count = 0
-    gap_lengths = []
+    gap_lengths: list[int] = []
     in_gap = False
     gap_start = 0
 
@@ -49,6 +49,7 @@ def _count_gaps(seq: str) -> dict[str, int | float]:
     return {
         "n_count": n_count,
         "gap_count": gap_count,
+        "gap_lengths": gap_lengths,
         "min_gap": min(gap_lengths) if gap_lengths else 0,
         "max_gap": max(gap_lengths) if gap_lengths else 0,
         "mean_gap": sum(gap_lengths) / len(gap_lengths) if gap_lengths else 0.0,
@@ -69,26 +70,14 @@ def cmd(args: Namespace) -> None:
         "max_gap": 0,
         "mean_gap": 0.0,
     }
-    gap_lengths_all = []
+    gap_lengths_all: list[int] = []
     for rec in records:
         gap_info = _count_gaps(str(rec.seq))
-        all_gaps["n_count"] += gap_info["n_count"]
-        all_gaps["gap_count"] += gap_info["gap_count"]
-        if gap_info["gap_count"] > 0:
-            seq = str(rec.seq).upper()
-            in_gap = False
-            gap_start = 0
-            for i, base in enumerate(seq):
-                if base == "N":
-                    if not in_gap:
-                        in_gap = True
-                        gap_start = i
-                else:
-                    if in_gap:
-                        in_gap = False
-                        gap_lengths_all.append(i - gap_start)
-            if in_gap:
-                gap_lengths_all.append(len(seq) - gap_start)
+        all_gaps["n_count"] += int(gap_info["n_count"])
+        all_gaps["gap_count"] += int(gap_info["gap_count"])
+        gap_lengths = gap_info.get("gap_lengths", [])
+        if isinstance(gap_lengths, list):
+            gap_lengths_all.extend(gap_lengths)
 
     if gap_lengths_all:
         all_gaps["min_gap"] = min(gap_lengths_all)

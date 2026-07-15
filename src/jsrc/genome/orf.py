@@ -6,75 +6,9 @@ from argparse import Namespace
 from typing import Any
 
 from jsrc.core import load_fasta
+from jsrc.genome.core import AA_TABLE as _CODON_TABLE
 
 logger = logging.getLogger(__name__)
-
-_CODON_TABLE = {
-    "TTT": "F",
-    "TTC": "F",
-    "TTA": "L",
-    "TTG": "L",
-    "CTT": "L",
-    "CTC": "L",
-    "CTA": "L",
-    "CTG": "L",
-    "ATT": "I",
-    "ATC": "I",
-    "ATA": "I",
-    "ATG": "M",
-    "GTT": "V",
-    "GTC": "V",
-    "GTA": "V",
-    "GTG": "V",
-    "TCT": "S",
-    "TCC": "S",
-    "TCA": "S",
-    "TCG": "S",
-    "CCT": "P",
-    "CCC": "P",
-    "CCA": "P",
-    "CCG": "P",
-    "ACT": "T",
-    "ACC": "T",
-    "ACA": "T",
-    "ACG": "T",
-    "GCT": "A",
-    "GCC": "A",
-    "GCA": "A",
-    "GCG": "A",
-    "TAT": "Y",
-    "TAC": "Y",
-    "TAA": "*",
-    "TAG": "*",
-    "CAT": "H",
-    "CAC": "H",
-    "CAA": "Q",
-    "CAG": "Q",
-    "AAT": "N",
-    "AAC": "N",
-    "AAA": "K",
-    "AAG": "K",
-    "GAT": "D",
-    "GAC": "D",
-    "GAA": "E",
-    "GAG": "E",
-    "TGT": "C",
-    "TGC": "C",
-    "TGA": "*",
-    "TGG": "W",
-    "CGT": "R",
-    "CGC": "R",
-    "CGA": "R",
-    "CGG": "R",
-    "AGT": "S",
-    "AGC": "S",
-    "AGA": "R",
-    "AGG": "R",
-    "GGT": "G",
-    "GGC": "G",
-    "GGA": "G",
-    "GGG": "G",
-}
 
 
 def _find_orfs(seq: str, min_len: int, all_frames: bool) -> list[dict[str, Any]]:
@@ -87,6 +21,7 @@ def _find_orfs(seq: str, min_len: int, all_frames: bool) -> list[dict[str, Any]]
         while i <= n - 3:
             codon = seq[i : i + 3]
             if codon == "ATG":
+                found_stop = False
                 for j in range(i, n - 2, 3):
                     c = seq[j : j + 3]
                     if len(c) < 3:
@@ -111,9 +46,10 @@ def _find_orfs(seq: str, min_len: int, all_frames: bool) -> list[dict[str, Any]]
                                 }
                             )
                         i = j + 3
+                        found_stop = True
                         break
-                else:
-                    break
+                if not found_stop:
+                    i += 3
             else:
                 i += 3
     return sorted(results, key=lambda x: x["length"], reverse=True)

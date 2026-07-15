@@ -10,6 +10,20 @@ from Bio import SeqIO
 
 logger = logging.getLogger(__name__)
 
+_IUPAC_PATTERNS = {
+    "R": re.compile("[AG]"),
+    "Y": re.compile("[CT]"),
+    "S": re.compile("[GC]"),
+    "W": re.compile("[AT]"),
+    "K": re.compile("[GT]"),
+    "M": re.compile("[AC]"),
+    "B": re.compile("[CGT]"),
+    "D": re.compile("[AGT]"),
+    "H": re.compile("[ACT]"),
+    "V": re.compile("[ACG]"),
+    "N": re.compile("[ACGT]"),
+}
+
 
 def _scan_motif(seq: str, motif: str, allow_mismatch: int = 0) -> list[dict[str, Any]]:
     seq = seq.upper()
@@ -50,8 +64,8 @@ def _scan_motif(seq: str, motif: str, allow_mismatch: int = 0) -> list[dict[str,
             subseq = seq[i : i + motif_len]
             mismatches = 0
             for m_char, s_char in zip(motif, subseq, strict=True):
-                if m_char in iupac_codes:
-                    if not re.match(iupac_codes[m_char], s_char):
+                if m_char in _IUPAC_PATTERNS:
+                    if not _IUPAC_PATTERNS[m_char].match(s_char):
                         mismatches += 1
                 elif m_char != s_char:
                     mismatches += 1

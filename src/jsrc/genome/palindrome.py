@@ -16,29 +16,27 @@ def _find_palindromes(
     seq = seq.upper()
     n = len(seq)
     palindromes = []
-    complement = {"A": "T", "T": "A", "G": "C", "C": "G"}
+    complement = str.maketrans("ATGC", "TACG")
 
-    for i in range(n):
-        for arm_len in range(min_length, max_length + 1):
-            if i + arm_len > n:
-                break
-            left_arm = seq[i : i + arm_len]
-            if not all(b in complement for b in left_arm):
+    for arm_len in range(min_length, max_length + 1):
+        rc_map: dict[str, list[int]] = {}
+        for i in range(n - arm_len + 1):
+            kmer = seq[i : i + arm_len]
+            if not set(kmer) <= {"A", "T", "G", "C"}:
                 continue
+            rc = kmer.translate(complement)[::-1]
+            rc_map.setdefault(rc, []).append(i)
 
-            for gap in range(0, max_gap + 1):
-                right_start = i + arm_len + gap
-                right_end = right_start + arm_len
-                if right_end > n:
-                    break
-                right_arm = seq[right_start:right_end]
-                if not all(b in complement for b in right_arm):
-                    continue
-
-                expected_right = "".join(
-                    complement.get(b, "N") for b in reversed(left_arm)
-                )
-                if right_arm == expected_right:
+        seen: set[tuple[int, int]] = set()
+        for i in range(n - arm_len + 1):
+            kmer = seq[i : i + arm_len]
+            if kmer not in rc_map:
+                continue
+            for j in rc_map[kmer]:
+                gap = j - (i + arm_len)
+                if 0 <= gap <= max_gap and (i, j) not in seen:
+                    seen.add((i, j))
+                    right_end = j + arm_len
                     palindromes.append(
                         {
                             "start": i,

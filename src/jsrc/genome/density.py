@@ -15,18 +15,25 @@ logger = logging.getLogger(__name__)
 def _calculate_density(
     features: list[tuple[int, int]], genome_length: int, window: int, step: int
 ) -> list[dict[str, Any]]:
+    features = sorted(features)
     results = []
-    for i in range(0, max(1, genome_length - window + 1), step):
-        window_start = i
-        window_end = i + window
-        count = 0
-        total_length = 0
+    active: list[tuple[int, int]] = []
+    feat_idx = 0
 
-        for start, end in features:
-            overlap_start = max(window_start, start)
-            overlap_end = min(window_end, end)
+    for win_start in range(0, max(1, genome_length - window + 1), step):
+        win_end = win_start + window
+        active = [f for f in active if f[1] > win_start]
+        while feat_idx < len(features) and features[feat_idx][0] < win_end:
+            if features[feat_idx][1] > win_start:
+                active.append(features[feat_idx])
+            feat_idx += 1
+
+        count = len(active)
+        total_length = 0
+        for start, end in active:
+            overlap_start = max(win_start, start)
+            overlap_end = min(win_end, end)
             if overlap_start < overlap_end:
-                count += 1
                 total_length += overlap_end - overlap_start
 
         density = count / (window / 1000)
@@ -34,7 +41,7 @@ def _calculate_density(
 
         results.append(
             {
-                "position": window_start,
+                "position": win_start,
                 "count": count,
                 "density": density,
                 "coverage": coverage,

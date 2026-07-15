@@ -127,7 +127,7 @@ class TestFetchCmd:
 
     @patch("jsrc.seq.fetch.Entrez.efetch")
     def test_fetch_failure(self, mock_efetch, capsys):
-        mock_efetch.side_effect = Exception("Network error")
+        mock_efetch.side_effect = OSError("Network error")
 
         args = Namespace(
             ids=["NM_001"],

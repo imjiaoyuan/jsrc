@@ -4,7 +4,9 @@ import json
 import logging
 import sys
 from argparse import Namespace
+from pathlib import Path
 from typing import Any
+from urllib.error import HTTPError, URLError
 
 from Bio import Entrez, SeqIO
 
@@ -16,14 +18,17 @@ logger = logging.getLogger(__name__)
 def _parse_ids(raw: list[str]) -> list[str]:
     ids: list[str] = []
     for item in raw:
-        try:
-            with open_text(item) as fh:
-                content = [line.strip() for line in fh if line.strip()]
-                if content:
-                    ids.extend(content)
-                    continue
-        except OSError:
-            pass
+        path = Path(item)
+        if path.exists() and path.is_file():
+            try:
+                with open_text(item) as fh:
+                    content = [line.strip() for line in fh if line.strip()]
+                    if content:
+                        ids.extend(content)
+                        continue
+            except OSError as exc:
+                logger.warning("Failed to read ID file '%s': %s", item, exc)
+            logger.debug("Empty or unreadable ID file, treating as accession: %s", item)
         ids.append(item)
     return ids
 
@@ -49,8 +54,10 @@ def cmd(args: Namespace) -> None:
             db=args.db, id=id_str, rettype=rettype, retmode="text"
         ) as handle:
             records = list(SeqIO.parse(handle, parse_fmt))
-    except Exception as exc:
-        raise DependencyError(f"Entrez fetch failed: {exc}") from exc
+    except (URLError, HTTPError, OSError) as exc:
+        raise DependencyError(f"Entrez network error: {exc}") from exc
+    except (ValueError, RuntimeError, KeyError) as exc:
+        raise DataFormatError(f"Entrez parse error: {exc}") from exc
 
     if not records:
         raise DataFormatError("No records returned from NCBI")

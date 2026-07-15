@@ -75,7 +75,7 @@ def setup_matplotlib():
 
 def open_text(path: str | Path) -> IO[str]:
     path_str = str(path)
-    if path_str.endswith(".gz"):
+    if path_str.endswith((".gz", ".bgz", ".gzip")):
         return gzip.open(path_str, "rt", encoding="utf-8")
     return open(path_str, encoding="utf-8")
 
