@@ -68,15 +68,24 @@ def cmd(args: Namespace) -> None:
         pa = ProteinAnalysis(clean)
         mw = _safe_protparam(pa.molecular_weight, 0.0, "molecular_weight", rec.id)
         pi = _safe_protparam(pa.isoelectric_point, 0.0, "isoelectric_point", rec.id)
-        ec = _safe_protparam(pa.molar_extinction_coefficient, (0, 0),
-                             "molar_extinction_coefficient", rec.id)
+        ec = _safe_protparam(
+            pa.molar_extinction_coefficient,
+            (0, 0),
+            "molar_extinction_coefficient",
+            rec.id,
+        )
         ii = _safe_protparam(pa.instability_index, 0.0, "instability_index", rec.id)
-        ai = _safe_protparam(lambda: _aliphatic_index(clean), 0.0,
-                             "aliphatic_index", rec.id)
+        ai = _safe_protparam(
+            lambda c=clean: _aliphatic_index(c), 0.0, "aliphatic_index", rec.id
+        )
         gv = _safe_protparam(pa.gravy, 0.0, "gravy", rec.id)
         ar = _safe_protparam(pa.aromaticity, 0.0, "aromaticity", rec.id)
-        ss = _safe_protparam(pa.secondary_structure_fraction, (0.0, 0.0, 0.0),
-                             "secondary_structure_fraction", rec.id)
+        ss = _safe_protparam(
+            pa.secondary_structure_fraction,
+            (0.0, 0.0, 0.0),
+            "secondary_structure_fraction",
+            rec.id,
+        )
         charge = pa.charge_at_pH(args.ph) if args.ph is not None else None
 
         entry: dict[str, Any] = {

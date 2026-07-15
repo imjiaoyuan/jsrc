@@ -7,8 +7,6 @@ from argparse import Namespace
 from typing import Any
 
 from jsrc.core import ResourceNotFoundError, ValidationError
-
-logger = logging.getLogger(__name__)
 from jsrc.job.core import (
     find_row,
     load_jobs,
@@ -17,6 +15,8 @@ from jsrc.job.core import (
     to_int,
     write_jobs,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def cmd(args: Namespace) -> None:
