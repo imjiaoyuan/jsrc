@@ -140,6 +140,19 @@ jsrc seq protparam -fa proteins.fa --json
 jsrc seq protparam -fa proteins.fa --ph 7.4           # with net charge at pH 7.4
 ```
 
+## primer
+
+Check primer quality before ordering — melting temperature, GC content, GC clamp, and hairpin risk in one pass. Supports Wallace rule (for short oligos < 14 nt) and nearest-neighbor thermodynamics (for longer primers), with configurable primer concentration.
+
+```bash
+jsrc seq primer -fa primers.fa
+jsrc seq primer -fa primers.fa --conc 500 --json
+```
+
+- `-fa`: FASTA file of primer sequences.
+- `--conc`: primer concentration in nM for nearest-neighbor Tm (default: `250`).
+- `--json`: JSON output.
+
 ## align
 
 Pairwise sequence alignment without installing anything extra. Uses Biopython's `PairwiseAligner` (a C implementation, fast enough for most needs). Supports global and local alignment, customizable match/mismatch/gap scores, and multi-top output.

@@ -39,7 +39,6 @@ jsrc <module> <subcommand> --help
 | `genome` | 基因组统计、特征检测、比较分析、进化分析 |
 | `plot` | 基因/外显子/染色体/结构域等可视化 |
 | `analyze` | 系统发育、motif、一致序列、SNP/INDEL、QC |
-| `gs` | 基因组选择数据构建、划分与训练流程 |
 | `grn` | GRN 转换、中心性分析、build 打包与服务 |
 | `vision` | 图像轮廓提取、EFD 描述子、形态指标 |
 | `job` | 后台任务提交、查看、日志、终止、历史清理 |
@@ -55,7 +54,6 @@ jsrc <module> <subcommand> --help
 - [基因组模块](./module-genome.md)
 - [分析模块](./module-analyze.md)
 - [绘图模块](./module-plot.md)
-- [GS 模块](./module-gs.md)
 - [GRN 模块](./module-grn.md)
 - [视觉模块](./module-vision.md)
 - [任务模块](./module-job.md)

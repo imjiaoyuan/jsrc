@@ -32,15 +32,35 @@ uv build
 
 ## Architecture
 
-`jsrc` is a CLI bioinformatics toolkit with 7 modules. Entry point: `jsrc = "jsrc.cli:main"`.
+`jsrc` is a CLI bioinformatics toolkit with 7 modules. Entry point: `jsrc = "jsrc.cli:main"`. The package uses a `src/` layout with setuptools (`where = ["src"]`).
+
+### How the CLI dispatches (`src/jsrc/cli.py`)
+
+1. `_iter_enabled_modules()` filters the `MODULES` dict by `JSRC_MODULES` / `JSRC_DISABLE_MODULES` env vars and disables `job` on Windows.
+2. `_probe_route(argv)` parses `command` and `subcommand` positional args to decide what to import.
+3. If the requested module is known, `_register_one_module()` imports only that module's top-level package and calls its `register_subparser()`. If the subcommand is also known, only that subcommand module is imported; otherwise stub parsers are registered for all subcommands.
+4. After parsing, `args.func(args)` dispatches to the subcommand's `cmd()`.
+5. The `--debug` flag re-raises exceptions with full traceback; without it, exceptions are caught and formatted as `Error: <type> - <message>`.
 
 ### Module registration pattern (lazy loading)
 
-Each module's `__init__.py` declares a `_SUBCOMMANDS` dict and a `register_subparser(subparsers, selected_subcommand=None)` function. The CLI probes argv to determine which module the user wants, then imports only that module's top-level package. If a specific subcommand is also known from argv, only that subcommand module is imported; otherwise stub parsers are registered for all subcommands.
+Each module's `__init__.py` must contain:
+
+- **`_SUBCOMMANDS`**: a dict mapping subcommand name → `("full.module.path", "help text")`. Example:
+  ```python
+  _SUBCOMMANDS: dict[str, tuple[str, str]] = {
+      "extract": ("jsrc.seq.extract", "Extract sequences by IDs"),
+      "qc": ("jsrc.seq.qc", "Sequence quality statistics"),
+  }
+  ```
+- **`register_subparser(subparsers, selected_subcommand=None)`**: creates a subparser for the module, optionally loads only the selected subcommand, otherwise registers stubs for all entries in `_SUBCOMMANDS`.
+- **`_register_stub_subcommands(subparsers)`**: registers a bare `add_parser(name, help=...)` for every subcommand (no args — just enough for `--help`).
+- **`_register_selected_subcommand(subparsers, selected)`**: imports the specific subcommand module and calls its `register()`.
+- **`parser.set_defaults(_group_parser=parser)`**: set on the module-level parser so the CLI can print module help when no subcommand is given.
 
 Every subcommand module (e.g., `seq/extract.py`) exposes two functions:
-- `register(subparsers)` — adds the subparser with arguments and sets `func=cmd`
-- `cmd(args: Namespace)` — the actual command implementation
+- **`register(subparsers)`** — adds a subparser with arguments and **must** call `p.set_defaults(func=cmd)` to wire the command function.
+- **`cmd(args: Namespace)`** — the actual command implementation.
 
 ### Module list
 
@@ -59,24 +79,37 @@ Every subcommand module (e.g., `seq/extract.py`) exposes two functions:
 All custom exceptions live in `src/jsrc/core.py` and inherit from `JsrcError`:
 `ValidationError` → `DataFormatError` → `ResourceNotFoundError` → `DependencyError` → `ConfigurationError`
 
-The CLI's `main()` catches these in order and formats them as `Error: <type> - <message>`. Subcommands should raise these (not `SystemExit`).
+The CLI's `main()` catches these in order and formats them as `Error: <type> - <message>`. Subcommands should raise these (not `SystemExit`). `ValueError` and `PermissionError` are also caught and formatted.
 
 ### Key shared utilities (`src/jsrc/core.py`)
 
 - `load_fasta(path)` — parse FASTA with Biopython, raises `DataFormatError` if empty
 - `open_text(path)` — open text files, transparently handles `.gz` (gzip)
 - `parse_gff_attributes(attr_string)` — parse GFF/GTF attribute column into dict
-- `setup_matplotlib()` — configure Agg backend for headless plotting
-- `progressbar` — context manager / iterable wrapper for stderr progress bars
+- `setup_matplotlib()` — configure Agg backend for headless plotting; call this at the top of `cmd()` in any subcommand that uses matplotlib
+- `progressbar` — context manager / iterable wrapper for stderr progress bars; use `with progressbar(total=N, desc="...") as pb:` or `for item in pb.iter(items):`
 - `nxx(lengths, pct)` — compute N50/N90-style metrics
+
+### Optional dependency pattern
+
+Subcommands in `plot` and `vision` (and any that need optional extras) should:
+1. Call `setup_matplotlib()` at the top of `cmd()` (for matplotlib).
+2. Import optional libraries (e.g., `cv2`) inline inside `cmd()`.
+3. Raise `DependencyError` with a clear install hint if the import fails:
+   ```python
+   try:
+       import cv2
+   except ImportError:
+       raise DependencyError("opencv-python is required. Install with: pip install jsrc[vision]")
+   ```
 
 ### Testing
 
-Tests live in `tests/` and mirror the module structure (e.g., `tests/test_seq_extract.py` for `src/jsrc/seq/extract.py`). `conftest.py` adds `src/` to `sys.path`. Tests use pytest; coverage is configured in `pyproject.toml`.
+Tests live in `tests/` and mirror the module structure (e.g., `tests/test_seq_extract.py` for `src/jsrc/seq/extract.py`). Test data files live under `test/` (e.g., `test/seq/`, `test/grn/`). `conftest.py` adds `src/` to `sys.path`. Tests use pytest; coverage is configured in `pyproject.toml`.
 
 ### CI
 
-`.github/workflows/ci.yml` — lint (ruff + black) on ubuntu; test matrix: [ubuntu, macos, windows] × [3.10, 3.11, 3.12, 3.13]. `.github/workflows/publish.yml` — PyPI publish on `v*` tags via trusted publishing.
+`.github/workflows/ci.yml` — lint (ruff + black) on ubuntu; test matrix: [ubuntu, macos, windows] × [3.10, 3.11, 3.12, 3.13], plus `uv build` on every test job. `.github/workflows/publish.yml` — PyPI publish on `v*` tags via trusted publishing.
 
 ### Environment variable controls
 
@@ -88,4 +121,4 @@ Tests live in `tests/` and mirror the module structure (e.g., `tests/test_seq_ex
 
 - The `job` module uses `/proc` on Linux for RSS metrics; on macOS it falls back to `ps`. It is automatically disabled on Windows.
 - `plot` and `vision` modules have optional dependencies (matplotlib, opencv-python). Subcommands that need them should call `setup_matplotlib()` or import opencv inline and raise `DependencyError` with a clear install hint if missing.
-- `grn` and `plot` modules package static assets via `[tool.setuptools.package-data]` in `pyproject.toml`.
+- `grn` and `plot` modules package static assets (HTML/CSS/JS in `sources/`) via `[tool.setuptools.package-data]` in `pyproject.toml`.

@@ -37,6 +37,21 @@ jsrc job ls -c PID,S,mem,time,command -f table -s runtime -r -a -l 50 -q harmony
 - `-l, --limit`：不使用 `--all` 时的最大行数（默认 `20`）。
 - `-q, --query`：按命令/名称/日志路径过滤。
 
+## top
+
+实时监控面板（类似 `top`）。按可配置的时间间隔自动刷新，显示运行中的任务（加 `-a` 显示全部）及其实时进程指标。按 Ctrl+C 退出。
+
+```bash
+jsrc job top -n 2 -c pid,s,mem,time,command -s runtime -r
+jsrc job top -a -n 1
+```
+
+- `-n, --interval`：刷新间隔秒数（默认 `2.0`）。
+- `-c, --cols`：显示列（逗号分隔，默认 `pid,s,mem,time,command`）。
+- `-s, --sort`：排序字段（`submit_time|time|elapsed|runtime|runtime_sec|rss_mb|rss|rss_min_mb|rss_avg_mb|rss_peak_mb|pid|job_id|status|s|mem`）。
+- `-r, --reverse`：倒序。
+- `-a, --all`：显示全部任务（默认仅显示运行中）。
+
 ## logs
 
 不用手动找日志文件路径，按任务 ID 或 PID 直接查。支持 `-F` 实时跟随日志输出，类似 tail -f。

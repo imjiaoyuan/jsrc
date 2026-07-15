@@ -37,6 +37,21 @@ jsrc job ls -c PID,S,mem,time,command -f table -s runtime -r -a -l 50 -q harmony
 - `-l, --limit`: max rows without `--all` (default: `20`).
 - `-q, --query`: filter by command/name/log path.
 
+## top
+
+Live monitoring dashboard (like `top`). Auto-refreshes at a configurable interval, showing running jobs (or all jobs with `-a`) with real-time process metrics. Press Ctrl+C to exit.
+
+```bash
+jsrc job top -n 2 -c pid,s,mem,time,command -s runtime -r
+jsrc job top -a -n 1
+```
+
+- `-n, --interval`: refresh interval in seconds (default: `2.0`).
+- `-c, --cols`: comma-separated columns to display (default: `pid,s,mem,time,command`).
+- `-s, --sort`: sort field (`submit_time|time|elapsed|runtime|runtime_sec|rss_mb|rss|rss_min_mb|rss_avg_mb|rss_peak_mb|pid|job_id|status|s|mem`).
+- `-r, --reverse`: reverse sort order.
+- `-a, --all`: show all jobs (default: running only).
+
 ## logs
 
 View job logs without manually hunting down the log file path. Look up by job ID or PID. Supports `-F` for real-time log following (tail -f style).

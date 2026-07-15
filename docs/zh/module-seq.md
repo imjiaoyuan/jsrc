@@ -141,6 +141,19 @@ jsrc seq protparam -fa proteins.fa --json
 jsrc seq protparam -fa proteins.fa --ph 7.4           # 算 pH 7.4 时的净电荷
 ```
 
+## primer
+
+下单引物之前先看看质量——一次输出熔解温度、GC 含量、GC 夹和发卡风险。短引物（< 14 nt）用 Wallace 规则，长引物用最近邻热力学方法，可配置引物浓度。
+
+```bash
+jsrc seq primer -fa primers.fa
+jsrc seq primer -fa primers.fa --conc 500 --json
+```
+
+- `-fa`：引物序列 FASTA 文件。
+- `--conc`：最近邻 Tm 计算的引物浓度 nM（默认 `250`）。
+- `--json`：JSON 输出。
+
 ## align
 
 无需额外安装任何东西就能做双序列比对。用的是 Biopython 的 `PairwiseAligner`（C 实现，大多数场景下速度够用）。支持全局和局部比对，可自定义匹配/错配/空位罚分，也可以输出多个最优比对结果。
