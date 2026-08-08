@@ -9,8 +9,6 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "chromosome": ("jsrc.plot.chromosome", "Plot chromosome map"),
     "domain": ("jsrc.plot.domain", "Plot protein domain architecture"),
     "cis": ("jsrc.plot.cis", "Plot cis-regulatory elements"),
-    "heart": ("jsrc.plot.heart", "Plot heart curve"),
-    "rose": ("jsrc.plot.rose", "Plot 3D rose model"),
     "dotplot": ("jsrc.plot.dotplot", "Sequence dotplot by exact k-mer matches"),
     "circoslite": ("jsrc.plot.circoslite", "Simple circular tracks for genome stats"),
 }

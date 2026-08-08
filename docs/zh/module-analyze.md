@@ -1,18 +1,23 @@
 # jsrc analyze
 
-序列分析层面的常用工具集合：进化树构建、motif 鉴定、QC 汇总、保守性分析、变异比较，以及带 bootstrap 支持的系统发育。
+序列分析层面的常用工具集合：进化树构建（支持 bootstrap）、motif 鉴定、QC 汇总、保守性分析和变异比较。
 
 ## phylo
 
 给一组序列，选个算法，就能得到一棵 Newick 树。支持邻接法（NJ）和 UPGMA 两种建树方式，结果可以导出直接用任何树可视化工具打开。适合快速看序列间的聚类关系，或者给更复杂的进化分析打个底。
 
+内置 bootstrap 支持：用 `-n`/`--bootstrap` 指定重采样次数（0 = 关闭，默认 0），`-seed` 指定随机种子（默认 42）。当 bootstrap ≥ 1 时，树的分支会标注支持值。
+
 ```bash
 jsrc analyze phylo -fa sequences.fa -o tree.nwk -a nj
+jsrc analyze phylo -fa seqs.fa -n 200 -seed 42 -o tree.nwk
 ```
 
 - `-fa`：输入 FASTA。
 - `-o`：输出 Newick 树文件。
 - `-a`：算法，`nj` 或 `upgma`（默认 `nj`）。
+- `-n`/`--bootstrap`：bootstrap 重采样次数（默认 `0`，0 = 关闭）。
+- `-seed`：随机种子（默认 `42`）。
 
 ## motif
 
@@ -67,16 +72,3 @@ jsrc analyze snpindel -fa pair.fa -id1 sampleA -id2 sampleB --json
 - `-id1`：序列 1 的 ID（默认第一条）。
 - `-id2`：序列 2 的 ID（默认第二条）。
 - `--json`：JSON 输出。
-
-## bootstrap_phylo
-
-普通建树只能看拓扑结构，bootstrap 能告诉你每个分支的可信度。这个命令做指定次数的重采样建树，输出带支持值的 Newick 树。`-seed` 控制随机种子，保证结果可复现。
-
-```bash
-jsrc analyze bootstrap_phylo -fa seqs.fa -n 200 -seed 42 -o boot.nwk
-```
-
-- `-fa`：输入 FASTA。
-- `-n`：bootstrap 重采样次数，默认 `100`。
-- `-seed`：随机种子，默认 `42`。
-- `-o`：可选输出 Newick 文件。

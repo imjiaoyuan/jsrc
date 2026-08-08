@@ -4,7 +4,7 @@ from argparse import Namespace
 
 import pytest
 
-from jsrc.core import ValidationError
+from jsrc.core import DataFormatError, ValidationError
 from jsrc.genome.codon import cmd as codon_cmd
 from jsrc.seq.kmer import cmd as kmer_cmd
 
@@ -15,7 +15,9 @@ class TestCodonUsage:
         fa = tmp_path / "cds.fa"
         fa.write_text(">g1\nATGGCCACTTAA\n", encoding="utf-8")
 
-        args = Namespace(fa=str(fa), top=20, json=False, cai=None, enc=False)
+        args = Namespace(
+            fa=str(fa), top=20, json=False, cai=None, enc=False, per_gene=False
+        )
         codon_cmd(args)
 
         captured = capsys.readouterr()
@@ -26,7 +28,9 @@ class TestCodonUsage:
         fa = tmp_path / "cds.fa"
         fa.write_text(">g1\nATGGCCACTTAA\n", encoding="utf-8")
 
-        args = Namespace(fa=str(fa), top=20, json=True, cai=None, enc=False)
+        args = Namespace(
+            fa=str(fa), top=20, json=True, cai=None, enc=False, per_gene=False
+        )
         codon_cmd(args)
 
         payload = json.loads(capsys.readouterr().out)
@@ -37,7 +41,9 @@ class TestCodonUsage:
         fa = tmp_path / "empty.fa"
         fa.write_text(">g1\nNNNNNN\n", encoding="utf-8")
 
-        args = Namespace(fa=str(fa), top=20, json=True, cai=None, enc=False)
+        args = Namespace(
+            fa=str(fa), top=20, json=True, cai=None, enc=False, per_gene=False
+        )
         codon_cmd(args)
 
         payload = json.loads(capsys.readouterr().out)
@@ -91,3 +97,74 @@ class TestKmer:
         args = Namespace(fa=[str(fa)], k=0, top=10, json=False)
         with pytest.raises(ValidationError):
             kmer_cmd(args)
+
+
+class TestCodonPerGene:
+    """Per-gene CAI table (migrated from the removed `genome cai` command)."""
+
+    def _args(self, query, ref, json_flag):
+        return Namespace(
+            fa=str(query),
+            top=20,
+            cai=str(ref),
+            per_gene=True,
+            enc=False,
+            json=json_flag,
+        )
+
+    def test_same_usage_cai_near_one(self, tmp_path, capsys):
+        ref = tmp_path / "ref.fa"
+        ref.write_text(">ref1\n" + "GCCGCCGCCGCC" * 4 + "\n", encoding="utf-8")
+        query = tmp_path / "query.fa"
+        query.write_text(">gene1\n" + "GCCGCCGCCGCC" * 4 + "\n", encoding="utf-8")
+        codon_cmd(self._args(query, ref, True))
+        data = json.loads(capsys.readouterr().out)
+        assert data[0]["id"] == "gene1"
+        assert data[0]["cai"] == pytest.approx(1.0, abs=0.01)
+
+    def test_different_usage_lower_cai(self, tmp_path, capsys):
+        ref = tmp_path / "ref.fa"
+        ref.write_text(">ref1\n" + "GCC" * 16 + "GCA" * 4 + "\n", encoding="utf-8")
+        query = tmp_path / "query.fa"
+        query.write_text(">gene1\n" + "GCA" * 20 + "\n", encoding="utf-8")
+        codon_cmd(self._args(query, ref, True))
+        data = json.loads(capsys.readouterr().out)
+        assert data[0]["cai"] < 1.0
+
+    def test_multiple_genes_ranked(self, tmp_path, capsys):
+        ref = tmp_path / "ref.fa"
+        ref.write_text(">ref1\n" + "GCC" * 15 + "GCA" * 5 + "\n", encoding="utf-8")
+        query = tmp_path / "query.fa"
+        query.write_text(
+            ">gene1\n" + "GCC" * 10 + "\n>gene2\n" + "GCA" * 10 + "\n", encoding="utf-8"
+        )
+        codon_cmd(self._args(query, ref, True))
+        data = json.loads(capsys.readouterr().out)
+        assert len(data) == 2
+        assert data[0]["cai"] > data[1]["cai"]
+
+    def test_table_output(self, tmp_path, capsys):
+        ref = tmp_path / "ref.fa"
+        ref.write_text(">ref1\n" + "GCC" * 20 + "\n", encoding="utf-8")
+        query = tmp_path / "query.fa"
+        query.write_text(">gene1\n" + "GCC" * 10 + "\n", encoding="utf-8")
+        codon_cmd(self._args(query, ref, False))
+        out = capsys.readouterr().out
+        assert "id\tcodon_count\tcai" in out
+        assert "gene1" in out
+
+    def test_empty_reference_raises(self, tmp_path):
+        ref = tmp_path / "empty.fa"
+        ref.write_text("", encoding="utf-8")
+        query = tmp_path / "query.fa"
+        query.write_text(">gene1\n" + "GCC" * 10 + "\n", encoding="utf-8")
+        with pytest.raises(DataFormatError):
+            codon_cmd(self._args(query, ref, True))
+
+    def test_empty_query_raises(self, tmp_path):
+        ref = tmp_path / "ref.fa"
+        ref.write_text(">ref1\n" + "GCC" * 20 + "\n", encoding="utf-8")
+        query = tmp_path / "empty.fa"
+        query.write_text("", encoding="utf-8")
+        with pytest.raises(DataFormatError):
+            codon_cmd(self._args(query, ref, True))

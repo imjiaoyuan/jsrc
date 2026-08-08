@@ -90,39 +90,18 @@ jsrc genome stats -fa assembly.fa
 jsrc genome stats -fa assembly.fa --json
 ```
 
-## gc-skew
-
-累积 GC 偏斜分析用于预测细菌基因组的复制起点（oriC）和终点（ter）。GC 偏斜定义为 (G-C)/(G+C)，在复制起点附近通常有明显的极小值。
-
-这个命令计算滑窗累积 GC 偏斜，输出每个窗口的位置和累积偏斜值。可以用绘图工具可视化，找到曲线的最低点。
-
-```bash
-jsrc genome gc-skew -fa genome.fa
-jsrc genome gc-skew -fa genome.fa --window 10000 --step 5000 --json
-```
-
 ## window
 
 滑窗 GC 和 AT 偏斜分析。这个命令在指定窗口大小和步长下，计算每个窗口的 GC 含量、GC 偏斜和 AT 偏斜。
 
 GC 偏斜 = (G-C)/(G+C)，AT 偏斜 = (A-T)/(A+T)。这些指标可以揭示基因组的局部组成特征和复制偏好。
 
+加上 `--cumulative` 后，命令会额外输出累积 GC 偏斜序列，并预测复制起点（oriC）和终点（ter）——即原先独立的 `gc-skew` 命令。
+
 ```bash
 jsrc genome window -fa genome.fa
 jsrc genome window -fa genome.fa --window 50000 --step 10000 --json
-```
-
-## cai
-
-密码子适应指数（CAI），衡量一个基因的密码子使用模式与参考高表达基因集的匹配程度。CAI 范围 0 到 1，值越高表示与参考集越相似（通常意味着更高的表达潜力）。
-
-与 `codon --cai`（对所有输入序列计算一个全局 CAI 值）不同，这个命令对每个基因单独计算 CAI，适合全基因组范围的 CAI 分析。
-
-参考序列应使用高表达基因的 CDS（如核糖体蛋白、延伸因子等）。输入的查询和参考都应该是 CDS 序列，不处理内含子和 UTR。
-
-```bash
-jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa
-jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa --json
+jsrc genome window -fa genome.fa -w 10000 -s 1000 --cumulative --json
 ```
 
 ## codon
@@ -133,11 +112,13 @@ RSCU = 观测频率 / 期望频率（假设同义密码子均匀使用）。RSCU
 
 可选功能：
 - `--cai`：计算 CAI（密码子适应指数），需要提供参考基因集（通常是高表达基因）
+- `--per-gene`：与 `--cai` 配合使用，输出每个基因的 CAI 表，而不是单个全局 CAI（即原先独立的 `cai` 命令）
 - `--enc`：计算 ENC（有效密码子数），范围 20-61，值越小表示密码子偏好性越强
 
 ```bash
 jsrc genome codon -fa cds.fa --top 20
 jsrc genome codon -fa cds.fa --cai highly_expressed.fa --enc --json
+jsrc genome codon -fa all_genes.fa --cai highly_expressed.fa --per-gene
 ```
 
 ## distance

@@ -8,6 +8,7 @@ from typing import Any
 
 from Bio import SeqIO
 
+from jsrc.core import DataFormatError
 from jsrc.genome.core import (
     AA_TABLE,
     calculate_cai,
@@ -55,6 +56,53 @@ def cmd(args: Namespace) -> None:
     counts: Counter[str] = Counter()
     aa_to_codons = make_aa_to_codons(AA_TABLE)
 
+    # Reference codon counts (shared by global and per-gene CAI).
+    ref_counts: Counter[str] | None = None
+    if args.cai:
+        ref_counts = Counter()
+        ref_n = 0
+        for rec in SeqIO.parse(args.cai, "fasta"):
+            ref_n += 1
+            for codon in iter_codons(str(rec.seq)):
+                if AA_TABLE.get(codon) != "*":
+                    ref_counts[codon] += 1
+        if ref_n == 0:
+            raise DataFormatError("No sequences found in reference FASTA")
+        if not ref_counts:
+            raise DataFormatError("No valid codons found in reference FASTA")
+
+    # Per-gene CAI table (migrated from the removed `genome cai` command):
+    # CAI for each query record against the reference set.
+    if args.cai and args.per_gene:
+        assert ref_counts is not None  # set when args.cai is truthy
+        results = []
+        query_n = 0
+        for rec in SeqIO.parse(args.fa, "fasta"):
+            query_n += 1
+            gene_counts: Counter[str] = Counter()
+            for codon in iter_codons(str(rec.seq)):
+                if AA_TABLE.get(codon) != "*":
+                    gene_counts[codon] += 1
+            cai = calculate_cai(gene_counts, ref_counts, aa_to_codons)
+            results.append(
+                {
+                    "id": rec.id,
+                    "codon_count": sum(gene_counts.values()),
+                    "cai": round(cai, 6),
+                }
+            )
+        if query_n == 0:
+            raise DataFormatError("No sequences found in query FASTA")
+        if args.json:
+            print(json.dumps(results, ensure_ascii=False, indent=2))
+        else:
+            print("id\tcodon_count\tcai")
+            for r in results:
+                print(f"{r['id']}\t{r['codon_count']}\t{r['cai']:.6f}")
+        logger.info("Computed per-gene CAI for %d genes", len(results))
+        return
+
+    # Otherwise: aggregate codon usage over all input sequences.
     total_codons = 0
     for rec in SeqIO.parse(args.fa, "fasta"):
         for codon in iter_codons(str(rec.seq)):
@@ -76,11 +124,7 @@ def cmd(args: Namespace) -> None:
 
     cai_value = None
     if args.cai:
-        ref_counts: Counter[str] = Counter()
-        for rec in SeqIO.parse(args.cai, "fasta"):
-            for codon in iter_codons(str(rec.seq)):
-                if AA_TABLE.get(codon) != "*":
-                    ref_counts[codon] += 1
+        assert ref_counts is not None  # set when args.cai is truthy
         cai_value = calculate_cai(counts, ref_counts, aa_to_codons)
 
     enc_value = None
@@ -117,6 +161,11 @@ def register(subparsers: Any) -> None:
     p.add_argument("-fa", required=True, help="CDS FASTA file")
     p.add_argument("--top", type=int, default=20, help="Show top N codons")
     p.add_argument("--cai", help="Reference CDS FASTA for CAI calculation")
+    p.add_argument(
+        "--per-gene",
+        action="store_true",
+        help="With --cai, emit a per-gene CAI table instead of global codon usage",
+    )
     p.add_argument("--enc", action="store_true", help="Calculate ENC")
     p.add_argument("--json", action="store_true", help="Print JSON")
     p.set_defaults(func=cmd)

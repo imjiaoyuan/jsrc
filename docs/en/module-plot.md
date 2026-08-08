@@ -90,17 +90,6 @@ jsrc plot cis -bed motifs.bed -o cis.png -dpi 300
 - `-o`: output PNG path.
 - `-dpi`: output DPI (default: `300`).
 
-## heart / rose
-
-Two interactive matplotlib demos (heart curve and 3D rose curve) for quickly checking whether the display environment works.
-
-```bash
-jsrc plot heart
-jsrc plot rose
-```
-
-No additional parameters.
-
 ## dotplot
 
 Compares two sequences by plotting exact k-mer matches. Each sequence's k-mer positions form the axes; matching points form patterns — a diagonal indicates collinearity, while scattered or repeated patterns suggest rearrangements or repeats. Useful for spotting structural variation quickly.

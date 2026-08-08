@@ -1,6 +1,6 @@
 # jsrc seq
 
-序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、蛋白理化分析、质控、k-mer 指纹、Entrez 下载、酶切模拟、序列复杂度、MSA 信息熵、双序列比对、格式转换和随机序列生成这些常用功能。
+序列操作是日常最绕不开的事。`jsrc seq` 涵盖了提取、重命名、翻译、蛋白理化分析、k-mer 指纹、Entrez 下载、酶切模拟、序列复杂度、MSA 信息熵、双序列比对、格式转换和随机序列生成这些常用功能。（质控已迁移到 `jsrc analyze qc`。）
 
 基因组级别的分析功能（如 ORF 查找、CpG 岛预测、启动子提取、串联重复、密码子使用、滑窗统计等）已迁移到 [genome 模块](./module-genome.md)。
 
@@ -56,17 +56,6 @@ jsrc seq rename -fa in.fa -mode gff -gff genes.gff -parent Parent -o out.fa
 
 ```bash
 jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
-```
-
-## qc
-
-做大规模分析前我总是习惯先看一眼数据质量。这个命令就是用来快速"体检"的——它不替代 FastQC 那些深度报告，但胜在快，一条命令下去基本概况就有了。
-
-支持 FASTA 和 FASTQ（包括 gzip 压缩）。对 FASTA 它会统计序列条数、总长度、N50/N90、GC 含量、N 比率。对 FASTQ 它会算 reads 数、总碱基数、平均读长。如果给了基因组大小（`-gs`），还会估算测序深度。
-
-```bash
-jsrc seq qc -fa assembly.fa
-jsrc seq qc -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
 ```
 
 ## kmer

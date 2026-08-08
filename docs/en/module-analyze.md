@@ -1,18 +1,23 @@
 # jsrc analyze
 
-Common analysis tools for sequences: phylogenetic tree construction, motif discovery, QC summary, consensus calling, variant comparison, and bootstrapped phylogeny.
+Common analysis tools for sequences: phylogenetic tree construction (with optional bootstrap support), motif discovery, QC summary, consensus calling, and variant comparison.
 
 ## phylo
 
 Pass in a FASTA, pick an algorithm, and get a Newick tree. Supports neighbor-joining (NJ) and UPGMA. The output works with any tree viewer. Good for a quick look at clustering relationships or as a starting point for more detailed phylogenetic analysis.
 
+Bootstrap support is built in: pass `-n`/`--bootstrap` with the number of replicates (0 = off, default 0) and `-seed` for the random seed (default 42). When bootstrap ≥ 1, the tree is annotated with branch support values.
+
 ```bash
 jsrc analyze phylo -fa sequences.fa -o tree.nwk -a nj
+jsrc analyze phylo -fa seqs.fa -n 200 -seed 42 -o tree.nwk
 ```
 
 - `-fa`: input FASTA.
 - `-o`: output Newick tree file.
 - `-a`: algorithm, `nj` or `upgma` (default: `nj`).
+- `-n`/`--bootstrap`: number of bootstrap replicates (default `0`; 0 = off).
+- `-seed`: random seed (default `42`).
 
 ## motif
 
@@ -67,16 +72,3 @@ jsrc analyze snpindel -fa pair.fa -id1 sampleA -id2 sampleB --json
 - `-id1`: sequence 1 ID (default: first sequence).
 - `-id2`: sequence 2 ID (default: second sequence).
 - `--json`: JSON output.
-
-## bootstrap_phylo
-
-A plain tree shows topology; bootstrap tells you how confident you should be in each branch. This command runs a specified number of bootstrap replicates and outputs a Newick tree with branch support values. `-seed` controls the random seed for reproducibility.
-
-```bash
-jsrc analyze bootstrap_phylo -fa seqs.fa -n 200 -seed 42 -o boot.nwk
-```
-
-- `-fa`: input FASTA.
-- `-n`: number of bootstrap replicates (default: `100`).
-- `-seed`: random seed (default: `42`).
-- `-o`: optional output Newick file.

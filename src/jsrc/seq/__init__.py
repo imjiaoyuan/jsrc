@@ -10,7 +10,6 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "rename": ("jsrc.seq.rename", "Rename FASTA headers"),
     "translate": ("jsrc.seq.translate", "Translate CDS/DNA to protein"),
     "protparam": ("jsrc.seq.protparam", "Protein physicochemical properties"),
-    "qc": ("jsrc.seq.qc", "Sequence quality statistics"),
     "kmer": ("jsrc.seq.kmer", "Count k-mer frequencies"),
     "primer": ("jsrc.seq.primer", "Primer Tm, GC, and hairpin analysis"),
     "complexity": ("jsrc.seq.complexity", "Sequence complexity metrics"),

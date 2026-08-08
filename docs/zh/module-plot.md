@@ -90,17 +90,6 @@ jsrc plot cis -bed motifs.bed -o cis.png -dpi 300
 - `-o`：输出 PNG 路径。
 - `-dpi`：输出分辨率（默认 `300`）。
 
-## heart / rose
-
-两个交互式的 matplotlib 演示示例（心形曲线和 3D 玫瑰曲线），用来快速测试显示环境是否正常。
-
-```bash
-jsrc plot heart
-jsrc plot rose
-```
-
-无额外参数。
-
 ## dotplot
 
 通过精确 k-mer 匹配比较两条序列的整体相似性。每条序列的 k-mer 位置作为坐标轴，匹配点形成点图模式——对角线表示共线性，散点或重复模式提示重排或重复。适合快速发现结构变异和大尺度序列关系。

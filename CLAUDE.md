@@ -66,13 +66,23 @@ Every subcommand module (e.g., `seq/extract.py`) exposes two functions:
 
 | module | package | notes |
 |--------|---------|-------|
-| `seq` | `jsrc.seq` | Sequence extraction, QC, k-mer, translation, alignment, digestion |
+| `seq` | `jsrc.seq` | Sequence extraction, k-mer, translation, alignment, digestion |
 | `genome` | `jsrc.genome` | Genome stats, CpG islands, ORF finding, ANI, Ka/Ks, codon usage |
 | `plot` | `jsrc.plot` | Gene/exon/chromosome/dotplot/circos diagrams (requires matplotlib) |
 | `analyze` | `jsrc.analyze` | Phylogeny, MSA consensus, SNP/INDEL, motif discovery |
 | `grn` | `jsrc.grn` | Gene regulatory network conversion, centrality, local viewer |
 | `vision` | `jsrc.vision` | Image object extraction, EFD, morphology traits (requires opencv) |
 | `job` | `jsrc.job` | Background job submit/monitor/log/kill (Linux/macOS only, disabled on Windows) |
+
+### CLI surface — prefer flags over new subcommands
+
+The toolkit deliberately keeps a small command surface: when a new capability overlaps an existing command, it is merged into a **flag** on that command rather than spawning a new subcommand. Do not reintroduce the removed forms. Current consolidations:
+
+- `analyze phylo -n/--bootstrap N -seed S` — branch support values; formerly the separate `analyze bootstrap_phylo`
+- `genome codon --cai ref [--per-gene]` — one global CAI, or a per-gene CAI table with `--per-gene`; formerly the separate `genome cai`
+- `genome window --cumulative` — cumulative GC skew + replication-origin prediction; formerly the separate `genome gc-skew`
+- QC is `analyze qc` only (FASTA/FASTQ/SAM/VCF) — there is **no** `seq qc`
+- `plot` has no `heart`/`rose` commands (removed)
 
 ### Exception hierarchy
 

@@ -1,6 +1,6 @@
 # jsrc seq
 
-Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, protein characterization, QC, k-mer profiling, Entrez fetching, restriction digestion, sequence complexity, MSA entropy, pairwise alignment, format conversion, and random sequence generation.
+Sequence manipulation is the most routine task in bioinformatics. `jsrc seq` covers extraction, renaming, translation, protein characterization, k-mer profiling, Entrez fetching, restriction digestion, sequence complexity, MSA entropy, pairwise alignment, format conversion, and random sequence generation. QC has moved to `jsrc analyze qc`.
 
 Genome-level analysis features (such as ORF finding, CpG island prediction, promoter extraction, tandem repeats, codon usage, sliding-window analysis, etc.) have been moved to the [genome module](./module-genome.md).
 
@@ -54,17 +54,6 @@ When doing cross-species comparison or looking for protein domains, what you act
 
 ```bash
 jsrc seq translate -fa genome.fa -gff genes.gff -id ID -o proteins.fa
-```
-
-## qc
-
-I always check data quality before diving into large-scale analysis. This command is for a quick health check — it won't replace FastQC's deep reports, but it's fast and gives you the essentials in one go.
-
-Supports FASTA and FASTQ (including gzip). For FASTA: sequence count, total length, N50/N90, GC content, N ratio. For FASTQ: read count, total bases, mean read length. If genome size is provided via `-gs`, it also estimates sequencing depth.
-
-```bash
-jsrc seq qc -fa assembly.fa
-jsrc seq qc -fq r1.fq.gz r2.fq.gz -gs 520000000 --json
 ```
 
 ## kmer

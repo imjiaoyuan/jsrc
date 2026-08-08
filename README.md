@@ -55,7 +55,7 @@ jsrc vision extract --help
 
 | module | focus | typical use |
 |---|---|---|
-| `seq` | Sequence extraction, translation, QC, k-mer, sliding window | `jsrc seq extract ...` |
+| `seq` | Sequence extraction, translation, k-mer, sliding window | `jsrc seq extract ...` |
 | `genome` | Genome statistics, feature detection, comparative/evolutionary analysis | `jsrc genome stats ...` |
 | `plot` | Gene/exon/chromosome/domain and other plots | `jsrc plot gene ...` |
 | `analyze` | Phylogeny, motif, consensus, SNP/INDEL, QC | `jsrc analyze phylo ...` |

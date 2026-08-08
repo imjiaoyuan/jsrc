@@ -36,7 +36,6 @@ include = ["jsrc*"]
 
 [tool.setuptools.package-data]
 "jsrc.grn" = ["sources/*"]
-"jsrc.plot" = ["sources/*"]
 
 [tool.black]
 target-version = ["py310"]

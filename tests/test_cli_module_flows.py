@@ -79,7 +79,7 @@ def test_cli_root_help_does_not_import_modules(monkeypatch):
 @pytest.mark.parametrize(
     ("argv", "expected_imports"),
     [
-        (["jsrc", "plot", "heart", "-h"], ["jsrc.plot", "jsrc.plot.heart"]),
+        (["jsrc", "plot", "gene", "-h"], ["jsrc.plot", "jsrc.plot.gene"]),
         (["jsrc", "genome", "window", "-h"], ["jsrc.genome", "jsrc.genome.window"]),
         (["jsrc", "grn", "centrality", "-h"], ["jsrc.grn", "jsrc.grn.centrality"]),
     ],

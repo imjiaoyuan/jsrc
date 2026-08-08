@@ -9,7 +9,6 @@ _SUBCOMMANDS: dict[str, tuple[str, str]] = {
     "qc": ("jsrc.analyze.qc", "Alignment/sequence QC"),
     "msa_consensus": ("jsrc.analyze.msa_consensus", "MSA consensus statistics"),
     "snpindel": ("jsrc.analyze.snpindel", "SNP/INDEL analysis from alignments"),
-    "bootstrap_phylo": ("jsrc.analyze.bootstrap_phylo", "Bootstrap phylogeny support"),
 }
 
 

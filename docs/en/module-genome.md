@@ -90,39 +90,18 @@ jsrc genome stats -fa assembly.fa
 jsrc genome stats -fa assembly.fa --json
 ```
 
-## gc-skew
-
-Cumulative GC skew analysis is used to predict replication origin (oriC) and terminus (ter) in bacterial genomes. GC skew is defined as (G-C)/(G+C), typically showing a distinct minimum near the replication origin.
-
-This command calculates sliding window cumulative GC skew, outputting position and cumulative skew for each window. Visualize with plotting tools to find the curve's lowest point.
-
-```bash
-jsrc genome gc-skew -fa genome.fa
-jsrc genome gc-skew -fa genome.fa --window 10000 --step 5000 --json
-```
-
 ## window
 
 Sliding window GC and AT skew analysis. This command calculates GC content, GC skew, and AT skew for each window at specified window size and step.
 
 GC skew = (G-C)/(G+C), AT skew = (A-T)/(A+T). These metrics reveal local compositional features and replication bias.
 
+With `--cumulative`, the command also adds a cumulative GC skew series and predicts the replication origin (oriC) and terminus (ter) — formerly the separate `gc-skew` command.
+
 ```bash
 jsrc genome window -fa genome.fa
 jsrc genome window -fa genome.fa --window 50000 --step 10000 --json
-```
-
-## cai
-
-Codon Adaptation Index measures how well a gene's codon usage matches a reference set of highly expressed genes. CAI ranges from 0 to 1; higher values indicate stronger similarity to the reference (and potentially higher expression).
-
-Unlike `codon --cai` which computes a single global CAI for all input sequences combined, this command computes per-gene CAI values. Each gene in the query FASTA gets an individual score, making it suitable for genome-wide CAI profiling.
-
-The reference should be a FASTA of highly expressed genes (e.g., ribosomal proteins, elongation factors). Both query and reference should be CDS sequences — introns and UTRs are not handled.
-
-```bash
-jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa
-jsrc genome cai -fa all_genes.fa --reference highly_expressed.fa --json
+jsrc genome window -fa genome.fa -w 10000 -s 1000 --cumulative --json
 ```
 
 ## codon
@@ -133,11 +112,13 @@ RSCU = observed frequency / expected frequency (assuming uniform synonymous codo
 
 Optional features:
 - `--cai`: Calculate CAI (Codon Adaptation Index), requires reference gene set (typically highly expressed genes)
+- `--per-gene`: Use with `--cai` to output a per-gene CAI table instead of a single global CAI (formerly the separate `cai` command)
 - `--enc`: Calculate ENC (Effective Number of Codons), range 20-61, lower values indicate stronger codon bias
 
 ```bash
 jsrc genome codon -fa cds.fa --top 20
 jsrc genome codon -fa cds.fa --cai highly_expressed.fa --enc --json
+jsrc genome codon -fa all_genes.fa --cai highly_expressed.fa --per-gene
 ```
 
 ## distance
