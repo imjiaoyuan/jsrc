@@ -5,7 +5,9 @@ import logging
 from argparse import Namespace
 from typing import Any
 
-from jsrc.core import load_fasta
+from Bio import SeqIO
+
+from jsrc.core import DataFormatError
 
 logger = logging.getLogger(__name__)
 
@@ -57,56 +59,58 @@ def _count_gaps(seq: str) -> dict[str, int | float | list[int]]:
 
 
 def cmd(args: Namespace) -> None:
-    records = load_fasta(args.fa)
-
-    lengths = [len(rec.seq) for rec in records]
-    total_length = sum(lengths)
-    n50, l50 = _calculate_n50_l50(lengths)
-
-    all_gaps = {
-        "n_count": 0,
-        "gap_count": 0,
-        "min_gap": 0,
-        "max_gap": 0,
-        "mean_gap": 0.0,
-    }
+    # Single streaming pass: hold one record at a time instead of loading the
+    # whole FASTA into memory (important for large genomes).
+    lengths: list[int] = []
+    total_length = 0
+    total_gc = 0
+    total_n = 0
+    gap_count = 0
     gap_lengths_all: list[int] = []
-    for rec in records:
-        gap_info = _count_gaps(str(rec.seq))
-        all_gaps["n_count"] += int(gap_info["n_count"])
-        all_gaps["gap_count"] += int(gap_info["gap_count"])
-        gap_lengths = gap_info.get("gap_lengths", [])
-        if isinstance(gap_lengths, list):
-            gap_lengths_all.extend(gap_lengths)
 
-    if gap_lengths_all:
-        all_gaps["min_gap"] = min(gap_lengths_all)
-        all_gaps["max_gap"] = max(gap_lengths_all)
-        all_gaps["mean_gap"] = sum(gap_lengths_all) / len(gap_lengths_all)
+    num_records = 0
+    for rec in SeqIO.parse(str(args.fa), "fasta"):
+        num_records += 1
+        seq = str(rec.seq).upper()
+        length = len(seq)
+        lengths.append(length)
+        total_length += length
+        total_gc += seq.count("G") + seq.count("C")
 
-    total_gc = sum(
-        str(rec.seq).upper().count("G") + str(rec.seq).upper().count("C")
-        for rec in records
-    )
+        gap_info = _count_gaps(seq)
+        total_n += int(gap_info["n_count"])
+        gap_count += int(gap_info["gap_count"])
+        rec_gap_lengths = gap_info.get("gap_lengths", [])
+        if isinstance(rec_gap_lengths, list):
+            gap_lengths_all.extend(rec_gap_lengths)
+
+    if num_records == 0:
+        raise DataFormatError(f"No sequences found in FASTA: {args.fa}")
+
+    n50, l50 = _calculate_n50_l50(lengths)
     gc_percent = (total_gc / total_length * 100.0) if total_length > 0 else 0.0
 
     stats = {
-        "num_sequences": len(records),
+        "num_sequences": num_records,
         "total_length": total_length,
         "min_length": min(lengths),
         "max_length": max(lengths),
-        "mean_length": total_length / len(lengths) if lengths else 0.0,
+        "mean_length": total_length / num_records if num_records else 0.0,
         "n50": n50,
         "l50": l50,
         "gc_percent": round(gc_percent, 4),
-        "n_count": all_gaps["n_count"],
+        "n_count": total_n,
         "n_percent": round(
-            (all_gaps["n_count"] / total_length * 100.0) if total_length > 0 else 0.0, 4
+            (total_n / total_length * 100.0) if total_length > 0 else 0.0, 4
         ),
-        "gap_count": all_gaps["gap_count"],
-        "min_gap_length": all_gaps["min_gap"],
-        "max_gap_length": all_gaps["max_gap"],
-        "mean_gap_length": round(all_gaps["mean_gap"], 2),
+        "gap_count": gap_count,
+        "min_gap_length": min(gap_lengths_all) if gap_lengths_all else 0,
+        "max_gap_length": max(gap_lengths_all) if gap_lengths_all else 0,
+        "mean_gap_length": (
+            round(sum(gap_lengths_all) / len(gap_lengths_all), 2)
+            if gap_lengths_all
+            else 0.0
+        ),
     }
 
     if args.json:

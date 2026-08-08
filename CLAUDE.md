@@ -76,16 +76,16 @@ Every subcommand module (e.g., `seq/extract.py`) exposes two functions:
 
 ### Exception hierarchy
 
-All custom exceptions live in `src/jsrc/core.py` and inherit from `JsrcError`:
-`ValidationError` → `DataFormatError` → `ResourceNotFoundError` → `DependencyError` → `ConfigurationError`
+All custom exceptions live in `src/jsrc/core.py` and are **sibling subclasses of `JsrcError`** (a flat family — each inherits directly from `JsrcError`, *not* a chain): `ValidationError`, `DataFormatError`, `ResourceNotFoundError`, `DependencyError`, `ConfigurationError`.
 
-The CLI's `main()` catches these in order and formats them as `Error: <type> - <message>`. Subcommands should raise these (not `SystemExit`). `ValueError` and `PermissionError` are also caught and formatted.
+The CLI's `main()` catches each in its own `except` branch and prints a type-specific line to stderr, e.g. `Error: Invalid input - <message>` (ValidationError), `Error: Resource not found -` (ResourceNotFoundError), `Error: Data format error -` (DataFormatError), `Error: External dependency error -` (DependencyError), `Error: Configuration error -` (ConfigurationError). `ValueError` → `Error: Invalid value -` and `PermissionError` → `Error: Permission denied -` are also caught; any other `Exception` becomes `Error: Unexpected error - <message>`. Error exits use code `2` (130 for `KeyboardInterrupt`, 1 when no command is given). Subcommands should raise `JsrcError` subclasses (not `SystemExit`). The `--debug` flag re-raises so the full traceback prints.
 
 ### Key shared utilities (`src/jsrc/core.py`)
 
 - `load_fasta(path)` — parse FASTA with Biopython, raises `DataFormatError` if empty
 - `open_text(path)` — open text files, transparently handles `.gz` (gzip)
-- `parse_gff_attributes(attr_string)` — parse GFF/GTF attribute column into dict
+- `check_input(path, label=None)` — return `Path(path)` if it exists, else raise `ResourceNotFoundError`; use this for all input-file checks (not `FileNotFoundError`)
+- `parse_gff_attributes(attr_string)` — parse GFF/GTF attribute column into dict (URL-unescapes GFF3 values like `%3B`)
 - `setup_matplotlib()` — configure Agg backend for headless plotting; call this at the top of `cmd()` in any subcommand that uses matplotlib
 - `progressbar` — context manager / iterable wrapper for stderr progress bars; use `with progressbar(total=N, desc="...") as pb:` or `for item in pb.iter(items):`
 - `nxx(lengths, pct)` — compute N50/N90-style metrics
@@ -105,7 +105,7 @@ Subcommands in `plot` and `vision` (and any that need optional extras) should:
 
 ### Testing
 
-Tests live in `tests/` and mirror the module structure (e.g., `tests/test_seq_extract.py` for `src/jsrc/seq/extract.py`). Test data files live under `test/` (e.g., `test/seq/`, `test/grn/`). `conftest.py` adds `src/` to `sys.path`. Tests use pytest; coverage is configured in `pyproject.toml`.
+Tests live in `tests/` and mirror the module structure (e.g., `tests/test_seq_extract.py` for `src/jsrc/seq/extract.py`). There are **no committed fixture files** — every test builds its inputs on the fly with pytest's `tmp_path` plus inline strings, so the data-definition lives at the top of each test function (don't look for a `test/` data directory; the `test/...` paths in the README are illustrative examples, not real files). `tests/conftest.py` adds `src/` to `sys.path`. Coverage is enforced on every run via `addopts = "--cov=jsrc ..."` in `pyproject.toml`, so `uv run pytest` always emits `htmlcov/`, `coverage.xml`, and `.coverage`.
 
 ### CI
 

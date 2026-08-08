@@ -2,14 +2,13 @@ from __future__ import annotations
 
 import logging
 from argparse import Namespace
-from pathlib import Path
 from typing import Any
 
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from jsrc.core import ValidationError, open_text, parse_gff_attributes
+from jsrc.core import ValidationError, check_input, open_text, parse_gff_attributes
 
 logger = logging.getLogger(__name__)
 
@@ -39,17 +38,9 @@ def cmd(args: Namespace) -> None:
     if not args.match.strip():
         raise ValidationError("Match attribute cannot be empty (use -match)")
 
-    ids_path = Path(args.ids)
-    if not ids_path.exists():
-        raise FileNotFoundError(f"ID list file not found: {args.ids}")
-
-    gff_path = Path(args.gff)
-    if not gff_path.exists():
-        raise FileNotFoundError(f"GFF file not found: {args.gff}")
-
-    fa_path = Path(args.fa)
-    if not fa_path.exists():
-        raise FileNotFoundError(f"FASTA file not found: {args.fa}")
+    check_input(args.ids, label="ID list file")
+    check_input(args.gff, label="GFF file")
+    check_input(args.fa, label="FASTA file")
 
     targets = _load_target_ids(args.ids)
     if not targets:

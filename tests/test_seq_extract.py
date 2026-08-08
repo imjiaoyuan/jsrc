@@ -1,9 +1,52 @@
 import logging
 from argparse import Namespace
 
+import pytest
 from Bio import SeqIO
 
+from jsrc.core import ResourceNotFoundError
 from jsrc.seq.extract import cmd
+
+
+def _make_args(tmp_path, *, omit=None):
+    """Build extract args; omit one input file to test missing-file handling."""
+    fa = tmp_path / "genome.fa"
+    gff = tmp_path / "anno.gff"
+    ids = tmp_path / "ids.txt"
+    if omit != "fa":
+        fa.write_text(">chr1\nATGCGGTTAA\n", encoding="utf-8")
+    if omit != "gff":
+        gff.write_text(
+            "chr1\tsrc\tCDS\t1\t3\t.\t+\t.\tParent=gene1\n", encoding="utf-8"
+        )
+    if omit != "ids":
+        ids.write_text("gene1\n", encoding="utf-8")
+    return Namespace(
+        fa=str(fa),
+        gff=str(gff),
+        ids=str(ids),
+        o=str(tmp_path / "out.fa"),
+        feature="CDS",
+        match="Parent",
+    )
+
+
+def test_extract_missing_fasta_raises_resource_not_found(tmp_path):
+    args = _make_args(tmp_path, omit="fa")
+    with pytest.raises(ResourceNotFoundError):
+        cmd(args)
+
+
+def test_extract_missing_gff_raises_resource_not_found(tmp_path):
+    args = _make_args(tmp_path, omit="gff")
+    with pytest.raises(ResourceNotFoundError):
+        cmd(args)
+
+
+def test_extract_missing_ids_raises_resource_not_found(tmp_path):
+    args = _make_args(tmp_path, omit="ids")
+    with pytest.raises(ResourceNotFoundError):
+        cmd(args)
 
 
 def test_seq_extract_basic_flow(tmp_path, capsys, caplog):

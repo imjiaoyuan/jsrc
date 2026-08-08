@@ -6,6 +6,7 @@ import time
 from collections.abc import Generator, Iterable, Sized
 from pathlib import Path
 from typing import IO, TypeVar
+from urllib.parse import unquote
 
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -55,11 +56,11 @@ def parse_gff_attributes(attr_string: str) -> dict[str, str]:
     for item in attr_string.strip().strip(";").split(";"):
         if "=" in item:
             key, value = item.strip().split("=", 1)
-            attrs[key] = value.strip('"')
+            attrs[key] = unquote(value.strip('"'))
         elif " " in item:
             parts = item.strip().split(None, 1)
             if len(parts) == 2:
-                attrs[parts[0]] = parts[1].strip('"')
+                attrs[parts[0]] = unquote(parts[1].strip('"'))
     return attrs
 
 
@@ -78,6 +79,19 @@ def open_text(path: str | Path) -> IO[str]:
     if path_str.endswith((".gz", ".bgz", ".gzip")):
         return gzip.open(path_str, "rt", encoding="utf-8")
     return open(path_str, encoding="utf-8")
+
+
+def check_input(path: str | Path, label: str | None = None) -> Path:
+    """Return ``Path(path)`` if it exists, else raise ``ResourceNotFoundError``.
+
+    ``label`` optionally describes the file's role for a clearer message
+    (e.g. ``"FASTA file"``); defaults to ``"Input file"``.
+    """
+    p = Path(path)
+    if not p.exists():
+        what = label if label is not None else "Input file"
+        raise ResourceNotFoundError(f"{what} not found: {path}")
+    return p
 
 
 def load_fasta(path: str | Path) -> list[SeqRecord]:
